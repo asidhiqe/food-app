@@ -4,14 +4,14 @@ import { Check, Edit3, ShieldAlert, Sparkles, Heart } from 'lucide-react';
 const CHILD_THEMES = {
   boy: {
     activeBg: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
-    activeBorder: '#3b82f6',
+    activeBorder: '#2563eb',
     activeText: '#1d4ed8',
     avatarBg: '#dbeafe',
     glow: '0 4px 14px rgba(37,99,235,0.18)'
   },
   girl: {
     activeBg: 'linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%)',
-    activeBorder: '#ec4899',
+    activeBorder: '#db2777',
     activeText: '#be185d',
     avatarBg: '#fce7f3',
     glow: '0 4px 14px rgba(236,72,153,0.18)'
@@ -29,9 +29,9 @@ export default function ChildAvatarBar({
   if (!childrenList || childrenList.length === 0) return null;
 
   return (
-    <div style={{ marginBottom: '1rem' }}>
-      {/* Visual Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.45rem', padding: '0 2px' }}>
+    <div style={{ marginBottom: '0.85rem' }}>
+      {/* Visual Section Title */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.4rem', padding: '0 2px' }}>
         <span style={{ fontSize: '0.72rem', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
           Select Child to Pack Lunch
         </span>
@@ -40,7 +40,7 @@ export default function ChildAvatarBar({
         </span>
       </div>
 
-      {/* Interactive Child Identity Cards */}
+      {/* Interactive Child Identity Cards (Without duplicate floating active pill) */}
       <div
         style={{
           display: 'grid',
@@ -76,30 +76,6 @@ export default function ChildAvatarBar({
                 transform: isSelected ? 'translateY(-1px)' : 'none'
               }}
             >
-              {/* Active Selection Pin */}
-              {isSelected && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: '-6px',
-                    right: '10px',
-                    background: theme.activeBorder,
-                    color: '#ffffff',
-                    padding: '1px 6px',
-                    borderRadius: '8px',
-                    fontSize: '0.6rem',
-                    fontWeight: 900,
-                    boxShadow: '0 2px 5px rgba(0,0,0,0.15)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '2px'
-                  }}
-                >
-                  <Check size={9} strokeWidth={3.5} />
-                  <span>ACTIVE</span>
-                </div>
-              )}
-
               {/* Row 1: Avatar + Name + Class */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.45rem' }}>
                 <div

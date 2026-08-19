@@ -22,7 +22,12 @@ export default function CompactHeader({
 
   const todayStr = new Date().toISOString().split('T')[0];
   const isToday = selectedDate === todayStr;
-  const dateLabel = isToday ? 'Today' : selectedDate;
+
+  // Format date nicely (e.g. "Today, Aug 19" or "Wed, Aug 20")
+  const dateObj = new Date(selectedDate);
+  const dateFormatted = isToday
+    ? 'Today'
+    : dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
 
   return (
     <>
@@ -31,103 +36,89 @@ export default function CompactHeader({
           position: 'sticky',
           top: 0,
           zIndex: 100,
-          background: 'rgba(255, 255, 255, 0.95)',
-          backdropFilter: 'blur(10px)',
+          background: 'rgba(255, 255, 255, 0.96)',
+          backdropFilter: 'blur(12px)',
           borderBottom: '1px solid rgba(226, 232, 240, 0.8)',
-          padding: '0.6rem 0.85rem',
           boxShadow: '0 1px 4px rgba(0,0,0,0.03)'
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.4rem' }}>
-          {/* Left: School & Slot Picker (Integrated) */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <button
-              onClick={() => setIsSchoolModalOpen(true)}
+        {/* ROW 1: Clean Masthead (School Brand on Left, Orders & Profile on Right) */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '0.65rem 0.95rem',
+            borderBottom: '1px solid #f1f5f9'
+          }}
+        >
+          {/* Left: School Logo / Campus Switcher */}
+          <button
+            onClick={() => setIsSchoolModalOpen(true)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              background: '#f8fafc',
+              border: '1px solid #e2e8f0',
+              borderRadius: 'var(--radius-full)',
+              padding: '4px 10px 4px 6px',
+              cursor: 'pointer'
+            }}
+          >
+            <div
               style={{
+                width: '24px',
+                height: '24px',
+                borderRadius: '50%',
+                background: 'var(--primary)',
+                color: 'white',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '5px',
-                background: '#f8fafc',
-                border: '1px solid #e2e8f0',
-                borderRadius: 'var(--radius-full)',
-                padding: '4px 8px 4px 6px',
-                cursor: 'pointer'
+                justifyContent: 'center',
+                fontSize: '0.8rem'
               }}
             >
-              <div
-                style={{
-                  width: '24px',
-                  height: '24px',
-                  borderRadius: '50%',
-                  background: 'var(--primary)',
-                  color: 'white',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '0.75rem'
-                }}
-              >
-                🏫
+              🏫
+            </div>
+            <div style={{ textAlign: 'left' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
+                <span style={{ fontSize: '0.82rem', fontWeight: 900, color: 'var(--text-main)' }}>
+                  {activeSchool?.name?.split(' ')[0] || 'Brainwaves'}
+                </span>
+                <ChevronDown size={12} color="#64748b" />
               </div>
-              <span style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--text-main)', maxWidth: '100px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {activeSchool?.name?.split(' ')[0] || 'School'}
-              </span>
-              <ChevronDown size={12} color="#64748b" />
-            </button>
+            </div>
+          </button>
 
-            {/* Delivery Slot Pill */}
-            <button
-              onClick={onOpenDateSlotSheet}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px',
-                background: '#eff6ff',
-                border: '1px solid #bfdbfe',
-                borderRadius: 'var(--radius-full)',
-                padding: '4px 8px',
-                cursor: 'pointer',
-                color: '#1d4ed8',
-                fontSize: '0.74rem',
-                fontWeight: 800
-              }}
-            >
-              <Clock size={12} color="#2563eb" />
-              <span style={{ maxWidth: '110px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {dateLabel}, {selectedSlot?.name?.split('/')[0] || selectedSlot?.name || 'Break'}
-              </span>
-              <ChevronDown size={11} />
-            </button>
-          </div>
-
-          {/* Right: Orders & User Profile */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-            {/* Orders Pill */}
+          {/* Right: Orders & User Menu */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            {/* Orders Button */}
             <button
               onClick={onViewMyOrders}
               style={{
                 background: '#ffffff',
                 border: '1px solid #cbd5e1',
                 borderRadius: 'var(--radius-full)',
-                padding: '4px 8px',
-                fontSize: '0.74rem',
+                padding: '4px 10px',
+                fontSize: '0.76rem',
                 fontWeight: 800,
                 color: 'var(--text-main)',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '4px'
+                gap: '5px'
               }}
             >
               <span>Orders</span>
               {activeOrderCount > 0 && (
-                <span style={{ background: '#10b981', color: 'white', borderRadius: '10px', padding: '0 5px', fontSize: '0.65rem', fontWeight: 900 }}>
+                <span style={{ background: '#10b981', color: 'white', borderRadius: '10px', padding: '1px 6px', fontSize: '0.65rem', fontWeight: 900 }}>
                   {activeOrderCount}
                 </span>
               )}
             </button>
 
-            {/* Settings / Parent Menu */}
+            {/* Settings Dropdown Trigger */}
             <div style={{ position: 'relative' }}>
               <button
                 onClick={() => setIsSettingsOpen(!isSettingsOpen)}
@@ -204,6 +195,34 @@ export default function CompactHeader({
               )}
             </div>
           </div>
+        </div>
+
+        {/* ROW 2: Prominent Date & Delivery Time Slot Banner (Below Masthead) */}
+        <div
+          onClick={onOpenDateSlotSheet}
+          style={{
+            padding: '0.55rem 0.95rem',
+            background: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)',
+            borderBottom: '1px solid #bbf7d0',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            cursor: 'pointer'
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div style={{ width: '22px', height: '22px', borderRadius: '50%', background: '#16a34a', color: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Clock size={12} strokeWidth={2.5} />
+            </div>
+            <div style={{ fontSize: '0.78rem', color: '#14532d', fontWeight: 700 }}>
+              Ordering for: <strong style={{ fontWeight: 900, color: '#166534' }}>{dateFormatted} • {selectedSlot?.name || 'Meal Break'} ({selectedSlot?.startTime || '10:30 AM'})</strong>
+            </div>
+          </div>
+
+          <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#15803d', display: 'flex', alignItems: 'center', gap: '2px', background: '#ffffff', padding: '2px 8px', borderRadius: 'var(--radius-full)', border: '1px solid #86efac' }}>
+            <span>Change</span>
+            <ChevronDown size={11} />
+          </span>
         </div>
       </header>
 
