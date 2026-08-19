@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Settings, Upload, Download, School, Palette, Clock, Users, FileSpreadsheet, Check, AlertCircle, Trash2, Plus, Search, ArrowLeft, X, ShieldAlert, UserPlus } from 'lucide-react';
+import { Settings, Upload, Download, School, Palette, Clock, Users, FileSpreadsheet, Check, AlertCircle, Trash2, Plus, Search, ArrowLeft, X, ShieldAlert, UserPlus, Edit3, Clock3 } from 'lucide-react';
 import { StorageService } from '../../services/storageService';
 import { ExcelService } from '../../services/excelService';
 
@@ -37,8 +37,9 @@ export default function SchoolSettings({
   const [isUploading, setIsUploading] = useState(false);
   const [studentSearch, setStudentSearch] = useState('');
 
-  // Direct Student Add State
+  // --- Student Add / Edit State ---
   const [isAddStudentModalOpen, setIsAddStudentModalOpen] = useState(false);
+  const [editingStudentId, setEditingStudentId] = useState(null);
   const [studentAddSuccess, setStudentAddSuccess] = useState(false);
   const [newStudent, setNewStudent] = useState({
     studentName: '',
@@ -48,8 +49,21 @@ export default function SchoolSettings({
     gender: 'boy',
     fatherName: '',
     fatherPhone: '',
+    motherName: '',
+    motherPhone: '',
     allergies: [],
     dietary: 'Veg'
+  });
+
+  // --- Break Slot Add / Edit State ---
+  const [isSlotModalOpen, setIsSlotModalOpen] = useState(false);
+  const [editingSlotId, setEditingSlotId] = useState(null);
+  const [slotSaveSuccess, setSlotSaveSuccess] = useState(false);
+  const [slotForm, setSlotForm] = useState({
+    name: '',
+    startTime: '10:00 AM',
+    endTime: '10:30 AM',
+    cutoffMins: '45'
   });
 
   // Handle Branding Save
@@ -81,6 +95,44 @@ export default function SchoolSettings({
     }
   };
 
+  // Open Student Modal for Adding
+  const handleOpenAddStudent = () => {
+    setEditingStudentId(null);
+    setNewStudent({
+      studentName: '',
+      id: `BIS-${Math.floor(1000 + Math.random() * 9000)}`,
+      class: '4',
+      section: 'A',
+      gender: 'boy',
+      fatherName: '',
+      fatherPhone: '',
+      motherName: '',
+      motherPhone: '',
+      allergies: [],
+      dietary: 'Veg'
+    });
+    setIsAddStudentModalOpen(true);
+  };
+
+  // Open Student Modal for Editing
+  const handleOpenEditStudent = (student) => {
+    setEditingStudentId(student.id);
+    setNewStudent({
+      studentName: student.studentName || '',
+      id: student.id,
+      class: student.class || '4',
+      section: student.section || 'A',
+      gender: student.gender || 'boy',
+      fatherName: student.fatherName || '',
+      fatherPhone: student.fatherPhone || student.parentPhone || '',
+      motherName: student.motherName || '',
+      motherPhone: student.motherPhone || '',
+      allergies: student.allergies || [],
+      dietary: student.dietary || 'Veg'
+    });
+    setIsAddStudentModalOpen(true);
+  };
+
   // Handle Direct Student Form Submit
   const handleAddStudentSubmit = (e) => {
     e.preventDefault();
@@ -92,19 +144,8 @@ export default function SchoolSettings({
     setTimeout(() => {
       setStudentAddSuccess(false);
       setIsAddStudentModalOpen(false);
-      // Reset form
-      setNewStudent({
-        studentName: '',
-        id: `BIS-${Math.floor(1000 + Math.random() * 9000)}`,
-        class: '4',
-        section: 'A',
-        gender: 'boy',
-        fatherName: '',
-        fatherPhone: '',
-        allergies: [],
-        dietary: 'Veg'
-      });
-    }, 600);
+      setEditingStudentId(null);
+    }, 500);
     onRefresh();
   };
 
@@ -121,8 +162,57 @@ export default function SchoolSettings({
 
   // Handle Delete Student
   const handleDeleteStudent = (studentId, studentName) => {
-    if (window.confirm(`Are you sure you want to remove ${studentName} from the campus roster?`)) {
+    if (window.confirm(`Are you sure you want to remove ${studentName} (${studentId}) from the campus roster?`)) {
       StorageService.deleteStudent(activeSchool.id, studentId);
+      onRefresh();
+    }
+  };
+
+  // --- Slot Handlers ---
+  const handleOpenAddSlot = () => {
+    setEditingSlotId(null);
+    setSlotForm({
+      name: '',
+      startTime: '10:00 AM',
+      endTime: '10:30 AM',
+      cutoffMins: '45'
+    });
+    setIsSlotModalOpen(true);
+  };
+
+  const handleOpenEditSlot = (slot) => {
+    setEditingSlotId(slot.id);
+    setSlotForm({
+      name: slot.name,
+      startTime: slot.startTime || '10:00 AM',
+      endTime: slot.endTime || '10:30 AM',
+      cutoffMins: String(slot.cutoffMins || 45)
+    });
+    setIsSlotModalOpen(true);
+  };
+
+  const handleSlotFormSubmit = (e) => {
+    e.preventDefault();
+    if (!slotForm.name.trim()) return;
+
+    if (editingSlotId) {
+      StorageService.updateMealSlot(activeSchool.id, editingSlotId, slotForm);
+    } else {
+      StorageService.addMealSlot(activeSchool.id, slotForm);
+    }
+
+    setSlotSaveSuccess(true);
+    setTimeout(() => {
+      setSlotSaveSuccess(false);
+      setIsSlotModalOpen(false);
+      setEditingSlotId(null);
+    }, 450);
+    onRefresh();
+  };
+
+  const handleDeleteSlot = (slotId, slotName) => {
+    if (window.confirm(`Are you sure you want to delete break slot "${slotName}"?`)) {
+      StorageService.deleteMealSlot(activeSchool.id, slotId);
       onRefresh();
     }
   };
@@ -260,6 +350,11 @@ export default function SchoolSettings({
                   {students.length}
                 </span>
               )}
+              {tab.id === 'mealSlots' && (
+                <span style={{ background: isSelected ? '#ffffff' : '#f1f5f9', color: isSelected ? 'var(--primary)' : 'var(--text-muted)', padding: '1px 5px', borderRadius: '10px', fontSize: '0.65rem', fontWeight: 900 }}>
+                  {(activeSchool?.mealPeriods || []).length}
+                </span>
+              )}
             </button>
           );
         })}
@@ -357,7 +452,7 @@ export default function SchoolSettings({
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               {/* Direct Add Student Button */}
               <button
-                onClick={() => setIsAddStudentModalOpen(true)}
+                onClick={handleOpenAddStudent}
                 style={{
                   background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
                   color: 'white',
@@ -432,8 +527,8 @@ export default function SchoolSettings({
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-              gap: '0.65rem'
+              gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+              gap: '0.75rem'
             }}
           >
             {filteredStudents.map((s) => (
@@ -443,25 +538,33 @@ export default function SchoolSettings({
                   background: '#f8fafc',
                   border: '1px solid #e2e8f0',
                   borderRadius: 'var(--radius-md)',
-                  padding: '0.75rem 0.85rem',
+                  padding: '0.85rem 0.95rem',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  transition: 'all 0.15s ease'
+                  transition: 'all 0.15s ease',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.02)'
                 }}
               >
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                    <span style={{ fontSize: '1rem' }}>{s.gender === 'girl' ? '👧' : '👦'}</span>
-                    <span style={{ fontSize: '0.86rem', fontWeight: 800, color: 'var(--text-main)' }}>
+                    <span style={{ fontSize: '1.05rem' }}>{s.gender === 'girl' ? '👧' : '👦'}</span>
+                    <span style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--text-main)' }}>
                       {s.studentName}
                     </span>
                   </div>
                   <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '2px' }}>
-                    ID: {s.id} • Grade {s.class}-{s.section}
+                    ID: <strong>{s.id}</strong> • Grade {s.class}-{s.section}
                   </div>
+                  
+                  {/* Both Parents Phone preview */}
+                  <div style={{ fontSize: '0.68rem', color: 'var(--primary)', fontWeight: 700, marginTop: '3px' }}>
+                    👨 {s.fatherPhone || s.parentPhone || 'No Father Phone'}
+                    {s.motherPhone && <span style={{ color: '#db2777', marginLeft: '6px' }}>👩 {s.motherPhone}</span>}
+                  </div>
+
                   {s.allergies && s.allergies.length > 0 && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '3px', marginTop: '3px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '3px', marginTop: '4px' }}>
                       <span style={{ fontSize: '0.64rem', color: '#b91c1c', background: '#fee2e2', padding: '1px 5px', borderRadius: '4px', fontWeight: 800 }}>
                         ⚠️ {s.allergies.join(', ')}
                       </span>
@@ -469,34 +572,43 @@ export default function SchoolSettings({
                   )}
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontSize: '0.74rem', fontWeight: 800, color: 'var(--primary)' }}>
-                      {s.fatherPhone || s.parentPhone || 'No Phone'}
-                    </div>
-                    <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
-                      {s.fatherName || 'Parent'}
-                    </div>
-                  </div>
-
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  {/* Edit Student Button */}
                   <button
-                    onClick={() => handleDeleteStudent(s.id, s.studentName)}
-                    title="Remove Student"
+                    onClick={() => handleOpenEditStudent(s)}
+                    title="Edit Student"
                     style={{
-                      background: 'none',
-                      border: 'none',
-                      color: '#94a3b8',
+                      background: '#eff6ff',
+                      border: '1px solid #bfdbfe',
+                      color: 'var(--primary)',
                       cursor: 'pointer',
-                      padding: '4px',
+                      padding: '5px',
                       borderRadius: '6px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center'
                     }}
-                    onMouseEnter={(e) => { e.currentTarget.style.color = '#ef4444'; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.color = '#94a3b8'; }}
                   >
-                    <Trash2 size={15} />
+                    <Edit3 size={14} />
+                  </button>
+
+                  {/* Delete Student Button */}
+                  <button
+                    onClick={() => handleDeleteStudent(s.id, s.studentName)}
+                    title="Remove Student"
+                    style={{
+                      background: '#fee2e2',
+                      border: '1px solid #fecaca',
+                      color: '#b91c1c',
+                      cursor: 'pointer',
+                      padding: '5px',
+                      borderRadius: '6px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                  >
+                    <Trash2 size={14} />
                   </button>
                 </div>
               </div>
@@ -505,35 +617,115 @@ export default function SchoolSettings({
         </div>
       )}
 
-      {/* TAB 3: BREAK SLOTS */}
+      {/* TAB 3: BREAK SLOTS (Full CRUD: Add / Edit / Delete) */}
       {activeTab === 'mealSlots' && (
         <div style={{ background: '#ffffff', padding: '1.25rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-card)' }}>
-          <h3 style={{ fontSize: '0.95rem', fontWeight: 900, marginBottom: '0.85rem' }}>⏰ Campus Meal Periods & Cutoffs</h3>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+            <div>
+              <h3 style={{ fontSize: '0.95rem', fontWeight: 900 }}>⏰ Campus Meal Periods & Cutoffs</h3>
+              <p style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+                Set break delivery times and order booking cutoffs
+              </p>
+            </div>
+
+            <button
+              onClick={handleOpenAddSlot}
+              style={{
+                background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%)',
+                color: 'white',
+                border: 'none',
+                padding: '5px 12px',
+                borderRadius: 'var(--radius-full)',
+                fontSize: '0.75rem',
+                fontWeight: 800,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+                boxShadow: '0 2px 8px rgba(37, 99, 235, 0.25)'
+              }}
+            >
+              <Plus size={14} />
+              <span>Add Break Slot</span>
+            </button>
+          </div>
+
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-              gap: '0.75rem'
+              gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+              gap: '0.85rem'
             }}
           >
             {(activeSchool?.mealPeriods || []).map((slot) => (
               <div
                 key={slot.id}
                 style={{
-                  padding: '0.85rem 1rem',
+                  padding: '1rem 1.1rem',
                   borderRadius: 'var(--radius-md)',
                   border: '1px solid #e2e8f0',
-                  background: '#f8fafc'
+                  background: '#f8fafc',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.02)'
                 }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                  <span style={{ fontSize: '0.9rem', fontWeight: 900 }}>{slot.name}</span>
-                  <span style={{ fontSize: '0.75rem', fontWeight: 800, background: '#eff6ff', color: 'var(--primary)', padding: '2px 8px', borderRadius: 'var(--radius-full)' }}>
-                    {slot.time}
-                  </span>
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                    <span style={{ fontSize: '0.95rem', fontWeight: 900, color: 'var(--text-main)' }}>
+                      {slot.name}
+                    </span>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 800, background: '#eff6ff', color: 'var(--primary)', padding: '2px 8px', borderRadius: 'var(--radius-full)', border: '1px solid #bfdbfe' }}>
+                      {slot.time || `${slot.startTime} - ${slot.endTime}`}
+                    </span>
+                  </div>
+
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                    Order Cutoff: <strong style={{ color: '#b91c1c' }}>{slot.cutoffMins} mins</strong> before break starts
+                  </div>
                 </div>
-                <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
-                  Order Cutoff: <strong>{slot.cutoffMins} mins</strong> before break starts
+
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '6px', marginTop: '0.85rem', paddingTop: '0.65rem', borderTop: '1px solid #e2e8f0' }}>
+                  <button
+                    onClick={() => handleOpenEditSlot(slot)}
+                    style={{
+                      background: '#ffffff',
+                      border: '1px solid #cbd5e1',
+                      color: 'var(--text-main)',
+                      padding: '4px 10px',
+                      borderRadius: '8px',
+                      fontSize: '0.72rem',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px'
+                    }}
+                  >
+                    <Edit3 size={13} />
+                    <span>Edit</span>
+                  </button>
+
+                  <button
+                    onClick={() => handleDeleteSlot(slot.id, slot.name)}
+                    style={{
+                      background: '#fee2e2',
+                      border: '1px solid #fecaca',
+                      color: '#b91c1c',
+                      padding: '4px 10px',
+                      borderRadius: '8px',
+                      fontSize: '0.72rem',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px'
+                    }}
+                  >
+                    <Trash2 size={13} />
+                    <span>Delete</span>
+                  </button>
                 </div>
               </div>
             ))}
@@ -560,7 +752,7 @@ export default function SchoolSettings({
         </div>
       )}
 
-      {/* Direct Add Student Modal */}
+      {/* Direct Add/Edit Student Modal */}
       {isAddStudentModalOpen && (
         <div
           className="modal-overlay"
@@ -582,7 +774,7 @@ export default function SchoolSettings({
             onClick={(e) => e.stopPropagation()}
             style={{
               width: '100%',
-              maxWidth: '480px',
+              maxWidth: '500px',
               background: '#ffffff',
               borderRadius: '24px',
               padding: '1.5rem',
@@ -594,10 +786,10 @@ export default function SchoolSettings({
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
               <div>
                 <h3 style={{ fontSize: '1.1rem', fontWeight: 900, color: 'var(--text-main)' }}>
-                  ➕ Enroll New Student
+                  {editingStudentId ? '✏️ Edit Student Profile' : '➕ Enroll New Student'}
                 </h3>
                 <p style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
-                  Directly add a student to the campus lunch roster
+                  {editingStudentId ? 'Update student identity & parent phone numbers' : 'Directly add a student to the campus lunch roster'}
                 </p>
               </div>
               <button onClick={() => setIsAddStudentModalOpen(false)} style={{ background: '#f1f5f9', border: 'none', borderRadius: '50%', padding: '6px', cursor: 'pointer' }}>
@@ -646,9 +838,10 @@ export default function SchoolSettings({
                     </label>
                     <input
                       type="text"
+                      disabled={!!editingStudentId}
                       value={newStudent.id}
                       onChange={(e) => setNewStudent({ ...newStudent, id: e.target.value })}
-                      style={{ width: '100%', padding: '0.55rem 0.75rem', borderRadius: '10px', border: '1.5px solid #cbd5e1', fontSize: '0.84rem', fontWeight: 700 }}
+                      style={{ width: '100%', padding: '0.55rem 0.75rem', borderRadius: '10px', border: '1.5px solid #cbd5e1', fontSize: '0.84rem', fontWeight: 700, background: editingStudentId ? '#f1f5f9' : '#ffffff' }}
                     />
                   </div>
 
@@ -789,7 +982,7 @@ export default function SchoolSettings({
 
               {studentAddSuccess && (
                 <div style={{ marginBottom: '1rem', padding: '0.5rem', background: '#dcfce7', color: '#15803d', borderRadius: 'var(--radius-md)', textAlign: 'center', fontSize: '0.78rem', fontWeight: 800 }}>
-                  🎉 Student enrolled successfully!
+                  🎉 {editingStudentId ? 'Student updated successfully!' : 'Student enrolled successfully!'}
                 </div>
               )}
 
@@ -799,7 +992,131 @@ export default function SchoolSettings({
                 style={{ width: '100%', padding: '0.85rem' }}
               >
                 <Check size={16} />
-                <span>Save & Enroll Student</span>
+                <span>{editingStudentId ? 'Save & Update Profile' : 'Save & Enroll Student'}</span>
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Direct Add/Edit Break Slot Modal */}
+      {isSlotModalOpen && (
+        <div
+          className="modal-overlay"
+          onClick={() => setIsSlotModalOpen(false)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 1000,
+            background: 'rgba(15, 23, 42, 0.7)',
+            backdropFilter: 'blur(8px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1rem'
+          }}
+        >
+          <div
+            className="modal-content"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: '100%',
+              maxWidth: '440px',
+              background: '#ffffff',
+              borderRadius: '24px',
+              padding: '1.5rem',
+              boxShadow: '0 20px 50px rgba(0,0,0,0.3)'
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <div>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 900, color: 'var(--text-main)' }}>
+                  {editingSlotId ? '✏️ Edit Break Slot' : '⏰ Add New Break Slot'}
+                </h3>
+                <p style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+                  Configure break timing & booking cutoff
+                </p>
+              </div>
+              <button onClick={() => setIsSlotModalOpen(false)} style={{ background: '#f1f5f9', border: 'none', borderRadius: '50%', padding: '6px', cursor: 'pointer' }}>
+                <X size={16} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSlotFormSubmit}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', marginBottom: '1.25rem' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '0.25rem' }}>
+                    Break Slot Name *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Morning Recess, Lunch Break"
+                    value={slotForm.name}
+                    onChange={(e) => setSlotForm({ ...slotForm, name: e.target.value })}
+                    style={{ width: '100%', padding: '0.55rem 0.75rem', borderRadius: '10px', border: '1.5px solid #cbd5e1', fontSize: '0.84rem', fontWeight: 700 }}
+                  />
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '0.25rem' }}>
+                      Start Time
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. 10:00 AM"
+                      value={slotForm.startTime}
+                      onChange={(e) => setSlotForm({ ...slotForm, startTime: e.target.value })}
+                      style={{ width: '100%', padding: '0.55rem', borderRadius: '10px', border: '1.5px solid #cbd5e1', fontSize: '0.84rem', fontWeight: 700 }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '0.25rem' }}>
+                      End Time
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. 10:30 AM"
+                      value={slotForm.endTime}
+                      onChange={(e) => setSlotForm({ ...slotForm, endTime: e.target.value })}
+                      style={{ width: '100%', padding: '0.55rem', borderRadius: '10px', border: '1.5px solid #cbd5e1', fontSize: '0.84rem', fontWeight: 700 }}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '0.25rem' }}>
+                    Order Cutoff (Minutes Before Break Starts)
+                  </label>
+                  <select
+                    value={slotForm.cutoffMins}
+                    onChange={(e) => setSlotForm({ ...slotForm, cutoffMins: e.target.value })}
+                    style={{ width: '100%', padding: '0.55rem 0.75rem', borderRadius: '10px', border: '1.5px solid #cbd5e1', fontSize: '0.84rem', fontWeight: 700 }}
+                  >
+                    <option value="15">15 Minutes Before</option>
+                    <option value="30">30 Minutes Before</option>
+                    <option value="45">45 Minutes Before (Recommended)</option>
+                    <option value="60">1 Hour Before</option>
+                    <option value="120">2 Hours Before</option>
+                  </select>
+                </div>
+              </div>
+
+              {slotSaveSuccess && (
+                <div style={{ marginBottom: '1rem', padding: '0.5rem', background: '#dcfce7', color: '#15803d', borderRadius: 'var(--radius-md)', textAlign: 'center', fontSize: '0.78rem', fontWeight: 800 }}>
+                  🎉 Break slot saved successfully!
+                </div>
+              )}
+
+              <button
+                type="submit"
+                className="btn-primary"
+                style={{ width: '100%', padding: '0.85rem' }}
+              >
+                <Check size={16} />
+                <span>{editingSlotId ? 'Save & Update Break Slot' : 'Save & Add Break Slot'}</span>
               </button>
             </form>
           </div>

@@ -94,6 +94,62 @@ export const StorageService = {
     }
   },
 
+  addMealSlot(schoolId, slotData) {
+    const schools = this.getSchools();
+    const index = schools.findIndex((s) => s.id === schoolId);
+    if (index !== -1) {
+      const periods = schools[index].mealPeriods || [];
+      const newSlot = {
+        id: slotData.id || `slot-${Date.now()}`,
+        name: slotData.name.trim(),
+        startTime: slotData.startTime || '10:00 AM',
+        endTime: slotData.endTime || '10:30 AM',
+        time: `${slotData.startTime || '10:00 AM'} - ${slotData.endTime || '10:30 AM'}`,
+        cutoffMins: parseInt(slotData.cutoffMins, 10) || 45,
+        cutoffTime: slotData.cutoffTime || '09:15 AM'
+      };
+      schools[index].mealPeriods = [...periods, newSlot];
+      localStorage.setItem(KEYS.SCHOOLS, JSON.stringify(schools));
+      this.notify('MEAL_SLOT_ADDED', { schoolId, slot: newSlot });
+      return newSlot;
+    }
+    return null;
+  },
+
+  updateMealSlot(schoolId, slotId, updatedData) {
+    const schools = this.getSchools();
+    const index = schools.findIndex((s) => s.id === schoolId);
+    if (index !== -1) {
+      const periods = schools[index].mealPeriods || [];
+      const slotIndex = periods.findIndex((p) => p.id === slotId);
+      if (slotIndex !== -1) {
+        periods[slotIndex] = {
+          ...periods[slotIndex],
+          ...updatedData,
+          time: `${updatedData.startTime || periods[slotIndex].startTime} - ${updatedData.endTime || periods[slotIndex].endTime}`
+        };
+        schools[index].mealPeriods = [...periods];
+        localStorage.setItem(KEYS.SCHOOLS, JSON.stringify(schools));
+        this.notify('MEAL_SLOT_UPDATED', { schoolId, slot: periods[slotIndex] });
+        return periods[slotIndex];
+      }
+    }
+    return null;
+  },
+
+  deleteMealSlot(schoolId, slotId) {
+    const schools = this.getSchools();
+    const index = schools.findIndex((s) => s.id === schoolId);
+    if (index !== -1) {
+      const periods = (schools[index].mealPeriods || []).filter((p) => p.id !== slotId);
+      schools[index].mealPeriods = periods;
+      localStorage.setItem(KEYS.SCHOOLS, JSON.stringify(schools));
+      this.notify('MEAL_SLOT_DELETED', { schoolId, slotId });
+      return periods;
+    }
+    return [];
+  },
+
   // --- Students & Sibling Discovery ---
   getStudents(schoolId) {
     this.init();
