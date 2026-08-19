@@ -12,8 +12,23 @@ const STATUS_FILTERS = [
   { id: 'DELIVERED', label: 'Delivered', icon: '✅' }
 ];
 
-export default function KitchenDashboard({ orders, activeSchool, onRefresh }) {
-  const [selectedStatusFilter, setSelectedStatusFilter] = useState('ALL');
+export default function KitchenDashboard({
+  orders,
+  activeSchool,
+  onRefresh,
+  staffSession,
+  onLogoutKitchen
+}) {
+  // Default filter based on kitchen staff role
+  const getInitialFilter = () => {
+    if (!staffSession) return 'ALL';
+    if (staffSession.staffName?.includes('Ramesh')) return 'PREPARING';
+    if (staffSession.staffName?.includes('Pooja')) return 'PACKED';
+    if (staffSession.staffName?.includes('Imran')) return 'PACKED';
+    return 'ALL';
+  };
+
+  const [selectedStatusFilter, setSelectedStatusFilter] = useState(getInitialFilter);
   const [activeSlotFilter, setActiveSlotFilter] = useState('ALL');
   const [searchQuery, setSearchQuery] = useState('');
   const [stickerOrder, setStickerOrder] = useState(null);

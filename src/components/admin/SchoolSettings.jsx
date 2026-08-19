@@ -10,6 +10,13 @@ const TABS = [
   { id: 'export', label: 'Export', icon: '📊' }
 ];
 
+const ROLE_PERMISSIONS = {
+  'Super Admin': ['branding', 'roster', 'mealSlots', 'export'],
+  'Operations': ['roster', 'mealSlots', 'export'],
+  'Dietitian': ['roster', 'mealSlots'],
+  'default': ['branding', 'roster', 'mealSlots', 'export']
+};
+
 export default function SchoolSettings({
   activeSchool,
   students,
@@ -18,7 +25,10 @@ export default function SchoolSettings({
   adminSession,
   onLogoutAdmin
 }) {
-  const [activeTab, setActiveTab] = useState('branding');
+  const userRole = adminSession?.role || 'Super Admin';
+  const allowedTabs = ROLE_PERMISSIONS[userRole] || ROLE_PERMISSIONS['default'];
+
+  const [activeTab, setActiveTab] = useState(() => allowedTabs[0] || 'roster');
   const [formData, setFormData] = useState({ ...activeSchool });
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [importStatus, setImportStatus] = useState(null);
@@ -138,13 +148,13 @@ export default function SchoolSettings({
           <div>
             <h2 style={{ fontSize: '1.05rem', fontWeight: 900, lineHeight: 1.2 }}>School & Canteen Admin</h2>
             <div style={{ fontSize: '0.72rem', color: '#94a3b8' }}>
-              Campus setup, student roster & accounting
+              {adminSession?.role ? `Role: ${adminSession.role} • ` : ''}Campus setup & student roster
             </div>
           </div>
         </div>
       </div>
 
-      {/* 2. Responsive Tabs Carousel */}
+      {/* 2. Responsive Tabs Carousel (Filtered by Role Permissions) */}
       <div
         style={{
           display: 'flex',
@@ -156,7 +166,7 @@ export default function SchoolSettings({
           msOverflowStyle: 'none'
         }}
       >
-        {TABS.map((tab) => {
+        {TABS.filter((tab) => allowedTabs.includes(tab.id)).map((tab) => {
           const isSelected = activeTab === tab.id;
           return (
             <button
