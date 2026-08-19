@@ -1,7 +1,14 @@
 import React, { useState } from 'react';
-import { Settings, Upload, Download, School, Palette, Clock, Users, FileSpreadsheet, Check, AlertCircle, Trash2, Plus, Search } from 'lucide-react';
+import { Settings, Upload, Download, School, Palette, Clock, Users, FileSpreadsheet, Check, AlertCircle, Trash2, Plus, Search, ArrowLeft } from 'lucide-react';
 import { StorageService } from '../../services/storageService';
 import { ExcelService } from '../../services/excelService';
+
+const TABS = [
+  { id: 'branding', label: 'Branding', icon: '🎨' },
+  { id: 'roster', label: 'Roster', icon: '👥' },
+  { id: 'mealSlots', label: 'Break Slots', icon: '⏰' },
+  { id: 'export', label: 'Export', icon: '📊' }
+];
 
 export default function SchoolSettings({
   activeSchool,
@@ -9,7 +16,7 @@ export default function SchoolSettings({
   orders,
   onRefresh
 }) {
-  const [activeTab, setActiveTab] = useState('branding'); // branding, roster, mealSlots, export
+  const [activeTab, setActiveTab] = useState('branding');
   const [formData, setFormData] = useState({ ...activeSchool });
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [importStatus, setImportStatus] = useState(null);
@@ -25,7 +32,7 @@ export default function SchoolSettings({
     onRefresh();
   };
 
-  // Handle Excel/CSV Roster Upload
+  // Handle Excel Roster Upload
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -57,266 +64,307 @@ export default function SchoolSettings({
   );
 
   return (
-    <div>
-      {/* Header Banner */}
-      <div className="glass-card" style={{ padding: '1.25rem', marginBottom: '1.25rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-            <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'var(--primary-light)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Settings size={22} color="var(--primary)" />
-            </div>
-            <div>
-              <h2 style={{ fontSize: '1.2rem', fontWeight: 800 }}>School & Canteen Administration</h2>
-              <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                White-label branding, student roster database, and accounting reports
-              </p>
-            </div>
-          </div>
-
-          {/* Quick Export Button */}
+    <div style={{ paddingBottom: '2rem' }}>
+      {/* 1. Mobile Header Bar */}
+      <div
+        style={{
+          background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
+          color: '#ffffff',
+          borderRadius: 'var(--radius-lg)',
+          padding: '1rem',
+          marginBottom: '1rem',
+          boxShadow: 'var(--shadow-card)'
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
           <button
-            onClick={handleExportOrders}
-            className="btn-secondary"
-            style={{ fontSize: '0.85rem', padding: '0.6rem 1rem' }}
+            onClick={() => { window.location.hash = '#/order'; }}
+            style={{
+              background: 'rgba(255,255,255,0.15)',
+              color: '#ffffff',
+              border: 'none',
+              borderRadius: 'var(--radius-full)',
+              padding: '4px 10px',
+              fontSize: '0.75rem',
+              fontWeight: 800,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px'
+            }}
           >
-            <FileSpreadsheet size={16} color="#15803d" />
-            <span>Export Orders to Excel</span>
+            <ArrowLeft size={14} />
+            <span>Parent App</span>
           </button>
+
+          <div style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 700 }}>
+            🏫 {activeSchool?.name}
+          </div>
         </div>
 
-        {/* Tab Navigation */}
-        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1.25rem', borderTop: '1px solid var(--border-color)', paddingTop: '1rem', overflowX: 'auto' }}>
-          <button
-            onClick={() => setActiveTab('branding')}
-            className={`portal-btn ${activeTab === 'branding' ? 'active' : ''}`}
-            style={{ padding: '0.5rem 1rem', fontSize: '0.85rem' }}
-          >
-            <Palette size={16} />
-            <span>White-Label Branding</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('roster')}
-            className={`portal-btn ${activeTab === 'roster' ? 'active' : ''}`}
-            style={{ padding: '0.5rem 1rem', fontSize: '0.85rem' }}
-          >
-            <Users size={16} />
-            <span>Student Roster ({students.length})</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('mealSlots')}
-            className={`portal-btn ${activeTab === 'mealSlots' ? 'active' : ''}`}
-            style={{ padding: '0.5rem 1rem', fontSize: '0.85rem' }}
-          >
-            <Clock size={16} />
-            <span>Break Slots & Cutoffs</span>
-          </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'var(--primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Settings size={20} />
+          </div>
+          <div>
+            <h2 style={{ fontSize: '1.05rem', fontWeight: 900, lineHeight: 1.2 }}>School & Canteen Admin</h2>
+            <div style={{ fontSize: '0.72rem', color: '#94a3b8' }}>
+              Campus setup, student roster & accounting
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* TAB 1: White-Label Branding */}
+      {/* 2. Responsive Tabs Carousel */}
+      <div
+        style={{
+          display: 'flex',
+          gap: '0.45rem',
+          overflowX: 'auto',
+          paddingBottom: '0.65rem',
+          marginBottom: '1rem',
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none'
+        }}
+      >
+        {TABS.map((tab) => {
+          const isSelected = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+                padding: '0.45rem 0.85rem',
+                borderRadius: 'var(--radius-full)',
+                border: isSelected ? '1.5px solid var(--primary)' : '1px solid #e2e8f0',
+                background: isSelected
+                  ? 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)'
+                  : '#ffffff',
+                color: isSelected ? '#ffffff' : 'var(--text-main)',
+                fontWeight: isSelected ? 900 : 700,
+                fontSize: '0.75rem',
+                cursor: 'pointer',
+                flexShrink: 0,
+                boxShadow: isSelected ? '0 4px 12px rgba(37,99,235,0.25)' : '0 1px 3px rgba(0,0,0,0.03)'
+              }}
+            >
+              <span>{tab.icon}</span>
+              <span>{tab.label}</span>
+              {tab.id === 'roster' && (
+                <span style={{ background: isSelected ? '#ffffff' : '#f1f5f9', color: isSelected ? 'var(--primary)' : 'var(--text-muted)', padding: '1px 5px', borderRadius: '10px', fontSize: '0.65rem', fontWeight: 900 }}>
+                  {students.length}
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* 3. Tab Contents */}
+
+      {/* TAB 1: BRANDING */}
       {activeTab === 'branding' && (
-        <div className="glass-card" style={{ padding: '1.5rem', maxWidth: '700px' }}>
-          <h3 style={{ fontSize: '1.05rem', fontWeight: 800, marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <School size={18} color="var(--primary)" />
-            <span>School Identity & Theme Settings</span>
+        <form onSubmit={handleSaveBranding} style={{ background: '#ffffff', padding: '1.25rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-card)' }}>
+          <h3 style={{ fontSize: '0.95rem', fontWeight: 900, marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span>🎨</span>
+            <span>School Identity & Theme</span>
           </h3>
 
-          <form onSubmit={handleSaveBranding} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', marginBottom: '1.25rem' }}>
             <div>
-              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, marginBottom: '4px' }}>
-                OFFICIAL SCHOOL NAME:
+              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '0.3rem' }}>
+                Official School Name:
               </label>
               <input
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                style={{ width: '100%', padding: '0.7rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', fontWeight: 600 }}
-                required
+                style={{ width: '100%', padding: '0.6rem 0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid #cbd5e1', fontSize: '0.85rem', fontWeight: 600 }}
               />
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, marginBottom: '4px' }}>
-                CANTEEN / FOOD COURT NAME:
+              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '0.3rem' }}>
+                Canteen / Food Court Name:
               </label>
               <input
                 type="text"
                 value={formData.canteenName}
                 onChange={(e) => setFormData({ ...formData, canteenName: e.target.value })}
-                style={{ width: '100%', padding: '0.7rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', fontWeight: 600 }}
-                required
+                style={{ width: '100%', padding: '0.6rem 0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid #cbd5e1', fontSize: '0.85rem', fontWeight: 600 }}
               />
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, marginBottom: '4px' }}>
-                  BRAND PRIMARY COLOR:
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '0.3rem' }}>
+                  Brand Primary Color:
                 </label>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <input
                     type="color"
-                    value={formData.primaryColor}
+                    value={formData.primaryColor || '#2563eb'}
                     onChange={(e) => setFormData({ ...formData, primaryColor: e.target.value })}
-                    style={{ width: '44px', height: '40px', padding: 0, border: 'none', borderRadius: '8px', cursor: 'pointer' }}
+                    style={{ width: '36px', height: '36px', borderRadius: '6px', border: '1px solid #cbd5e1', cursor: 'pointer', padding: 0 }}
                   />
                   <input
                     type="text"
-                    value={formData.primaryColor}
+                    value={formData.primaryColor || '#2563eb'}
                     onChange={(e) => setFormData({ ...formData, primaryColor: e.target.value })}
-                    style={{ flex: 1, padding: '0.65rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', fontWeight: 600 }}
+                    style={{ flex: 1, padding: '0.5rem', borderRadius: 'var(--radius-md)', border: '1px solid #cbd5e1', fontSize: '0.78rem' }}
                   />
                 </div>
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, marginBottom: '4px' }}>
-                  CURRENCY SYMBOL & CODE:
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '0.3rem' }}>
+                  Currency Symbol:
                 </label>
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
-                  <input
-                    type="text"
-                    placeholder="Symbol (₹, $, €)"
-                    value={formData.currency}
-                    onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
-                    style={{ width: '70px', padding: '0.65rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', fontWeight: 700, textAlign: 'center' }}
-                  />
-                  <input
-                    type="text"
-                    placeholder="Code (INR, USD)"
-                    value={formData.currencyCode}
-                    onChange={(e) => setFormData({ ...formData, currencyCode: e.target.value })}
-                    style={{ flex: 1, padding: '0.65rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', fontWeight: 600 }}
-                  />
-                </div>
+                <input
+                  type="text"
+                  value={formData.currency || '₹'}
+                  onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
+                  style={{ width: '100%', padding: '0.6rem', borderRadius: 'var(--radius-md)', border: '1px solid #cbd5e1', fontSize: '0.85rem', fontWeight: 800, textAlign: 'center' }}
+                />
               </div>
-            </div>
-
-            {saveSuccess && (
-              <div style={{ background: '#d1fae5', color: '#065f46', padding: '0.75rem', borderRadius: 'var(--radius-md)', fontSize: '0.82rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Check size={18} />
-                <span>Branding updated successfully! Colors and school identity applied.</span>
-              </div>
-            )}
-
-            <button type="submit" className="btn-primary" style={{ marginTop: '0.5rem', padding: '0.85rem' }}>
-              <span>Save & Apply School Branding</span>
-            </button>
-          </form>
-        </div>
-      )}
-
-      {/* TAB 2: Student Roster Management */}
-      {activeTab === 'roster' && (
-        <div className="glass-card" style={{ padding: '1.5rem' }}>
-          {/* Top Upload Section */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem', background: '#f8fafc', padding: '1.25rem', borderRadius: 'var(--radius-lg)', border: '1px solid #e2e8f0' }}>
-            <div>
-              <h3 style={{ fontSize: '1.05rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Upload size={18} color="var(--primary)" />
-                <span>Import Student Master List (Excel / CSV)</span>
-              </h3>
-              <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '2px' }}>
-                Upload the school roster containing Student ID, Name, Class, Section, and Parent Phone.
-              </p>
-            </div>
-
-            <div style={{ display: 'flex', gap: '0.6rem' }}>
-              <button onClick={() => ExcelService.downloadSampleTemplate()} className="btn-secondary" style={{ fontSize: '0.8rem' }}>
-                <Download size={14} />
-                <span>Sample Template</span>
-              </button>
-
-              <label className="btn-primary" style={{ fontSize: '0.82rem', padding: '0.55rem 1rem', cursor: 'pointer' }}>
-                <Upload size={15} />
-                <span>{isUploading ? 'Uploading...' : 'Upload Excel / CSV'}</span>
-                <input type="file" accept=".xlsx, .xls, .csv" onChange={handleFileUpload} style={{ display: 'none' }} />
-              </label>
             </div>
           </div>
 
-          {importStatus && (
-            <div style={{ background: importStatus.success ? '#d1fae5' : '#fee2e2', color: importStatus.success ? '#065f46' : '#991b1b', padding: '0.75rem 1rem', borderRadius: 'var(--radius-md)', marginBottom: '1rem', fontSize: '0.85rem', fontWeight: 700 }}>
-              {importStatus.success
-                ? `🎉 Successfully imported ${importStatus.count} students into the school database!`
-                : `❌ Import Error: ${importStatus.error}`}
+          <button type="submit" className="btn-primary" style={{ width: '100%', padding: '0.75rem' }}>
+            <Check size={16} />
+            <span>Save School Branding</span>
+          </button>
+
+          {saveSuccess && (
+            <div style={{ marginTop: '0.75rem', padding: '0.5rem', background: '#dcfce7', color: '#15803d', borderRadius: 'var(--radius-md)', textAlign: 'center', fontSize: '0.78rem', fontWeight: 800 }}>
+              ✅ Branding saved & updated!
             </div>
           )}
+        </form>
+      )}
 
-          {/* Search Box */}
-          <div style={{ marginBottom: '1rem', position: 'relative' }}>
-            <Search size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+      {/* TAB 2: ROSTER */}
+      {activeTab === 'roster' && (
+        <div style={{ background: '#ffffff', padding: '1.25rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-card)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+            <h3 style={{ fontSize: '0.95rem', fontWeight: 900 }}>👥 Student Roster ({students.length})</h3>
+            <label
+              style={{
+                background: 'var(--primary)',
+                color: 'white',
+                padding: '4px 10px',
+                borderRadius: 'var(--radius-full)',
+                fontSize: '0.75rem',
+                fontWeight: 800,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}
+            >
+              <Upload size={13} />
+              <span>Import Excel</span>
+              <input type="file" accept=".xlsx,.xls,.csv" onChange={handleFileUpload} style={{ display: 'none' }} />
+            </label>
+          </div>
+
+          {/* Search */}
+          <div style={{ position: 'relative', marginBottom: '0.85rem' }}>
+            <Search size={14} color="var(--text-muted)" style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)' }} />
             <input
               type="text"
-              placeholder="Search enrolled students by Name, ID, or Grade..."
+              placeholder="Search students..."
               value={studentSearch}
               onChange={(e) => setStudentSearch(e.target.value)}
-              style={{ width: '100%', padding: '0.6rem 0.75rem 0.6rem 2.2rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', fontWeight: 600 }}
+              style={{ width: '100%', padding: '0.5rem 0.6rem 0.5rem 30px', borderRadius: 'var(--radius-md)', border: '1px solid #cbd5e1', fontSize: '0.8rem', outline: 'none' }}
             />
           </div>
 
-          {/* Students Table */}
-          <div style={{ overflowX: 'auto', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
-              <thead>
-                <tr style={{ background: '#f8fafc', borderBottom: '1px solid var(--border-color)', textAlign: 'left' }}>
-                  <th style={{ padding: '0.75rem 1rem', fontWeight: 800 }}>Student ID</th>
-                  <th style={{ padding: '0.75rem 1rem', fontWeight: 800 }}>Student Name</th>
-                  <th style={{ padding: '0.75rem 1rem', fontWeight: 800 }}>Class & Section</th>
-                  <th style={{ padding: '0.75rem 1rem', fontWeight: 800 }}>Parent Contact</th>
-                  <th style={{ padding: '0.75rem 1rem', fontWeight: 800 }}>Parent Name</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredStudents.map((s) => (
-                  <tr key={s.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                    <td style={{ padding: '0.75rem 1rem', fontWeight: 800, color: 'var(--primary)' }}>{s.id}</td>
-                    <td style={{ padding: '0.75rem 1rem', fontWeight: 700 }}>{s.studentName}</td>
-                    <td style={{ padding: '0.75rem 1rem' }}>{s.class} - {s.section}</td>
-                    <td style={{ padding: '0.75rem 1rem', color: 'var(--text-muted)' }}>{s.parentPhone || 'N/A'}</td>
-                    <td style={{ padding: '0.75rem 1rem', color: 'var(--text-muted)' }}>{s.parentName || 'N/A'}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          {/* Student Cards List */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            {filteredStudents.map((s) => (
+              <div
+                key={s.id}
+                style={{
+                  background: '#f8fafc',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: 'var(--radius-md)',
+                  padding: '0.65rem 0.85rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between'
+                }}
+              >
+                <div>
+                  <div style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-main)' }}>
+                    {s.studentName}
+                  </div>
+                  <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                    ID: {s.id} • {s.class}-{s.section}
+                  </div>
+                </div>
+
+                <div style={{ textAlign: 'right' }}>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--primary)' }}>
+                    {s.fatherPhone || s.parentPhone || 'No Phone'}
+                  </div>
+                  <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>
+                    {s.fatherName || 'Parent'}
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       )}
 
-      {/* TAB 3: Meal Periods & Cutoff Rules */}
+      {/* TAB 3: BREAK SLOTS */}
       {activeTab === 'mealSlots' && (
-        <div className="glass-card" style={{ padding: '1.5rem', maxWidth: '700px' }}>
-          <h3 style={{ fontSize: '1.05rem', fontWeight: 800, marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Clock size={18} color="var(--primary)" />
-            <span>Configured Meal & Break Slots</span>
-          </h3>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            {activeSchool.mealPeriods.map((slot) => (
+        <div style={{ background: '#ffffff', padding: '1.25rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-card)' }}>
+          <h3 style={{ fontSize: '0.95rem', fontWeight: 900, marginBottom: '0.85rem' }}>⏰ Campus Meal Periods & Cutoffs</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+            {(activeSchool?.mealPeriods || []).map((slot) => (
               <div
                 key={slot.id}
                 style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '1rem',
-                  background: '#f8fafc',
-                  border: '1px solid var(--border-color)',
-                  borderRadius: 'var(--radius-md)'
+                  padding: '0.75rem 0.85rem',
+                  borderRadius: 'var(--radius-md)',
+                  border: '1px solid #e2e8f0',
+                  background: '#f8fafc'
                 }}
               >
-                <div>
-                  <div style={{ fontSize: '0.95rem', fontWeight: 800 }}>{slot.name}</div>
-                  <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '2px' }}>
-                    Meal Timing: <b>{slot.time}</b> • Order Cut-off: <b>{slot.cutoffMins} mins prior</b>
-                  </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                  <span style={{ fontSize: '0.88rem', fontWeight: 800 }}>{slot.name}</span>
+                  <span style={{ fontSize: '0.68rem', background: '#dbeafe', color: '#1e40af', padding: '1px 6px', borderRadius: '4px', fontWeight: 800 }}>Active</span>
                 </div>
-                <span className="badge badge-preparing">Active</span>
+                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                  Break Timing: <strong>{slot.startTime} - {slot.endTime}</strong> • Order Cutoff: <strong>{slot.cutoffTime}</strong>
+                </div>
               </div>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* TAB 4: EXPORT & REPORTS */}
+      {activeTab === 'export' && (
+        <div style={{ background: '#ffffff', padding: '1.25rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-card)' }}>
+          <h3 style={{ fontSize: '0.95rem', fontWeight: 900, marginBottom: '0.5rem' }}>📊 Accounting & Settlement Reports</h3>
+          <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: '1.25rem' }}>
+            Download itemized transaction reports for canteen vendor billing and school commission audits.
+          </p>
+
+          <button
+            onClick={handleExportOrders}
+            className="btn-primary"
+            style={{ width: '100%', padding: '0.85rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+          >
+            <FileSpreadsheet size={18} />
+            <span>Download All Orders (.xlsx)</span>
+          </button>
         </div>
       )}
     </div>
