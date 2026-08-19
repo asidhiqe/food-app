@@ -1,17 +1,32 @@
 {
   "short_name": "FoodCourt",
   "name": "Brainwaves Food Court - School Canteen",
-  "icons": [
-    {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍱</text></svg>",
-      "sizes": "192x192 512x512",
-      "type": "image/svg+xml"
-    }
-  ],
+  "id": "/food-app/",
   "start_url": "/food-app/",
   "scope": "/food-app/",
-  "background_color": "#f8fafc",
-  "theme_color": "#2563eb",
   "display": "standalone",
-  "orientation": "portrait"
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
 }
