@@ -253,24 +253,32 @@ export default function KitchenDashboard({ orders, activeSchool, onRefresh }) {
         })}
       </div>
 
-      {/* 3. Search & Break Slot Filters (Clean Mobile Layout) */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem' }}>
+      {/* 3. Search & Break Slot Filters (Responsive Grid for Tab/Laptop) */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+          gap: '0.65rem',
+          marginBottom: '1.25rem'
+        }}
+      >
         {/* Search */}
         <div style={{ position: 'relative' }}>
           <Search size={15} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
           <input
             type="text"
-            placeholder="Search by student name, grade or token #..."
+            placeholder="Search student, grade, token #..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             style={{
               width: '100%',
-              padding: '0.55rem 0.75rem 0.55rem 34px',
+              padding: '0.6rem 0.75rem 0.6rem 34px',
               borderRadius: 'var(--radius-md)',
               border: '1px solid #cbd5e1',
               background: '#ffffff',
-              fontSize: '0.82rem',
-              outline: 'none'
+              fontSize: '0.84rem',
+              outline: 'none',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
             }}
           />
         </div>
@@ -281,14 +289,15 @@ export default function KitchenDashboard({ orders, activeSchool, onRefresh }) {
           onChange={(e) => setActiveSlotFilter(e.target.value)}
           style={{
             width: '100%',
-            padding: '0.55rem 0.75rem',
+            padding: '0.6rem 0.75rem',
             borderRadius: 'var(--radius-md)',
             border: '1px solid #cbd5e1',
             background: '#ffffff',
-            fontSize: '0.82rem',
+            fontSize: '0.84rem',
             fontWeight: 700,
             outline: 'none',
-            color: 'var(--text-main)'
+            color: 'var(--text-main)',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
           }}
         >
           <option value="ALL">🕒 All Break Slots</option>
@@ -300,7 +309,7 @@ export default function KitchenDashboard({ orders, activeSchool, onRefresh }) {
         </select>
       </div>
 
-      {/* 4. Orders Queue Cards */}
+      {/* 4. Orders Queue Grid (1 col on mobile, 2-3 cols on tablet, 3-4 cols on laptop) */}
       {filteredOrders.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '3.5rem 1rem', background: '#ffffff', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-color)' }}>
           <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>👨‍🍳</div>
@@ -308,7 +317,13 @@ export default function KitchenDashboard({ orders, activeSchool, onRefresh }) {
           <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>New student meal orders will appear in real time</p>
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
+            gap: '1rem'
+          }}
+        >
           {filteredOrders.map((order) => {
             const hasAllergies = order.allergies && order.allergies.length > 0;
 

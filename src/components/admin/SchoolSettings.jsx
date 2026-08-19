@@ -323,8 +323,14 @@ export default function SchoolSettings({
             />
           </div>
 
-          {/* Student Cards List */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          {/* Student Cards Grid (Responsive 1-col on mobile, 2-3 cols on tablet/laptop) */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+              gap: '0.65rem'
+            }}
+          >
             {filteredStudents.map((s) => (
               <div
                 key={s.id}
@@ -332,26 +338,27 @@ export default function SchoolSettings({
                   background: '#f8fafc',
                   border: '1px solid #e2e8f0',
                   borderRadius: 'var(--radius-md)',
-                  padding: '0.65rem 0.85rem',
+                  padding: '0.75rem 0.85rem',
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'space-between'
+                  justifyContent: 'space-between',
+                  transition: 'all 0.15s ease'
                 }}
               >
                 <div>
-                  <div style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-main)' }}>
+                  <div style={{ fontSize: '0.86rem', fontWeight: 800, color: 'var(--text-main)' }}>
                     {s.studentName}
                   </div>
-                  <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
-                    ID: {s.id} • {s.class}-{s.section}
+                  <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                    ID: {s.id} • Grade {s.class}-{s.section}
                   </div>
                 </div>
 
                 <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--primary)' }}>
+                  <div style={{ fontSize: '0.74rem', fontWeight: 800, color: 'var(--primary)' }}>
                     {s.fatherPhone || s.parentPhone || 'No Phone'}
                   </div>
-                  <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>
+                  <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
                     {s.fatherName || 'Parent'}
                   </div>
                 </div>
@@ -365,23 +372,31 @@ export default function SchoolSettings({
       {activeTab === 'mealSlots' && (
         <div style={{ background: '#ffffff', padding: '1.25rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-card)' }}>
           <h3 style={{ fontSize: '0.95rem', fontWeight: 900, marginBottom: '0.85rem' }}>⏰ Campus Meal Periods & Cutoffs</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+              gap: '0.75rem'
+            }}
+          >
             {(activeSchool?.mealPeriods || []).map((slot) => (
               <div
                 key={slot.id}
                 style={{
-                  padding: '0.75rem 0.85rem',
+                  padding: '0.85rem 1rem',
                   borderRadius: 'var(--radius-md)',
                   border: '1px solid #e2e8f0',
                   background: '#f8fafc'
                 }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                  <span style={{ fontSize: '0.88rem', fontWeight: 800 }}>{slot.name}</span>
-                  <span style={{ fontSize: '0.68rem', background: '#dbeafe', color: '#1e40af', padding: '1px 6px', borderRadius: '4px', fontWeight: 800 }}>Active</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                  <span style={{ fontSize: '0.9rem', fontWeight: 900 }}>{slot.name}</span>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 800, background: '#eff6ff', color: 'var(--primary)', padding: '2px 8px', borderRadius: 'var(--radius-full)' }}>
+                    {slot.time}
+                  </span>
                 </div>
-                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-                  Break Timing: <strong>{slot.startTime} - {slot.endTime}</strong> • Order Cutoff: <strong>{slot.cutoffTime}</strong>
+                <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+                  Order Cutoff: <strong>{slot.cutoffMins} mins</strong> before break starts
                 </div>
               </div>
             ))}

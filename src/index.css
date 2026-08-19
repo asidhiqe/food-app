@@ -71,11 +71,24 @@ body {
   position: relative;
 }
 
+/* Tablet & Laptop Full-Width Dashboard Mode (KDS & School Admin) */
+.app-container.wide-layout {
+  max-width: 1400px;
+  background: transparent;
+  box-shadow: none;
+  border-left: none;
+  border-right: none;
+}
+
 @media (min-width: 768px) {
-  .app-container {
+  .app-container:not(.wide-layout) {
     min-height: 100vh;
     border-left: 1px solid var(--border-color);
     border-right: 1px solid var(--border-color);
+  }
+
+  .app-container.wide-layout .main-content {
+    padding: 1.25rem 2rem 5rem 2rem;
   }
 }
 

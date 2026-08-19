@@ -314,7 +314,7 @@ export default function App() {
   if (!activeSchool) return null;
 
   return (
-    <div className="app-container">
+    <div className={`app-container ${activePortal !== 'parent' ? 'wide-layout' : ''}`}>
       {/* Toast Notification Banner */}
       {notificationToast && (
         <div
