@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShieldCheck, Phone, ArrowRight, Sparkles, CheckCircle2, Lock, School, Heart, ChevronRight, User, Users } from 'lucide-react';
+import { ShieldCheck, Phone, ArrowRight, Sparkles, CheckCircle2, Lock, School, Heart, ChevronDown, ChevronUp, User, Users } from 'lucide-react';
 import { StorageService } from '../../services/storageService';
 
 const DEMO_ACCOUNTS = [
@@ -36,6 +36,7 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
   const [errorMsg, setErrorMsg] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [loadingText, setLoadingText] = useState('');
+  const [showDemoProfiles, setShowDemoProfiles] = useState(false);
 
   // Handle Request OTP
   const handleRequestOtp = (e) => {
@@ -136,14 +137,75 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
     <div
       style={{
         minHeight: '100vh',
-        background: 'radial-gradient(circle at 50% 0%, #eff6ff 0%, #f8fafc 50%, #f1f5f9 100%)',
+        position: 'relative',
+        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '1.5rem 1rem'
+        padding: '1.5rem 1rem',
+        overflow: 'hidden'
       }}
     >
+      {/* Ambient Background Glows & Pattern */}
+      <div
+        style={{
+          position: 'absolute',
+          top: '-15%',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '600px',
+          height: '600px',
+          background: 'radial-gradient(circle, rgba(37, 99, 235, 0.35) 0%, rgba(37, 99, 235, 0) 70%)',
+          filter: 'blur(60px)',
+          pointerEvents: 'none'
+        }}
+      />
+      <div
+        style={{
+          position: 'absolute',
+          bottom: '-10%',
+          right: '5%',
+          width: '400px',
+          height: '400px',
+          background: 'radial-gradient(circle, rgba(245, 158, 11, 0.2) 0%, rgba(245, 158, 11, 0) 70%)',
+          filter: 'blur(50px)',
+          pointerEvents: 'none'
+        }}
+      />
+
+      {/* Subtle Dot Grid Pattern Overlay */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundImage: 'radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px)',
+          backgroundSize: '24px 24px',
+          pointerEvents: 'none'
+        }}
+      />
+
+      {/* Floating Trust Pills in Background */}
+      <div
+        style={{
+          position: 'absolute',
+          top: '12%',
+          left: '8%',
+          background: 'rgba(255, 255, 255, 0.06)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          backdropFilter: 'blur(8px)',
+          padding: '6px 12px',
+          borderRadius: 'var(--radius-full)',
+          color: '#94a3b8',
+          fontSize: '0.72rem',
+          fontWeight: 700,
+          display: 'none'
+        }}
+        className="hide-mobile"
+      >
+        🌱 Farm Fresh Ingredients
+      </div>
+
       {/* Loading Overlay Animation */}
       {isLoading && (
         <div
@@ -151,8 +213,8 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
             position: 'fixed',
             inset: 0,
             zIndex: 9999,
-            background: 'rgba(15, 23, 42, 0.8)',
-            backdropFilter: 'blur(10px)',
+            background: 'rgba(15, 23, 42, 0.85)',
+            backdropFilter: 'blur(12px)',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -172,7 +234,7 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
               objectFit: 'contain',
               background: '#ffffff',
               padding: '6px',
-              boxShadow: '0 12px 30px rgba(0,0,0,0.4)',
+              boxShadow: '0 12px 30px rgba(0,0,0,0.5)',
               marginBottom: '1.25rem',
               animation: 'fabBounce 1s infinite alternate cubic-bezier(0.34, 1.56, 0.64, 1)'
             }}
@@ -199,8 +261,8 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
         </div>
       )}
 
-      {/* Main Container */}
-      <div style={{ width: '100%', maxWidth: '440px' }}>
+      {/* Main Form Box */}
+      <div style={{ width: '100%', maxWidth: '420px', position: 'relative', zIndex: 10 }}>
         
         {/* Brand Header */}
         <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
@@ -209,20 +271,21 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
               display: 'inline-flex',
               alignItems: 'center',
               gap: '8px',
-              background: '#ffffff',
+              background: 'rgba(255, 255, 255, 0.1)',
+              backdropFilter: 'blur(10px)',
               padding: '6px 14px 6px 8px',
               borderRadius: 'var(--radius-full)',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-              border: '1px solid rgba(226, 232, 240, 0.9)',
-              marginBottom: '1rem'
+              boxShadow: '0 4px 16px rgba(0,0,0,0.2)',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
+              marginBottom: '0.85rem'
             }}
           >
             <img
               src="./bis-hapur-responsive-logo.png"
               alt="Logo"
-              style={{ width: '26px', height: '26px', borderRadius: '50%', objectFit: 'contain' }}
+              style={{ width: '24px', height: '24px', borderRadius: '50%', objectFit: 'contain', background: '#ffffff', padding: '1px' }}
             />
-            <span style={{ fontSize: '0.82rem', fontWeight: 800, color: 'var(--text-main)' }}>
+            <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#f8fafc' }}>
               {activeSchool?.name || 'Brainwaves International School'}
             </span>
           </div>
@@ -231,36 +294,36 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
             style={{
               fontSize: '1.65rem',
               fontWeight: 900,
-              color: 'var(--text-main)',
+              color: '#ffffff',
               lineHeight: 1.2,
               letterSpacing: '-0.02em',
-              marginBottom: '0.4rem'
+              marginBottom: '0.35rem'
             }}
           >
-            Fresh Meals for Your Child
+            School Food Court
           </h1>
           <p
             style={{
-              fontSize: '0.84rem',
-              color: '#64748b',
+              fontSize: '0.82rem',
+              color: '#94a3b8',
               lineHeight: 1.45,
-              maxWidth: '340px',
+              maxWidth: '320px',
               margin: '0 auto'
             }}
           >
-            Order wholesome, hygienic canteen meals delivered straight to classroom break times.
+            Fresh, healthy meals delivered directly to your child's classroom.
           </p>
         </div>
 
-        {/* Auth Card */}
+        {/* Auth Glassmorphism Card */}
         <div
           style={{
-            background: '#ffffff',
+            background: 'rgba(255, 255, 255, 0.96)',
+            backdropFilter: 'blur(20px)',
             borderRadius: '24px',
             padding: '1.75rem 1.5rem',
-            boxShadow: '0 12px 36px rgba(15, 23, 42, 0.08), 0 2px 6px rgba(15, 23, 42, 0.04)',
-            border: '1px solid rgba(226, 232, 240, 0.9)',
-            marginBottom: '1.25rem'
+            boxShadow: '0 20px 50px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.2)',
+            marginBottom: '1rem'
           }}
         >
           {!otpStep ? (
@@ -327,7 +390,7 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
                   />
                 </div>
                 <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.4rem' }}>
-                  We'll send a 4-digit verification code to match your student.
+                  We'll send a 4-digit code to securely match your child.
                 </div>
               </div>
 
@@ -380,7 +443,7 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
             <form onSubmit={handleVerifyOtp}>
               <div style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
                 <div style={{ fontSize: '0.95rem', fontWeight: 900, color: 'var(--text-main)', marginBottom: '0.25rem' }}>
-                  Enter Verification Code
+                  Enter 4-Digit Code
                 </div>
                 <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>
                   Sent to <strong style={{ color: 'var(--text-main)' }}>+91 {phone}</strong>
@@ -479,119 +542,132 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
           )}
         </div>
 
-        {/* Quick Demo Test Profiles Section */}
+        {/* Minimized Demo Profiles Accordion / Trigger */}
         <div
           style={{
-            background: 'rgba(255, 255, 255, 0.85)',
+            background: 'rgba(255, 255, 255, 0.08)',
             backdropFilter: 'blur(10px)',
-            borderRadius: '20px',
-            padding: '1.1rem 1.15rem',
-            border: '1px solid rgba(226, 232, 240, 0.8)',
-            boxShadow: '0 4px 16px rgba(0,0,0,0.03)'
+            borderRadius: '18px',
+            border: '1px solid rgba(255, 255, 255, 0.12)',
+            overflow: 'hidden',
+            transition: 'all 0.25s ease'
           }}
         >
-          <div
+          {/* Header Accordion Trigger */}
+          <button
+            onClick={() => setShowDemoProfiles(!showDemoProfiles)}
             style={{
+              width: '100%',
+              padding: '0.75rem 1rem',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              marginBottom: '0.75rem'
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              color: '#e2e8f0'
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <span style={{ fontSize: '0.9rem' }}>⚡</span>
-              <span style={{ fontSize: '0.76rem', fontWeight: 900, color: 'var(--text-main)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                Quick Demo Profiles
+              <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#f1f5f9' }}>
+                Quick Demo Test Logins
               </span>
-            </div>
-            <span style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: 700 }}>
-              1-Tap Test Login
-            </span>
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
-            {DEMO_ACCOUNTS.map((acc, i) => (
-              <div
-                key={i}
-                onClick={() => handlePickDemo(acc)}
+              <span
                 style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  background: '#ffffff',
-                  border: '1px solid #e2e8f0',
-                  borderRadius: '14px',
-                  padding: '0.65rem 0.85rem',
-                  cursor: 'pointer',
-                  transition: 'all 0.15s ease',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.03)'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = 'var(--primary)';
-                  e.currentTarget.style.transform = 'translateY(-1px)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = '#e2e8f0';
-                  e.currentTarget.style.transform = 'none';
+                  fontSize: '0.65rem',
+                  fontWeight: 800,
+                  background: 'rgba(255, 255, 255, 0.15)',
+                  color: '#ffffff',
+                  padding: '1px 6px',
+                  borderRadius: '10px'
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <div
-                    style={{
-                      width: '34px',
-                      height: '34px',
-                      borderRadius: '10px',
-                      background: '#f1f5f9',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '1.1rem'
-                    }}
-                  >
-                    {acc.avatar}
-                  </div>
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <span style={{ fontSize: '0.82rem', fontWeight: 900, color: 'var(--text-main)' }}>
-                        {acc.name}
-                      </span>
-                      <span
-                        style={{
-                          fontSize: '0.65rem',
-                          fontWeight: 800,
-                          color: 'var(--primary)',
-                          background: '#eff6ff',
-                          padding: '1px 6px',
-                          borderRadius: '8px'
-                        }}
-                      >
-                        {acc.badge}
-                      </span>
-                    </div>
-                    <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 600 }}>
-                      {acc.kidsDesc}
-                    </div>
-                  </div>
-                </div>
+                3 Profiles
+              </span>
+            </div>
+            <div style={{ color: '#94a3b8' }}>
+              {showDemoProfiles ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+            </div>
+          </button>
 
+          {/* Collapsible Content */}
+          {showDemoProfiles && (
+            <div
+              style={{
+                padding: '0.5rem 0.85rem 0.85rem',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.5rem',
+                borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+                animation: 'slideDown 0.2s ease'
+              }}
+            >
+              {DEMO_ACCOUNTS.map((acc, i) => (
                 <div
+                  key={i}
+                  onClick={() => handlePickDemo(acc)}
                   style={{
-                    width: '28px',
-                    height: '28px',
-                    borderRadius: '50%',
-                    background: '#f8fafc',
-                    border: '1px solid #e2e8f0',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'var(--primary)'
+                    justifyContent: 'space-between',
+                    background: 'rgba(255, 255, 255, 0.95)',
+                    borderRadius: '12px',
+                    padding: '0.55rem 0.75rem',
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease',
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-1px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'none';
                   }}
                 >
-                  <ArrowRight size={14} />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ fontSize: '1.1rem' }}>{acc.avatar}</span>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                        <span style={{ fontSize: '0.8rem', fontWeight: 900, color: 'var(--text-main)' }}>
+                          {acc.name}
+                        </span>
+                        <span
+                          style={{
+                            fontSize: '0.62rem',
+                            fontWeight: 800,
+                            color: 'var(--primary)',
+                            background: '#eff6ff',
+                            padding: '1px 5px',
+                            borderRadius: '6px'
+                          }}
+                        >
+                          {acc.badge}
+                        </span>
+                      </div>
+                      <div style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 600 }}>
+                        {acc.kidsDesc}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      fontSize: '0.72rem',
+                      fontWeight: 800,
+                      color: 'var(--primary)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '2px'
+                    }}
+                  >
+                    <span>Use</span>
+                    <ArrowRight size={12} />
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Security Trust Micro-Footer */}
@@ -603,12 +679,12 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
             gap: '6px',
             marginTop: '1.25rem',
             fontSize: '0.72rem',
-            color: '#94a3b8',
+            color: '#64748b',
             fontWeight: 700
           }}
         >
           <Lock size={12} />
-          <span>Zero-Trust Privacy • Only registered parents can access</span>
+          <span>Zero-Trust Student Privacy • Verified Parents Only</span>
         </div>
 
       </div>
