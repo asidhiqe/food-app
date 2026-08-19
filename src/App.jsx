@@ -311,10 +311,36 @@ export default function App() {
     setTimeout(() => setNotificationToast(null), 4000);
   };
 
-  if (!activeSchool) return null;
+  // Unauthenticated Full-Screen Login Gateways (Rendered directly without 480px frame)
+  if (activePortal === 'parent' && !parentSession) {
+    return (
+      <ParentLoginScreen
+        activeSchool={activeSchool}
+        onLoginSuccess={handleLoginSuccess}
+      />
+    );
+  }
+
+  if (activePortal === 'kitchen' && !kitchenSession) {
+    return (
+      <KitchenLoginScreen
+        activeSchool={activeSchool}
+        onLoginSuccess={(sess) => setKitchenSession(sess)}
+      />
+    );
+  }
+
+  if (activePortal === 'admin' && !adminSession) {
+    return (
+      <AdminLoginScreen
+        activeSchool={activeSchool}
+        onLoginSuccess={(sess) => setAdminSession(sess)}
+      />
+    );
+  }
 
   return (
-    <div className={`app-container ${activePortal !== 'parent' ? 'wide-layout' : ''}`}>
+    <div className={`app-container ${activePortal !== 'parent' ? 'wide-layout' : 'parent-desktop-responsive'}`}>
       {/* Toast Notification Banner */}
       {notificationToast && (
         <div
@@ -341,138 +367,113 @@ export default function App() {
         </div>
       )}
 
-      {/* PORTAL 1: PARENT FOOD ORDERING */}
+      {/* PORTAL 1: AUTHENTICATED PARENT FOOD ORDERING */}
       {activePortal === 'parent' && (
         <>
-          {!parentSession ? (
-            /* 1. Dedicated Parent Login Screen (No public menu before login) */
-            <ParentLoginScreen
-              activeSchool={activeSchool}
-              onLoginSuccess={handleLoginSuccess}
-            />
-          ) : (
-            /* 2. Authenticated Parent Ordering Flow */
-            <>
-              {/* Ultra-Compact Sticky Header */}
-              <CompactHeader
+          {/* Ultra-Compact Sticky Header */}
+          <CompactHeader
+            activeSchool={activeSchool}
+            schools={schools}
+            onSelectSchool={handleSelectSchool}
+            cartCount={totalFamilyItemsCount}
+            cartTotal={totalFamilyAmount}
+            onOpenCart={() => setIsCartOpen(true)}
+            onViewMyOrders={() => setIsTrackingOpen(true)}
+            activeOrderCount={orders.length}
+            parentSession={parentSession}
+            onOpenAuthModal={() => setIsAuthModalOpen(true)}
+            onLogoutParent={handleLogoutParent}
+            selectedDate={selectedDate}
+            selectedSlot={selectedSlot}
+            onOpenDateSlotSheet={() => setIsDateSlotSheetOpen(true)}
+          />
+
+          <main className="main-content">
+            {isTrackingOpen ? (
+              <OrderTracker
+                orders={orders}
+                onBackToMenu={() => setIsTrackingOpen(false)}
+                currency={activeSchool.currency}
                 activeSchool={activeSchool}
-                schools={schools}
-                onSelectSchool={handleSelectSchool}
-                cartCount={totalFamilyItemsCount}
-                cartTotal={totalFamilyAmount}
-                onOpenCart={() => setIsCartOpen(true)}
-                onViewMyOrders={() => setIsTrackingOpen(true)}
-                activeOrderCount={orders.length}
-                parentSession={parentSession}
-                onOpenAuthModal={() => setIsAuthModalOpen(true)}
-                onLogoutParent={handleLogoutParent}
-                selectedDate={selectedDate}
-                selectedSlot={selectedSlot}
-                onOpenDateSlotSheet={() => setIsDateSlotSheetOpen(true)}
               />
+            ) : (
+              <>
+                {/* 👦 Visual Avatar Sibling Bar & Health Safety Strip */}
+                <ChildAvatarBar
+                  childrenList={childrenList}
+                  activeChild={activeChild}
+                  onSelectChild={handleSelectChild}
+                  cartsByChild={cartsByChild}
+                  currency={activeSchool.currency}
+                  onOpenHealthModal={() => setIsHealthModalOpen(true)}
+                />
 
-              <main className="main-content">
-                {isTrackingOpen ? (
-                  <OrderTracker
-                    orders={orders}
-                    onBackToMenu={() => setIsTrackingOpen(false)}
-                    currency={activeSchool.currency}
-                    activeSchool={activeSchool}
+                {/* Co-Parent Active Order Conflict Detection Banner */}
+                {activeOrderForCurrentSlot && (
+                  <ActiveSlotOrderBanner
+                    activeOrder={activeOrderForCurrentSlot}
+                    childName={activeChild?.studentName}
+                    currentParentSession={parentSession}
+                    onViewOrder={() => setIsTrackingOpen(true)}
+                    selectedSlotName={selectedSlot?.name}
                   />
-                ) : (
-                  <>
-                    {/* 👦 Visual Avatar Sibling Bar & Health Safety Strip */}
-                    <ChildAvatarBar
-                      childrenList={childrenList}
-                      activeChild={activeChild}
-                      onSelectChild={handleSelectChild}
-                      cartsByChild={cartsByChild}
-                      currency={activeSchool.currency}
-                      onOpenHealthModal={() => setIsHealthModalOpen(true)}
-                    />
-
-                    {/* Co-Parent Active Order Conflict Detection Banner */}
-                    {activeOrderForCurrentSlot && (
-                      <ActiveSlotOrderBanner
-                        activeOrder={activeOrderForCurrentSlot}
-                        childName={activeChild?.studentName}
-                        currentParentSession={parentSession}
-                        onViewOrder={() => setIsTrackingOpen(true)}
-                        selectedSlotName={selectedSlot?.name}
-                      />
-                    )}
-
-                    {/* High-Density Food Catalog with Allergy Safety Filter */}
-                    <MenuCatalog
-                      menuItems={menuItems}
-                      selectedSlot={selectedSlot}
-                      cart={currentCart}
-                      onAddToCart={handleAddToCart}
-                      onRemoveFromCart={handleRemoveFromCart}
-                      currency={activeSchool.currency}
-                      activeChild={activeChild}
-                    />
-
-                    {/* 🌟 Floatable Quick-Action Hub */}
-                    <FloatingActionHub
-                      cartCount={totalFamilyItemsCount}
-                      cartTotal={totalFamilyAmount}
-                      currency={activeSchool.currency}
-                      activeOrderCount={orders.length}
-                      onOpenCart={() => setIsCartOpen(true)}
-                      onViewOrders={() => setIsTrackingOpen(true)}
-                      activeChild={activeChild}
-                      childrenList={childrenList}
-                      onSelectChild={handleSelectChild}
-                      cartsByChild={cartsByChild}
-                    />
-                  </>
                 )}
-              </main>
-            </>
-          )}
+
+                {/* High-Density Food Catalog with Allergy Safety Filter */}
+                <MenuCatalog
+                  menuItems={menuItems}
+                  selectedSlot={selectedSlot}
+                  cart={currentCart}
+                  onAddToCart={handleAddToCart}
+                  onRemoveFromCart={handleRemoveFromCart}
+                  currency={activeSchool.currency}
+                  activeChild={activeChild}
+                />
+
+                {/* 🌟 Floatable Quick-Action Hub */}
+                <FloatingActionHub
+                  cartCount={totalFamilyItemsCount}
+                  cartTotal={totalFamilyAmount}
+                  currency={activeSchool.currency}
+                  activeOrderCount={orders.length}
+                  onOpenCart={() => setIsCartOpen(true)}
+                  onViewOrders={() => setIsTrackingOpen(true)}
+                  activeChild={activeChild}
+                  childrenList={childrenList}
+                  onSelectChild={handleSelectChild}
+                  cartsByChild={cartsByChild}
+                />
+              </>
+            )}
+          </main>
         </>
       )}
 
       {/* PORTAL 2: KITCHEN DISPLAY & DISPATCH (KDS) */}
       {activePortal === 'kitchen' && (
-        !kitchenSession ? (
-          <KitchenLoginScreen
+        <main className="main-content">
+          <KitchenDashboard
+            orders={orders}
             activeSchool={activeSchool}
-            onLoginSuccess={(sess) => setKitchenSession(sess)}
+            onRefresh={loadData}
+            staffSession={kitchenSession}
+            onLogoutKitchen={() => setKitchenSession(null)}
           />
-        ) : (
-          <main className="main-content">
-            <KitchenDashboard
-              orders={orders}
-              activeSchool={activeSchool}
-              onRefresh={loadData}
-              staffSession={kitchenSession}
-              onLogoutKitchen={() => setKitchenSession(null)}
-            />
-          </main>
-        )
+        </main>
       )}
 
       {/* PORTAL 3: SCHOOL ADMIN & ROSTER */}
       {activePortal === 'admin' && (
-        !adminSession ? (
-          <AdminLoginScreen
+        <main className="main-content">
+          <SchoolSettings
             activeSchool={activeSchool}
-            onLoginSuccess={(sess) => setAdminSession(sess)}
+            students={students}
+            orders={orders}
+            onRefresh={loadData}
+            adminSession={adminSession}
+            onLogoutAdmin={() => setAdminSession(null)}
           />
-        ) : (
-          <main className="main-content">
-            <SchoolSettings
-              activeSchool={activeSchool}
-              students={students}
-              orders={orders}
-              onRefresh={loadData}
-              adminSession={adminSession}
-              onLogoutAdmin={() => setAdminSession(null)}
-            />
-          </main>
-        )
+        </main>
       )}
 
       {/* Child Health & Allergy Preferences Modal */}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShieldCheck, Lock, ArrowRight, ArrowLeft, KeyRound, Building2, X } from 'lucide-react';
+import { ShieldCheck, Lock, ArrowRight, KeyRound, Building2, X, FileSpreadsheet, Users, Settings } from 'lucide-react';
 
 const ADMIN_DEMO_PROFILES = [
   {
@@ -49,7 +49,7 @@ export default function AdminLoginScreen({ activeSchool, onLoginSuccess }) {
         role: 'Super Admin',
         authenticatedAt: new Date().toISOString()
       });
-    }, 500);
+    }, 450);
   };
 
   const handlePickDemoAdmin = (admin) => {
@@ -67,34 +67,33 @@ export default function AdminLoginScreen({ activeSchool, onLoginSuccess }) {
         avatar: admin.avatar,
         authenticatedAt: new Date().toISOString()
       });
-    }, 450);
+    }, 400);
   };
 
   return (
     <div
       style={{
         minHeight: '100vh',
+        width: '100vw',
         position: 'relative',
         background: 'linear-gradient(135deg, #090e17 0%, #1e1b4b 45%, #090e17 100%)',
         display: 'flex',
-        flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '1.5rem 1rem',
-        overflow: 'hidden'
+        padding: '2rem 1.25rem',
+        overflowX: 'hidden'
       }}
     >
-      {/* Ambient Pulsing Glow */}
+      {/* Ambient Pulsing Warm Lighting */}
       <div
         style={{
           position: 'absolute',
-          top: '-10%',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          width: '550px',
-          height: '550px',
+          top: '-15%',
+          left: '30%',
+          width: '600px',
+          height: '600px',
           background: 'radial-gradient(circle, rgba(124, 58, 237, 0.35) 0%, rgba(124, 58, 237, 0) 70%)',
-          filter: 'blur(70px)',
+          filter: 'blur(80px)',
           animation: 'pulseGlow 6s infinite ease-in-out',
           pointerEvents: 'none'
         }}
@@ -141,27 +140,31 @@ export default function AdminLoginScreen({ activeSchool, onLoginSuccess }) {
         </div>
       )}
 
-      {/* Main Login Card */}
+      {/* Responsive Shell: 1 Column on Mobile, 2 Columns on Tablet & Desktop */}
       <div
         style={{
           width: '100%',
-          maxWidth: '420px',
+          maxWidth: '960px',
           position: 'relative',
           zIndex: 10,
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+          gap: '2.5rem',
+          alignItems: 'center',
           animation: 'slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
         }}
       >
-        {/* Brand Header */}
-        <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-          <div style={{ display: 'inline-block', position: 'relative', marginBottom: '0.75rem' }}>
+        {/* LEFT COLUMN: School Admin Brand & Management Capabilities */}
+        <div style={{ color: '#ffffff' }}>
+          <div style={{ display: 'inline-block', position: 'relative', marginBottom: '1rem' }}>
             <div
               style={{
-                width: '64px',
-                height: '64px',
-                borderRadius: '20px',
+                width: '68px',
+                height: '68px',
+                borderRadius: '22px',
                 background: '#ffffff',
                 border: '2px solid rgba(255, 255, 255, 0.9)',
-                padding: '4px',
+                padding: '5px',
                 boxShadow: '0 8px 24px rgba(0, 0, 0, 0.25)',
                 display: 'flex',
                 alignItems: 'center',
@@ -178,12 +181,12 @@ export default function AdminLoginScreen({ activeSchool, onLoginSuccess }) {
 
           <h1
             style={{
-              fontSize: '1.55rem',
+              fontSize: '2rem',
               fontWeight: 900,
               color: '#ffffff',
               lineHeight: 1.2,
               letterSpacing: '-0.02em',
-              marginBottom: '0.35rem'
+              marginBottom: '0.4rem'
             }}
           >
             {activeSchool?.name || 'Brainwaves International School'}
@@ -196,133 +199,154 @@ export default function AdminLoginScreen({ activeSchool, onLoginSuccess }) {
               background: 'rgba(124, 58, 237, 0.2)',
               border: '1px solid rgba(124, 58, 237, 0.4)',
               backdropFilter: 'blur(8px)',
-              padding: '4px 12px',
+              padding: '5px 14px',
               borderRadius: 'var(--radius-full)',
               color: '#c4b5fd',
-              fontSize: '0.76rem',
-              fontWeight: 800
+              fontSize: '0.8rem',
+              fontWeight: 800,
+              marginBottom: '1.5rem'
             }}
           >
             <span>🏫</span>
             <span>School & Canteen Administration</span>
           </div>
-        </div>
 
-        {/* Auth Glassmorphic Card */}
-        <div
-          style={{
-            background: 'rgba(255, 255, 255, 0.96)',
-            backdropFilter: 'blur(20px)',
-            borderRadius: '24px',
-            padding: '1.65rem 1.4rem',
-            boxShadow: '0 20px 50px rgba(0, 0, 0, 0.35)',
-            marginBottom: '1rem'
-          }}
-        >
-          <form onSubmit={handleLogin}>
-            <div style={{ marginBottom: '1.25rem' }}>
-              <label
-                style={{
-                  display: 'block',
-                  fontSize: '0.78rem',
-                  fontWeight: 800,
-                  color: 'var(--text-main)',
-                  marginBottom: '0.5rem'
-                }}
-              >
-                Administrator Passcode
-              </label>
-
-              <input
-                type="password"
-                placeholder="Enter password (Try: admin123)"
-                value={passcode}
-                onChange={(e) => setPasscode(e.target.value)}
-                autoFocus
-                style={{
-                  width: '100%',
-                  padding: '0.75rem 1rem',
-                  borderRadius: '14px',
-                  border: '1.5px solid #cbd5e1',
-                  background: '#f8fafc',
-                  fontSize: '1rem',
-                  fontWeight: 800,
-                  outline: 'none',
-                  color: 'var(--text-main)'
-                }}
-              />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxWidth: '420px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(255,255,255,0.07)', padding: '0.75rem 1rem', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.1)' }}>
+              <span style={{ fontSize: '1.4rem' }}>👥</span>
+              <div>
+                <div style={{ fontSize: '0.86rem', fontWeight: 900 }}>Excel Student Roster & Sibling Mapping</div>
+                <div style={{ fontSize: '0.72rem', color: '#94a3b8' }}>1-click batch import of student databases</div>
+              </div>
             </div>
 
-            {errorMsg && (
-              <div
-                style={{
-                  background: '#fee2e2',
-                  color: '#b91c1c',
-                  padding: '0.65rem',
-                  borderRadius: '12px',
-                  fontSize: '0.78rem',
-                  fontWeight: 700,
-                  marginBottom: '1rem',
-                  textAlign: 'center'
-                }}
-              >
-                ⚠️ {errorMsg}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(255,255,255,0.07)', padding: '0.75rem 1rem', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.1)' }}>
+              <span style={{ fontSize: '1.4rem' }}>📊</span>
+              <div>
+                <div style={{ fontSize: '0.86rem', fontWeight: 900 }}>Financial Settlement & Audit Reports</div>
+                <div style={{ fontSize: '0.72rem', color: '#94a3b8' }}>Vendor transaction reconciliation & commissions</div>
               </div>
-            )}
-
-            <button
-              type="submit"
-              style={{
-                width: '100%',
-                padding: '0.88rem',
-                fontSize: '0.95rem',
-                fontWeight: 900,
-                color: '#ffffff',
-                background: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)',
-                border: 'none',
-                borderRadius: 'var(--radius-full)',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                boxShadow: '0 4px 14px rgba(124, 58, 237, 0.35)'
-              }}
-            >
-              <span>Access Admin Dashboard</span>
-              <ArrowRight size={16} />
-            </button>
-          </form>
+            </div>
+          </div>
         </div>
 
-        {/* Minimized Demo Trigger */}
-        <button
-          onClick={() => setIsDemoModalOpen(true)}
-          style={{
-            width: '100%',
-            padding: '0.7rem 1rem',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            background: 'rgba(255, 255, 255, 0.08)',
-            backdropFilter: 'blur(12px)',
-            borderRadius: '16px',
-            border: '1px solid rgba(255, 255, 255, 0.14)',
-            cursor: 'pointer',
-            color: '#e2e8f0'
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '0.9rem' }}>⚡</span>
-            <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#f1f5f9' }}>
-              Quick Demo Admin Profiles
-            </span>
+        {/* RIGHT COLUMN: Admin Passcode Login Card */}
+        <div style={{ width: '100%', maxWidth: '420px', justifySelf: 'center' }}>
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.96)',
+              backdropFilter: 'blur(20px)',
+              borderRadius: '26px',
+              padding: '2rem 1.75rem',
+              boxShadow: '0 25px 60px rgba(0, 0, 0, 0.38)',
+              marginBottom: '1rem'
+            }}
+          >
+            <form onSubmit={handleLogin}>
+              <div style={{ marginBottom: '1.4rem' }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '0.82rem',
+                    fontWeight: 900,
+                    color: 'var(--text-main)',
+                    marginBottom: '0.5rem'
+                  }}
+                >
+                  Administrator Passcode
+                </label>
+
+                <input
+                  type="password"
+                  placeholder="Enter password (Try: admin123)"
+                  value={passcode}
+                  onChange={(e) => setPasscode(e.target.value)}
+                  autoFocus
+                  style={{
+                    width: '100%',
+                    padding: '0.85rem 1rem',
+                    borderRadius: '14px',
+                    border: '2px solid #cbd5e1',
+                    background: '#f8fafc',
+                    fontSize: '1.05rem',
+                    fontWeight: 800,
+                    outline: 'none',
+                    color: 'var(--text-main)'
+                  }}
+                />
+              </div>
+
+              {errorMsg && (
+                <div
+                  style={{
+                    background: '#fee2e2',
+                    color: '#b91c1c',
+                    padding: '0.65rem',
+                    borderRadius: '12px',
+                    fontSize: '0.78rem',
+                    fontWeight: 700,
+                    marginBottom: '1rem',
+                    textAlign: 'center'
+                  }}
+                >
+                  ⚠️ {errorMsg}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                style={{
+                  width: '100%',
+                  padding: '0.92rem',
+                  fontSize: '0.95rem',
+                  fontWeight: 900,
+                  color: '#ffffff',
+                  background: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)',
+                  border: 'none',
+                  borderRadius: 'var(--radius-full)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  boxShadow: '0 4px 14px rgba(124, 58, 237, 0.35)'
+                }}
+              >
+                <span>Access Admin Dashboard</span>
+                <ArrowRight size={16} />
+              </button>
+            </form>
           </div>
-          <div style={{ color: '#c4b5fd', fontSize: '0.72rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <span>Select</span>
-            <ArrowRight size={12} />
-          </div>
-        </button>
+
+          {/* Minimized Demo Trigger */}
+          <button
+            onClick={() => setIsDemoModalOpen(true)}
+            style={{
+              width: '100%',
+              padding: '0.75rem 1.15rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              background: 'rgba(255, 255, 255, 0.08)',
+              backdropFilter: 'blur(12px)',
+              borderRadius: '16px',
+              border: '1px solid rgba(255, 255, 255, 0.14)',
+              cursor: 'pointer',
+              color: '#e2e8f0'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '0.95rem' }}>⚡</span>
+              <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#f1f5f9' }}>
+                Quick Demo Admin Roles
+              </span>
+            </div>
+            <div style={{ color: '#c4b5fd', fontSize: '0.74rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <span>Select</span>
+              <ArrowRight size={12} />
+            </div>
+          </button>
+        </div>
       </div>
 
       {/* Demo Modal */}
@@ -337,8 +361,9 @@ export default function AdminLoginScreen({ activeSchool, onLoginSuccess }) {
             background: 'rgba(15, 23, 42, 0.7)',
             backdropFilter: 'blur(8px)',
             display: 'flex',
-            alignItems: 'flex-end',
-            justifyContent: 'center'
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1rem'
           }}
         >
           <div
@@ -348,9 +373,9 @@ export default function AdminLoginScreen({ activeSchool, onLoginSuccess }) {
               width: '100%',
               maxWidth: '420px',
               background: '#ffffff',
-              borderTopLeftRadius: '24px',
-              borderTopRightRadius: '24px',
+              borderRadius: '24px',
               padding: '1.5rem 1.25rem',
+              boxShadow: '0 20px 50px rgba(0,0,0,0.3)',
               animation: 'slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1)'
             }}
           >

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShieldCheck, Phone, ArrowRight, Sparkles, CheckCircle2, Lock, School, Heart, ChevronDown, ChevronUp, User, Users, Check, X, KeyRound } from 'lucide-react';
+import { ShieldCheck, Phone, ArrowRight, Sparkles, CheckCircle2, Lock, School, Heart, ChevronDown, ChevronUp, User, Users, Check, X, KeyRound, Sparkle } from 'lucide-react';
 import { StorageService } from '../../services/storageService';
 
 const DEMO_ACCOUNTS = [
@@ -55,7 +55,7 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
     setTimeout(() => {
       setIsLoading(false);
       setOtpStep(true);
-    }, 500);
+    }, 450);
   };
 
   // Handle Quick Demo Account Pick
@@ -130,36 +130,34 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
       setTimeout(() => {
         setIsLoading(false);
         onLoginSuccess(session, matchedKids);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }, 700);
-    }, 600);
+      }, 500);
+    }, 500);
   };
 
   return (
     <div
       style={{
         minHeight: '100vh',
+        width: '100vw',
         position: 'relative',
         background: 'linear-gradient(135deg, #090e17 0%, #0f172a 45%, #1e1b4b 100%)',
         display: 'flex',
-        flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '1.5rem 1rem',
-        overflow: 'hidden'
+        padding: '2rem 1.25rem',
+        overflowX: 'hidden'
       }}
     >
       {/* Ambient Pulsing Warm Lighting */}
       <div
         style={{
           position: 'absolute',
-          top: '-12%',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          width: '550px',
-          height: '550px',
-          background: 'radial-gradient(circle, rgba(37, 99, 235, 0.4) 0%, rgba(37, 99, 235, 0) 70%)',
-          filter: 'blur(70px)',
+          top: '-15%',
+          left: '30%',
+          width: '600px',
+          height: '600px',
+          background: 'radial-gradient(circle, rgba(37, 99, 235, 0.35) 0%, rgba(37, 99, 235, 0) 70%)',
+          filter: 'blur(80px)',
           animation: 'pulseGlow 6s infinite ease-in-out',
           pointerEvents: 'none'
         }}
@@ -167,18 +165,18 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
       <div
         style={{
           position: 'absolute',
-          bottom: '-12%',
-          right: '5%',
-          width: '450px',
-          height: '450px',
-          background: 'radial-gradient(circle, rgba(245, 158, 11, 0.25) 0%, rgba(245, 158, 11, 0) 70%)',
-          filter: 'blur(60px)',
+          bottom: '-15%',
+          right: '20%',
+          width: '500px',
+          height: '500px',
+          background: 'radial-gradient(circle, rgba(245, 158, 11, 0.22) 0%, rgba(245, 158, 11, 0) 70%)',
+          filter: 'blur(70px)',
           animation: 'pulseGlow 7s infinite 1s ease-in-out',
           pointerEvents: 'none'
         }}
       />
 
-      {/* Subtle Dot Grid Pattern */}
+      {/* Subtle Dot Grid */}
       <div
         style={{
           position: 'absolute',
@@ -244,21 +242,24 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
         </div>
       )}
 
-      {/* Main Login Card Container (Zero Layout Shift) */}
+      {/* Responsive Shell: 1 Column on Phone, 2 Column Hero on Tablet & Desktop */}
       <div
         style={{
           width: '100%',
-          maxWidth: '430px',
+          maxWidth: '1020px',
           position: 'relative',
           zIndex: 10,
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
+          gap: '2.5rem',
+          alignItems: 'center',
           animation: 'slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
         }}
       >
-        
-        {/* Prominent White-Label School Brand Hero */}
-        <div style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
+        {/* LEFT COLUMN: School Brand Hero & Value Pillars */}
+        <div style={{ color: '#ffffff' }}>
           {/* Official School Crest Emblem with Luminous Aura */}
-          <div style={{ display: 'inline-block', position: 'relative', marginBottom: '0.75rem' }}>
+          <div style={{ display: 'inline-block', position: 'relative', marginBottom: '1rem' }}>
             <div
               style={{
                 position: 'absolute',
@@ -272,12 +273,12 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
             <div
               style={{
                 position: 'relative',
-                width: '64px',
-                height: '64px',
-                borderRadius: '20px',
+                width: '68px',
+                height: '68px',
+                borderRadius: '22px',
                 background: '#ffffff',
                 border: '2px solid rgba(255, 255, 255, 0.9)',
-                padding: '4px',
+                padding: '5px',
                 boxShadow: '0 8px 24px rgba(0, 0, 0, 0.25)',
                 display: 'flex',
                 alignItems: 'center',
@@ -294,12 +295,12 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
 
           <h1
             style={{
-              fontSize: '1.65rem',
+              fontSize: '2rem',
               fontWeight: 900,
               color: '#ffffff',
               lineHeight: 1.2,
               letterSpacing: '-0.02em',
-              marginBottom: '0.35rem',
+              marginBottom: '0.4rem',
               textShadow: '0 2px 10px rgba(0,0,0,0.3)'
             }}
           >
@@ -312,412 +313,412 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
               gap: '6px',
               background: 'rgba(255, 255, 255, 0.12)',
               backdropFilter: 'blur(8px)',
-              padding: '4px 12px',
+              padding: '5px 14px',
               borderRadius: 'var(--radius-full)',
               color: '#93c5fd',
-              fontSize: '0.76rem',
+              fontSize: '0.8rem',
               fontWeight: 800,
               letterSpacing: '0.02em',
-              border: '1px solid rgba(255, 255, 255, 0.15)'
+              border: '1px solid rgba(255, 255, 255, 0.15)',
+              marginBottom: '1.5rem'
             }}
           >
             <span>🍱</span>
             <span>Campus Canteen & Daily Meals</span>
           </div>
-        </div>
 
-        {/* Parent & Child Value Propositions */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: '0.55rem',
-            marginBottom: '1.1rem'
-          }}
-        >
-          <div
-            style={{
-              background: 'rgba(255, 255, 255, 0.08)',
-              backdropFilter: 'blur(10px)',
-              border: '1px solid rgba(255, 255, 255, 0.12)',
-              borderRadius: '14px',
-              padding: '0.65rem 0.5rem',
-              textAlign: 'center',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
-            }}
-          >
-            <div style={{ fontSize: '1.25rem', marginBottom: '2px' }}>🍱</div>
-            <div style={{ fontSize: '0.72rem', fontWeight: 900, color: '#ffffff', lineHeight: 1.2 }}>
-              Desk Delivery
-            </div>
-            <div style={{ fontSize: '0.62rem', color: '#94a3b8', marginTop: '1px' }}>
-              Served hot at recess
-            </div>
-          </div>
-
-          <div
-            style={{
-              background: 'rgba(255, 255, 255, 0.08)',
-              backdropFilter: 'blur(10px)',
-              border: '1px solid rgba(255, 255, 255, 0.12)',
-              borderRadius: '14px',
-              padding: '0.65rem 0.5rem',
-              textAlign: 'center',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
-            }}
-          >
-            <div style={{ fontSize: '1.25rem', marginBottom: '2px' }}>🛡️</div>
-            <div style={{ fontSize: '0.72rem', fontWeight: 900, color: '#ffffff', lineHeight: 1.2 }}>
-              Allergen Safe
-            </div>
-            <div style={{ fontSize: '0.62rem', color: '#94a3b8', marginTop: '1px' }}>
-              FSSAI Grade A kitchen
-            </div>
-          </div>
-
-          <div
-            style={{
-              background: 'rgba(255, 255, 255, 0.08)',
-              backdropFilter: 'blur(10px)',
-              border: '1px solid rgba(255, 255, 255, 0.12)',
-              borderRadius: '14px',
-              padding: '0.65rem 0.5rem',
-              textAlign: 'center',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
-            }}
-          >
-            <div style={{ fontSize: '1.25rem', marginBottom: '2px' }}>⏰</div>
-            <div style={{ fontSize: '0.72rem', fontWeight: 900, color: '#ffffff', lineHeight: 1.2 }}>
-              No Morning Rush
-            </div>
-            <div style={{ fontSize: '0.62rem', color: '#94a3b8', marginTop: '1px' }}>
-              Book 7 days ahead
-            </div>
-          </div>
-        </div>
-
-        {/* Auth Glassmorphism Card */}
-        <div
-          style={{
-            background: 'rgba(255, 255, 255, 0.96)',
-            backdropFilter: 'blur(20px)',
-            borderRadius: '24px',
-            padding: '1.65rem 1.4rem',
-            boxShadow: '0 20px 50px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.2)',
-            marginBottom: '1rem',
-            transition: 'all 0.3s ease'
-          }}
-        >
-          {!otpStep ? (
-            /* Step 1: Mobile Phone Number */
-            <form onSubmit={handleRequestOtp}>
-              <div style={{ marginBottom: '1.25rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                  <label
-                    style={{
-                      fontSize: '0.78rem',
-                      fontWeight: 800,
-                      color: 'var(--text-main)'
-                    }}
-                  >
-                    Parent Mobile Number
-                  </label>
-                  {phone.length === 10 && (
-                    <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#16a34a', display: 'flex', alignItems: 'center', gap: '2px' }}>
-                      <Check size={12} /> Ready
-                    </span>
-                  )}
+          {/* 3 Core Parent Value Pillars */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxWidth: '440px' }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                background: 'rgba(255, 255, 255, 0.07)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                borderRadius: '16px',
+                padding: '0.75rem 1rem'
+              }}
+            >
+              <div style={{ fontSize: '1.6rem' }}>🍱</div>
+              <div>
+                <div style={{ fontSize: '0.88rem', fontWeight: 900, color: '#ffffff' }}>
+                  Hot Desk Delivery
                 </div>
+                <div style={{ fontSize: '0.74rem', color: '#94a3b8' }}>
+                  Served fresh to child's classroom desk at scheduled break times
+                </div>
+              </div>
+            </div>
 
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    border: isFocused ? '1.5px solid var(--primary)' : '1.5px solid #cbd5e1',
-                    borderRadius: '14px',
-                    background: isFocused ? '#ffffff' : '#f8fafc',
-                    padding: '0.45rem 0.85rem',
-                    gap: '10px',
-                    boxShadow: isFocused ? '0 0 0 4px rgba(37, 99, 235, 0.15)' : 'none',
-                    transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
-                  }}
-                >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                background: 'rgba(255, 255, 255, 0.07)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                borderRadius: '16px',
+                padding: '0.75rem 1rem'
+              }}
+            >
+              <div style={{ fontSize: '1.6rem' }}>🛡️</div>
+              <div>
+                <div style={{ fontSize: '0.88rem', fontWeight: 900, color: '#ffffff' }}>
+                  100% Nut & Allergen Safe
+                </div>
+                <div style={{ fontSize: '0.74rem', color: '#94a3b8' }}>
+                  FSSAI Grade-A kitchen verified against your child's health profile
+                </div>
+              </div>
+            </div>
+
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                background: 'rgba(255, 255, 255, 0.07)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                borderRadius: '16px',
+                padding: '0.75rem 1rem'
+              }}
+            >
+              <div style={{ fontSize: '1.6rem' }}>⏰</div>
+              <div>
+                <div style={{ fontSize: '0.88rem', fontWeight: 900, color: '#ffffff' }}>
+                  No Morning Cooking Rush
+                </div>
+                <div style={{ fontSize: '0.74rem', color: '#94a3b8' }}>
+                  Pre-order wholesome breakfasts & lunches up to 7 days ahead
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* RIGHT COLUMN: Glassmorphic Auth Card */}
+        <div style={{ width: '100%', maxWidth: '440px', justifySelf: 'center' }}>
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.96)',
+              backdropFilter: 'blur(20px)',
+              borderRadius: '26px',
+              padding: '2rem 1.75rem',
+              boxShadow: '0 25px 60px rgba(0, 0, 0, 0.38), 0 0 0 1px rgba(255, 255, 255, 0.25)',
+              marginBottom: '1rem'
+            }}
+          >
+            {!otpStep ? (
+              /* Step 1: Mobile Phone Number */
+              <form onSubmit={handleRequestOtp}>
+                <div style={{ marginBottom: '1.4rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                    <label
+                      style={{
+                        fontSize: '0.82rem',
+                        fontWeight: 900,
+                        color: 'var(--text-main)'
+                      }}
+                    >
+                      Parent Mobile Number
+                    </label>
+                    {phone.length === 10 && (
+                      <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#16a34a', display: 'flex', alignItems: 'center', gap: '2px' }}>
+                        <Check size={13} /> Ready
+                      </span>
+                    )}
+                  </div>
+
                   <div
                     style={{
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '5px',
-                      fontWeight: 800,
-                      fontSize: '0.92rem',
-                      color: 'var(--text-main)',
-                      borderRight: '1.5px solid #e2e8f0',
-                      paddingRight: '10px'
+                      border: isFocused ? '2px solid var(--primary)' : '1.5px solid #cbd5e1',
+                      borderRadius: '14px',
+                      background: isFocused ? '#ffffff' : '#f8fafc',
+                      padding: '0.55rem 0.9rem',
+                      gap: '10px',
+                      boxShadow: isFocused ? '0 0 0 4px rgba(37, 99, 235, 0.15)' : 'none',
+                      transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
                     }}
                   >
-                    <span style={{ fontSize: '1.1rem' }}>🇮🇳</span>
-                    <span>+91</span>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '5px',
+                        fontWeight: 800,
+                        fontSize: '0.95rem',
+                        color: 'var(--text-main)',
+                        borderRight: '1.5px solid #e2e8f0',
+                        paddingRight: '10px'
+                      }}
+                    >
+                      <span style={{ fontSize: '1.15rem' }}>🇮🇳</span>
+                      <span>+91</span>
+                    </div>
+
+                    <input
+                      type="tel"
+                      placeholder="Enter 10-digit number"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      onFocus={() => setIsFocused(true)}
+                      onBlur={() => setIsFocused(false)}
+                      maxLength={10}
+                      autoFocus
+                      style={{
+                        border: 'none',
+                        background: 'transparent',
+                        width: '100%',
+                        fontSize: '1.1rem',
+                        fontWeight: 800,
+                        outline: 'none',
+                        color: 'var(--text-main)',
+                        letterSpacing: '1px'
+                      }}
+                    />
                   </div>
+                  <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: '0.45rem' }}>
+                    We'll send a 4-digit code to securely verify your student.
+                  </div>
+                </div>
 
-                  <input
-                    type="tel"
-                    placeholder="Enter 10-digit number"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    onFocus={() => setIsFocused(true)}
-                    onBlur={() => setIsFocused(false)}
-                    maxLength={10}
-                    autoFocus
+                {errorMsg && (
+                  <div
                     style={{
-                      border: 'none',
-                      background: 'transparent',
-                      width: '100%',
-                      fontSize: '1.05rem',
-                      fontWeight: 800,
-                      outline: 'none',
-                      color: 'var(--text-main)',
-                      letterSpacing: '1px'
+                      background: '#fee2e2',
+                      color: '#b91c1c',
+                      padding: '0.65rem 0.85rem',
+                      borderRadius: '12px',
+                      fontSize: '0.78rem',
+                      fontWeight: 700,
+                      marginBottom: '1.1rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px'
                     }}
-                  />
-                </div>
-                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.4rem' }}>
-                  We'll send a 4-digit code to securely match your child.
-                </div>
-              </div>
+                  >
+                    <span>⚠️</span>
+                    <span>{errorMsg}</span>
+                  </div>
+                )}
 
-              {errorMsg && (
-                <div
+                <button
+                  type="submit"
                   style={{
-                    background: '#fee2e2',
-                    color: '#b91c1c',
-                    padding: '0.65rem 0.85rem',
-                    borderRadius: '12px',
-                    fontSize: '0.78rem',
-                    fontWeight: 700,
-                    marginBottom: '1.1rem',
+                    width: '100%',
+                    padding: '0.92rem',
+                    fontSize: '0.95rem',
+                    fontWeight: 900,
+                    color: '#ffffff',
+                    background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+                    border: 'none',
+                    borderRadius: 'var(--radius-full)',
+                    cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '6px'
+                    justifyContent: 'center',
+                    gap: '8px',
+                    boxShadow: '0 4px 14px rgba(37, 99, 235, 0.35)',
+                    transition: 'all 0.15s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-1px)';
+                    e.currentTarget.style.boxShadow = '0 6px 20px rgba(37, 99, 235, 0.45)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'none';
+                    e.currentTarget.style.boxShadow = '0 4px 14px rgba(37, 99, 235, 0.35)';
                   }}
                 >
-                  <span>⚠️</span>
-                  <span>{errorMsg}</span>
+                  <span>Continue with OTP</span>
+                  <ArrowRight size={16} />
+                </button>
+              </form>
+            ) : (
+              /* Step 2: 4-Digit OTP */
+              <form onSubmit={handleVerifyOtp}>
+                <div style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
+                  <div style={{ fontSize: '1rem', fontWeight: 900, color: 'var(--text-main)', marginBottom: '0.25rem' }}>
+                    Enter 4-Digit Security Code
+                  </div>
+                  <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                    Sent to <strong style={{ color: 'var(--text-main)' }}>+91 {phone}</strong>
+                  </div>
                 </div>
-              )}
 
-              <button
-                type="submit"
-                style={{
-                  width: '100%',
-                  padding: '0.88rem',
-                  fontSize: '0.95rem',
-                  fontWeight: 900,
-                  color: '#ffffff',
-                  background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
-                  border: 'none',
-                  borderRadius: 'var(--radius-full)',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
-                  boxShadow: '0 4px 14px rgba(37, 99, 235, 0.35)',
-                  transition: 'all 0.15s ease'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-1px)';
-                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(37, 99, 235, 0.45)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'none';
-                  e.currentTarget.style.boxShadow = '0 4px 14px rgba(37, 99, 235, 0.35)';
-                }}
-              >
-                <span>Continue with OTP</span>
-                <ArrowRight size={16} />
-              </button>
-            </form>
-          ) : (
-            /* Step 2: 4-Digit OTP */
-            <form onSubmit={handleVerifyOtp}>
-              <div style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
-                <div style={{ fontSize: '0.95rem', fontWeight: 900, color: 'var(--text-main)', marginBottom: '0.25rem' }}>
-                  Enter 4-Digit Code
+                {/* OTP Input Boxes */}
+                <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
+                  {otp.map((digit, idx) => (
+                    <input
+                      key={idx}
+                      id={`otp-input-${idx}`}
+                      type="text"
+                      maxLength={1}
+                      value={digit}
+                      onChange={(e) => handleOtpChange(idx, e.target.value)}
+                      style={{
+                        width: '54px',
+                        height: '58px',
+                        borderRadius: '14px',
+                        border: digit ? '2px solid var(--primary)' : '1.5px solid #cbd5e1',
+                        background: digit ? '#eff6ff' : '#f8fafc',
+                        fontSize: '1.5rem',
+                        fontWeight: 900,
+                        textAlign: 'center',
+                        outline: 'none',
+                        color: 'var(--text-main)',
+                        boxShadow: digit ? '0 2px 10px rgba(37,99,235,0.22)' : 'none',
+                        transform: digit ? 'scale(1.04)' : 'none',
+                        transition: 'all 0.15s ease'
+                      }}
+                    />
+                  ))}
                 </div>
-                <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>
-                  Sent to <strong style={{ color: 'var(--text-main)' }}>+91 {phone}</strong>
-                </div>
-              </div>
 
-              {/* OTP Input Boxes with Micro-Interaction */}
-              <div style={{ display: 'flex', justifyContent: 'center', gap: '0.65rem', marginBottom: '1.25rem' }}>
-                {otp.map((digit, idx) => (
-                  <input
-                    key={idx}
-                    id={`otp-input-${idx}`}
-                    type="text"
-                    maxLength={1}
-                    value={digit}
-                    onChange={(e) => handleOtpChange(idx, e.target.value)}
+                {errorMsg && (
+                  <div
                     style={{
-                      width: '52px',
-                      height: '56px',
-                      borderRadius: '14px',
-                      border: digit ? '2px solid var(--primary)' : '1.5px solid #cbd5e1',
-                      background: digit ? '#eff6ff' : '#f8fafc',
-                      fontSize: '1.45rem',
-                      fontWeight: 900,
-                      textAlign: 'center',
-                      outline: 'none',
-                      color: 'var(--text-main)',
-                      boxShadow: digit ? '0 2px 10px rgba(37,99,235,0.22)' : 'none',
-                      transform: digit ? 'scale(1.04)' : 'none',
-                      transition: 'all 0.15s ease'
+                      background: '#fee2e2',
+                      color: '#b91c1c',
+                      padding: '0.65rem 0.85rem',
+                      borderRadius: '12px',
+                      fontSize: '0.78rem',
+                      fontWeight: 700,
+                      marginBottom: '1rem',
+                      textAlign: 'center'
                     }}
-                  />
-                ))}
-              </div>
+                  >
+                    ⚠️ {errorMsg}
+                  </div>
+                )}
 
-              {errorMsg && (
-                <div
+                <button
+                  type="submit"
                   style={{
-                    background: '#fee2e2',
-                    color: '#b91c1c',
-                    padding: '0.65rem 0.85rem',
-                    borderRadius: '12px',
-                    fontSize: '0.78rem',
-                    fontWeight: 700,
-                    marginBottom: '1rem',
-                    textAlign: 'center'
+                    width: '100%',
+                    padding: '0.92rem',
+                    fontSize: '0.95rem',
+                    fontWeight: 900,
+                    color: '#ffffff',
+                    background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+                    border: 'none',
+                    borderRadius: 'var(--radius-full)',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    boxShadow: '0 4px 14px rgba(22, 163, 74, 0.35)',
+                    marginBottom: '0.75rem',
+                    transition: 'all 0.15s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-1px)';
+                    e.currentTarget.style.boxShadow = '0 6px 20px rgba(22, 163, 74, 0.45)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'none';
+                    e.currentTarget.style.boxShadow = '0 4px 14px rgba(22, 163, 74, 0.35)';
                   }}
                 >
-                  ⚠️ {errorMsg}
-                </div>
-              )}
+                  <CheckCircle2 size={16} />
+                  <span>Verify & View Menu</span>
+                </button>
 
-              <button
-                type="submit"
-                style={{
-                  width: '100%',
-                  padding: '0.88rem',
-                  fontSize: '0.95rem',
-                  fontWeight: 900,
-                  color: '#ffffff',
-                  background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
-                  border: 'none',
-                  borderRadius: 'var(--radius-full)',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
-                  boxShadow: '0 4px 14px rgba(22, 163, 74, 0.35)',
-                  marginBottom: '0.75rem',
-                  transition: 'all 0.15s ease'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-1px)';
-                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(22, 163, 74, 0.45)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'none';
-                  e.currentTarget.style.boxShadow = '0 4px 14px rgba(22, 163, 74, 0.35)';
-                }}
-              >
-                <CheckCircle2 size={16} />
-                <span>Verify & View Menu</span>
-              </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setOtpStep(false);
+                    setOtp(['', '', '', '']);
+                    setErrorMsg('');
+                  }}
+                  style={{
+                    width: '100%',
+                    background: 'transparent',
+                    border: 'none',
+                    fontSize: '0.78rem',
+                    fontWeight: 800,
+                    color: 'var(--text-muted)',
+                    cursor: 'pointer',
+                    padding: '0.4rem'
+                  }}
+                >
+                  ← Change Phone Number
+                </button>
+              </form>
+            )}
+          </div>
 
-              <button
-                type="button"
-                onClick={() => {
-                  setOtpStep(false);
-                  setOtp(['', '', '', '']);
-                  setErrorMsg('');
-                }}
+          {/* Minimized Trigger for Demo Sheet */}
+          <button
+            onClick={() => setIsDemoModalOpen(true)}
+            style={{
+              width: '100%',
+              padding: '0.75rem 1.15rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              background: 'rgba(255, 255, 255, 0.08)',
+              backdropFilter: 'blur(12px)',
+              borderRadius: '16px',
+              border: '1px solid rgba(255, 255, 255, 0.14)',
+              cursor: 'pointer',
+              color: '#e2e8f0',
+              transition: 'all 0.15s ease'
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.12)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)'; }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '0.95rem' }}>⚡</span>
+              <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#f1f5f9' }}>
+                Quick Demo Test Logins
+              </span>
+              <span
                 style={{
-                  width: '100%',
-                  background: 'transparent',
-                  border: 'none',
-                  fontSize: '0.76rem',
+                  fontSize: '0.65rem',
                   fontWeight: 800,
-                  color: 'var(--text-muted)',
-                  cursor: 'pointer',
-                  padding: '0.4rem',
-                  transition: 'color 0.15s ease'
+                  background: 'rgba(255, 255, 255, 0.15)',
+                  color: '#ffffff',
+                  padding: '1px 6px',
+                  borderRadius: '10px'
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text-main)'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; }}
               >
-                ← Change Phone Number
-              </button>
-            </form>
-          )}
-        </div>
+                3 Profiles
+              </span>
+            </div>
+            <div style={{ color: '#93c5fd', fontSize: '0.74rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <span>Select</span>
+              <ArrowRight size={12} />
+            </div>
+          </button>
 
-        {/* Minimized Trigger for Demo Sheet (Zero Layout Shift Button) */}
-        <button
-          onClick={() => setIsDemoModalOpen(true)}
-          style={{
-            width: '100%',
-            padding: '0.7rem 1rem',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            background: 'rgba(255, 255, 255, 0.08)',
-            backdropFilter: 'blur(12px)',
-            borderRadius: '16px',
-            border: '1px solid rgba(255, 255, 255, 0.14)',
-            cursor: 'pointer',
-            color: '#e2e8f0',
-            transition: 'all 0.15s ease'
-          }}
-          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.12)'; }}
-          onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)'; }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '0.9rem' }}>⚡</span>
-            <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#f1f5f9' }}>
-              Quick Demo Test Logins
-            </span>
-            <span
-              style={{
-                fontSize: '0.65rem',
-                fontWeight: 800,
-                background: 'rgba(255, 255, 255, 0.15)',
-                color: '#ffffff',
-                padding: '1px 6px',
-                borderRadius: '10px'
-              }}
-            >
-              3 Profiles
-            </span>
+          {/* Security Trust Micro-Footer */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px',
+              marginTop: '1.15rem',
+              fontSize: '0.74rem',
+              color: '#64748b',
+              fontWeight: 700
+            }}
+          >
+            <Lock size={12} />
+            <span>Zero-Trust Student Privacy • Verified Parents Only</span>
           </div>
-          <div style={{ color: '#93c5fd', fontSize: '0.72rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <span>Select</span>
-            <ArrowRight size={12} />
-          </div>
-        </button>
-
-        {/* Security Trust Micro-Footer */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '6px',
-            marginTop: '1.15rem',
-            fontSize: '0.72rem',
-            color: '#64748b',
-            fontWeight: 700
-          }}
-        >
-          <Lock size={12} />
-          <span>Zero-Trust Student Privacy • Verified Parents Only</span>
         </div>
-
       </div>
 
-      {/* Non-Intrusive Bottom Sheet Modal for Demo Profiles (Prevents all layout shifts) */}
+      {/* Non-Intrusive Bottom Sheet Modal for Demo Profiles */}
       {isDemoModalOpen && (
         <div
           className="modal-overlay"
@@ -729,8 +730,9 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
             background: 'rgba(15, 23, 42, 0.7)',
             backdropFilter: 'blur(8px)',
             display: 'flex',
-            alignItems: 'flex-end',
-            justifyContent: 'center'
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1rem'
           }}
         >
           <div
@@ -740,10 +742,9 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
               width: '100%',
               maxWidth: '440px',
               background: '#ffffff',
-              borderTopLeftRadius: '24px',
-              borderTopRightRadius: '24px',
+              borderRadius: '24px',
               padding: '1.5rem 1.25rem',
-              boxShadow: '0 -10px 40px rgba(0,0,0,0.25)',
+              boxShadow: '0 20px 50px rgba(0,0,0,0.3)',
               animation: 'slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1)'
             }}
           >

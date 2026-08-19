@@ -267,7 +267,14 @@ export default function MenuCatalog({
           <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Try resetting the search or category filters</p>
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', paddingBottom: '1.25rem' }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+            gap: '0.85rem',
+            paddingBottom: '1.25rem'
+          }}
+        >
           {filteredItems.map((item) => {
             const qty = getItemQuantity(item.id);
             const foodImg = item.image || item.imageUrl || FALLBACK_IMAGES[item.category] || FALLBACK_IMAGES['Snacks & Rolls'];

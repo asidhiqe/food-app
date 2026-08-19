@@ -81,10 +81,17 @@ body {
 }
 
 @media (min-width: 768px) {
-  .app-container:not(.wide-layout) {
-    min-height: 100vh;
+  .app-container.parent-desktop-responsive {
+    max-width: 1100px;
+    margin: 0 auto;
+    background: #ffffff;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.06);
     border-left: 1px solid var(--border-color);
     border-right: 1px solid var(--border-color);
+  }
+
+  .app-container.parent-desktop-responsive .main-content {
+    padding: 1.25rem 2rem 6rem 2rem;
   }
 
   .app-container.wide-layout .main-content {
