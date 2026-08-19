@@ -81,8 +81,8 @@ export default function CompactHeader({
             />
             <div style={{ textAlign: 'left' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
-                <span style={{ fontSize: '0.82rem', fontWeight: 900, color: 'var(--text-main)' }}>
-                  {activeSchool?.name?.split(' ')[0] || 'Brainwaves'}
+                <span style={{ fontSize: '0.82rem', fontWeight: 900, color: 'var(--text-main)', letterSpacing: '-0.01em' }}>
+                  {activeSchool?.name?.includes('Brainwaves') ? "Brainwaves Int'l" : activeSchool?.name}
                 </span>
                 <ChevronDown size={12} color="#64748b" />
               </div>

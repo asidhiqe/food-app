@@ -330,56 +330,75 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
         }}
       >
         
-        {/* Brand Header */}
-        <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              background: 'rgba(255, 255, 255, 0.1)',
-              backdropFilter: 'blur(10px)',
-              padding: '6px 14px 6px 8px',
-              borderRadius: 'var(--radius-full)',
-              boxShadow: '0 4px 16px rgba(0,0,0,0.2)',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
-              marginBottom: '0.85rem',
-              transition: 'all 0.2s ease'
-            }}
-          >
-            <img
-              src="./bis-hapur-responsive-logo.png"
-              alt="Logo"
-              style={{ width: '24px', height: '24px', borderRadius: '50%', objectFit: 'contain', background: '#ffffff', padding: '1px' }}
+        {/* Prominent White-Label School Brand Hero */}
+        <div style={{ textAlign: 'center', marginBottom: '1.65rem' }}>
+          {/* Official School Crest Emblem with Luminous Aura */}
+          <div style={{ display: 'inline-block', position: 'relative', marginBottom: '0.85rem' }}>
+            <div
+              style={{
+                position: 'absolute',
+                inset: -6,
+                borderRadius: '24px',
+                background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.6) 0%, rgba(245, 158, 11, 0.4) 100%)',
+                filter: 'blur(10px)',
+                opacity: 0.7
+              }}
             />
-            <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#f8fafc' }}>
-              {activeSchool?.name || 'Brainwaves International School'}
-            </span>
+            <div
+              style={{
+                position: 'relative',
+                width: '64px',
+                height: '64px',
+                borderRadius: '20px',
+                background: '#ffffff',
+                border: '2px solid rgba(255, 255, 255, 0.9)',
+                padding: '4px',
+                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.25)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <img
+                src="./bis-hapur-responsive-logo.png"
+                alt="School Emblem"
+                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+              />
+            </div>
           </div>
 
           <h1
             style={{
-              fontSize: '1.75rem',
+              fontSize: '1.65rem',
               fontWeight: 900,
               color: '#ffffff',
               lineHeight: 1.2,
               letterSpacing: '-0.02em',
-              marginBottom: '0.35rem'
+              marginBottom: '0.35rem',
+              textShadow: '0 2px 10px rgba(0,0,0,0.3)'
             }}
           >
-            School Food Court
+            {activeSchool?.name || 'Brainwaves International School'}
           </h1>
-          <p
+          <div
             style={{
-              fontSize: '0.82rem',
-              color: '#94a3b8',
-              lineHeight: 1.45,
-              maxWidth: '320px',
-              margin: '0 auto'
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              background: 'rgba(255, 255, 255, 0.12)',
+              backdropFilter: 'blur(8px)',
+              padding: '3px 12px',
+              borderRadius: 'var(--radius-full)',
+              color: '#93c5fd',
+              fontSize: '0.76rem',
+              fontWeight: 800,
+              letterSpacing: '0.02em',
+              border: '1px solid rgba(255, 255, 255, 0.15)'
             }}
           >
-            Fresh, healthy meals delivered directly to your child's classroom.
-          </p>
+            <span>🍱</span>
+            <span>{activeSchool?.canteenName || 'Official Student Dining & Canteen Portal'}</span>
+          </div>
         </div>
 
         {/* Auth Glassmorphism Card */}
