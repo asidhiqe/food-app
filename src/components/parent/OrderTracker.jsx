@@ -60,32 +60,46 @@ export default function OrderTracker({ orders, onBackToMenu, currency, activeSch
 
   return (
     <div style={{ maxWidth: '640px', margin: '0 auto' }}>
-      {/* Top Bar */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
+      {/* Top Bar: Clean Mobile Subpage Header */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.75rem',
+          marginBottom: '1.15rem',
+          padding: '0.2rem 0'
+        }}
+      >
         <button
           onClick={onBackToMenu}
           style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '6px',
-            padding: '5px 12px',
-            borderRadius: 'var(--radius-full)',
+            width: '36px',
+            height: '36px',
+            borderRadius: '50%',
             background: '#ffffff',
-            border: '1px solid #cbd5e1',
+            border: '1.5px solid #cbd5e1',
             color: 'var(--text-main)',
-            fontSize: '0.78rem',
-            fontWeight: 800,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
             cursor: 'pointer',
-            boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+            flexShrink: 0,
+            boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
             transition: 'all 0.15s ease'
           }}
+          title="Back to Menu"
         >
-          <ArrowLeft size={14} />
-          <span>Back to Menu</span>
+          <ArrowLeft size={18} />
         </button>
 
-        <h2 style={{ fontSize: '1.1rem', fontWeight: 900 }}>Live Order Tracking</h2>
-        <div style={{ width: '80px' }} />
+        <div style={{ minWidth: 0, flex: 1 }}>
+          <h2 style={{ fontSize: '1.05rem', fontWeight: 900, color: 'var(--text-main)', lineHeight: 1.2, margin: 0 }}>
+            Live Order Tracking
+          </h2>
+          <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+            Track real-time kitchen prep & delivery
+          </div>
+        </div>
       </div>
 
       {orders.length === 0 ? (
@@ -101,6 +115,7 @@ export default function OrderTracker({ orders, onBackToMenu, currency, activeSch
           {orders.map((order) => {
             const currentStageIdx = getStageIndex(order.status);
             const isDelivered = order.status === 'DELIVERED';
+            const cleanClass = String(order.classSection || '').replace(/Grade\s*/gi, '').trim();
 
             return (
               <div
@@ -130,7 +145,7 @@ export default function OrderTracker({ orders, onBackToMenu, currency, activeSch
                         👦 {order.studentName}
                       </span>
                       <span style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '2px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 800 }}>
-                        Grade {order.classSection}
+                        Grade {cleanClass}
                       </span>
                     </div>
 

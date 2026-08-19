@@ -105,14 +105,25 @@ export default function MenuCatalog({
 
   return (
     <div>
-      {/* 1. Appetizing Category Carousel (Visual Food Storytelling) */}
-      <div style={{ marginBottom: '0.85rem' }}>
+      {/* 1. Appetizing Category Carousel (Sticky on Scroll) */}
+      <div
+        style={{
+          position: 'sticky',
+          top: '75px',
+          zIndex: 80,
+          background: 'rgba(255, 255, 255, 0.96)',
+          backdropFilter: 'blur(10px)',
+          margin: '0 -0.5rem 0.75rem -0.5rem',
+          padding: '0.45rem 0.5rem',
+          borderBottom: '1px solid rgba(241, 245, 249, 0.9)'
+        }}
+      >
         <div
           style={{
             display: 'flex',
             gap: '0.55rem',
             overflowX: 'auto',
-            paddingBottom: '4px',
+            paddingBottom: '2px',
             scrollbarWidth: 'none'
           }}
         >
@@ -135,19 +146,19 @@ export default function MenuCatalog({
                   display: 'flex',
                   alignItems: 'center',
                   gap: '6px',
-                  padding: '6px 12px',
+                  padding: '5px 12px',
                   borderRadius: '12px',
                   background: isSelected ? style.activeBg : style.bg,
                   color: isSelected ? style.activeText : style.text,
-                  boxShadow: isSelected ? '0 4px 12px rgba(0,0,0,0.15)' : 'none',
+                  boxShadow: isSelected ? '0 3px 10px rgba(0,0,0,0.14)' : 'none',
                   cursor: 'pointer',
                   flexShrink: 0,
                   transition: 'all 0.15s ease',
                   transform: isSelected ? 'scale(1.02)' : 'none'
                 }}
               >
-                <span style={{ fontSize: '1.1rem' }}>{style.icon}</span>
-                <span style={{ fontSize: '0.78rem', fontWeight: 800 }}>{style.label}</span>
+                <span style={{ fontSize: '1.05rem' }}>{style.icon}</span>
+                <span style={{ fontSize: '0.76rem', fontWeight: 800 }}>{style.label}</span>
               </div>
             );
           })}
