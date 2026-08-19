@@ -105,17 +105,18 @@ export default function MenuCatalog({
 
   return (
     <div>
-      {/* 1. Appetizing Category Carousel (Sticky on Scroll) */}
+      {/* 1. Appetizing Category Carousel (Sticky on Scroll with zero clipping) */}
       <div
         style={{
           position: 'sticky',
-          top: '75px',
+          top: '84px',
           zIndex: 80,
-          background: 'rgba(255, 255, 255, 0.96)',
-          backdropFilter: 'blur(10px)',
+          background: 'rgba(255, 255, 255, 0.98)',
+          backdropFilter: 'blur(12px)',
           margin: '0 -0.5rem 0.75rem -0.5rem',
-          padding: '0.45rem 0.5rem',
-          borderBottom: '1px solid rgba(241, 245, 249, 0.9)'
+          padding: '0.55rem 0.5rem 0.45rem 0.5rem',
+          borderBottom: '1px solid rgba(226, 232, 240, 0.8)',
+          boxShadow: '0 2px 6px rgba(0,0,0,0.02)'
         }}
       >
         <div
@@ -266,7 +267,7 @@ export default function MenuCatalog({
           <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Try resetting the search or category filters</p>
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', paddingBottom: '5rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', paddingBottom: '1.25rem' }}>
           {filteredItems.map((item) => {
             const qty = getItemQuantity(item.id);
             const foodImg = item.image || item.imageUrl || FALLBACK_IMAGES[item.category] || FALLBACK_IMAGES['Snacks & Rolls'];
