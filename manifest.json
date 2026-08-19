@@ -8,7 +8,8 @@
       "type": "image/svg+xml"
     }
   ],
-  "start_url": "/",
+  "start_url": "/food-app/",
+  "scope": "/food-app/",
   "background_color": "#f8fafc",
   "theme_color": "#2563eb",
   "display": "standalone",
