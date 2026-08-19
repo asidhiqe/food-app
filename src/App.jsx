@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import CompactHeader from './components/common/CompactHeader';
 import DateSlotSheet from './components/parent/DateSlotSheet';
+import ParentLoginScreen from './components/parent/ParentLoginScreen';
 import ParentAuthModal from './components/parent/ParentAuthModal';
 import ActiveSlotOrderBanner from './components/parent/ActiveSlotOrderBanner';
 import ChildAvatarBar from './components/parent/ChildAvatarBar';
@@ -72,6 +73,7 @@ export default function App() {
       } else {
         setActivePortal('parent');
       }
+      window.scrollTo(0, 0);
     };
 
     handleHashChange();
@@ -170,6 +172,19 @@ export default function App() {
     setCartsByChild({});
     setNotificationToast('Logged out successfully');
     setTimeout(() => setNotificationToast(null), 3000);
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  };
+
+  // Login Success Handler
+  const handleLoginSuccess = (session, kids) => {
+    setParentSession(session);
+    setChildrenList(kids);
+    if (kids.length > 0) {
+      setActiveChild(kids[0]);
+      setVerifiedStudent(kids[0]);
+    }
+    loadData();
+    window.scrollTo({ top: 0, behavior: 'instant' });
   };
 
   // Save Child Health Profile
@@ -178,7 +193,7 @@ export default function App() {
     loadData();
   };
 
-  // Cart Operations (Scoped strictly to activeChild)
+  // Cart Operations
   const handleAddToCart = (item) => {
     setCartsByChild((prev) => {
       const childCart = prev[activeCartKey] || [];
@@ -314,82 +329,93 @@ export default function App() {
       {/* PORTAL 1: PARENT FOOD ORDERING */}
       {activePortal === 'parent' && (
         <>
-          {/* Ultra-Compact Sticky Header */}
-          <CompactHeader
-            activeSchool={activeSchool}
-            schools={schools}
-            onSelectSchool={handleSelectSchool}
-            cartCount={totalFamilyItemsCount}
-            cartTotal={totalFamilyAmount}
-            onOpenCart={() => setIsCartOpen(true)}
-            onViewMyOrders={() => setIsTrackingOpen(true)}
-            activeOrderCount={orders.length}
-            parentSession={parentSession}
-            onOpenAuthModal={() => setIsAuthModalOpen(true)}
-            onLogoutParent={handleLogoutParent}
-            selectedDate={selectedDate}
-            selectedSlot={selectedSlot}
-            onOpenDateSlotSheet={() => setIsDateSlotSheetOpen(true)}
-          />
-
-          <main className="main-content">
-            {isTrackingOpen ? (
-              <OrderTracker
-                orders={orders}
-                onBackToMenu={() => setIsTrackingOpen(false)}
-                currency={activeSchool.currency}
+          {!parentSession ? (
+            /* 1. Dedicated Parent Login Screen (No public menu before login) */
+            <ParentLoginScreen
+              activeSchool={activeSchool}
+              onLoginSuccess={handleLoginSuccess}
+            />
+          ) : (
+            /* 2. Authenticated Parent Ordering Flow */
+            <>
+              {/* Ultra-Compact Sticky Header */}
+              <CompactHeader
                 activeSchool={activeSchool}
+                schools={schools}
+                onSelectSchool={handleSelectSchool}
+                cartCount={totalFamilyItemsCount}
+                cartTotal={totalFamilyAmount}
+                onOpenCart={() => setIsCartOpen(true)}
+                onViewMyOrders={() => setIsTrackingOpen(true)}
+                activeOrderCount={orders.length}
+                parentSession={parentSession}
+                onOpenAuthModal={() => setIsAuthModalOpen(true)}
+                onLogoutParent={handleLogoutParent}
+                selectedDate={selectedDate}
+                selectedSlot={selectedSlot}
+                onOpenDateSlotSheet={() => setIsDateSlotSheetOpen(true)}
               />
-            ) : (
-              <>
-                {/* 👦 Visual Avatar Sibling Bar & Health Safety Strip */}
-                <ChildAvatarBar
-                  childrenList={childrenList}
-                  activeChild={activeChild}
-                  onSelectChild={handleSelectChild}
-                  cartsByChild={cartsByChild}
-                  currency={activeSchool.currency}
-                  onOpenHealthModal={() => setIsHealthModalOpen(true)}
-                />
 
-                {/* Co-Parent Active Order Conflict Detection Banner */}
-                {activeOrderForCurrentSlot && (
-                  <ActiveSlotOrderBanner
-                    activeOrder={activeOrderForCurrentSlot}
-                    childName={activeChild?.studentName}
-                    currentParentSession={parentSession}
-                    onViewOrder={() => setIsTrackingOpen(true)}
-                    selectedSlotName={selectedSlot?.name}
+              <main className="main-content">
+                {isTrackingOpen ? (
+                  <OrderTracker
+                    orders={orders}
+                    onBackToMenu={() => setIsTrackingOpen(false)}
+                    currency={activeSchool.currency}
+                    activeSchool={activeSchool}
                   />
+                ) : (
+                  <>
+                    {/* 👦 Visual Avatar Sibling Bar & Health Safety Strip */}
+                    <ChildAvatarBar
+                      childrenList={childrenList}
+                      activeChild={activeChild}
+                      onSelectChild={handleSelectChild}
+                      cartsByChild={cartsByChild}
+                      currency={activeSchool.currency}
+                      onOpenHealthModal={() => setIsHealthModalOpen(true)}
+                    />
+
+                    {/* Co-Parent Active Order Conflict Detection Banner */}
+                    {activeOrderForCurrentSlot && (
+                      <ActiveSlotOrderBanner
+                        activeOrder={activeOrderForCurrentSlot}
+                        childName={activeChild?.studentName}
+                        currentParentSession={parentSession}
+                        onViewOrder={() => setIsTrackingOpen(true)}
+                        selectedSlotName={selectedSlot?.name}
+                      />
+                    )}
+
+                    {/* High-Density Food Catalog with Allergy Safety Filter */}
+                    <MenuCatalog
+                      menuItems={menuItems}
+                      selectedSlot={selectedSlot}
+                      cart={currentCart}
+                      onAddToCart={handleAddToCart}
+                      onRemoveFromCart={handleRemoveFromCart}
+                      currency={activeSchool.currency}
+                      activeChild={activeChild}
+                    />
+
+                    {/* 🌟 Floatable Quick-Action Hub */}
+                    <FloatingActionHub
+                      cartCount={totalFamilyItemsCount}
+                      cartTotal={totalFamilyAmount}
+                      currency={activeSchool.currency}
+                      activeOrderCount={orders.length}
+                      onOpenCart={() => setIsCartOpen(true)}
+                      onViewOrders={() => setIsTrackingOpen(true)}
+                      activeChild={activeChild}
+                      childrenList={childrenList}
+                      onSelectChild={handleSelectChild}
+                      cartsByChild={cartsByChild}
+                    />
+                  </>
                 )}
-
-                {/* High-Density Food Catalog with Allergy Safety Filter */}
-                <MenuCatalog
-                  menuItems={menuItems}
-                  selectedSlot={selectedSlot}
-                  cart={currentCart}
-                  onAddToCart={handleAddToCart}
-                  onRemoveFromCart={handleRemoveFromCart}
-                  currency={activeSchool.currency}
-                  activeChild={activeChild}
-                />
-
-                {/* 🌟 Floatable Quick-Action Hub */}
-                <FloatingActionHub
-                  cartCount={totalFamilyItemsCount}
-                  cartTotal={totalFamilyAmount}
-                  currency={activeSchool.currency}
-                  activeOrderCount={orders.length}
-                  onOpenCart={() => setIsCartOpen(true)}
-                  onViewOrders={() => setIsTrackingOpen(true)}
-                  activeChild={activeChild}
-                  childrenList={childrenList}
-                  onSelectChild={handleSelectChild}
-                  cartsByChild={cartsByChild}
-                />
-              </>
-            )}
-          </main>
+              </main>
+            </>
+          )}
         </>
       )}
 
@@ -480,21 +506,13 @@ export default function App() {
         onPaymentSuccess={handlePaymentSuccess}
       />
 
-      {/* Parent OTP Auth Modal */}
+      {/* Parent OTP Auth Modal (Fallback) */}
       <ParentAuthModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
         schoolId={activeSchool.id}
         activeSchool={activeSchool}
-        onLoginSuccess={(session, kids) => {
-          setParentSession(session);
-          setChildrenList(kids);
-          if (kids.length > 0) {
-            setActiveChild(kids[0]);
-            setVerifiedStudent(kids[0]);
-          }
-          loadData();
-        }}
+        onLoginSuccess={handleLoginSuccess}
       />
     </div>
   );
