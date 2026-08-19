@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShieldCheck, Phone, ArrowRight, Sparkles, CheckCircle2, Lock, School, Heart, ChevronDown, ChevronUp, User, Users, Check } from 'lucide-react';
+import { ShieldCheck, Phone, ArrowRight, Sparkles, CheckCircle2, Lock, School, Heart, ChevronDown, ChevronUp, User, Users, Check, Utensils } from 'lucide-react';
 import { StorageService } from '../../services/storageService';
 
 const DEMO_ACCOUNTS = [
@@ -27,6 +27,14 @@ const DEMO_ACCOUNTS = [
     kidsDesc: 'Rohan (Grade 5)',
     badge: '1 Student'
   }
+];
+
+const FOOD_SHOWCASE_PILLS = [
+  { icon: '🌯', label: 'Fresh Wraps', tag: 'Chef Special' },
+  { icon: '🍱', label: 'Hot Thali', tag: 'Balanced Meal' },
+  { icon: '🥪', label: 'Club Sandwiches', tag: 'High Fiber' },
+  { icon: '🥗', label: 'Crunchy Salads', tag: '100% Organic' },
+  { icon: '🧃', label: 'Fresh Juices', tag: 'No Added Sugar' }
 ];
 
 export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
@@ -148,11 +156,11 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
         overflow: 'hidden'
       }}
     >
-      {/* Ambient Pulsing Background Glows */}
+      {/* Ambient Pulsing Warm Lighting */}
       <div
         style={{
           position: 'absolute',
-          top: '-10%',
+          top: '-12%',
           left: '50%',
           transform: 'translateX(-50%)',
           width: '550px',
@@ -166,7 +174,7 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
       <div
         style={{
           position: 'absolute',
-          bottom: '-10%',
+          bottom: '-12%',
           right: '5%',
           width: '450px',
           height: '450px',
@@ -177,92 +185,16 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
         }}
       />
 
-      {/* Modern Micro-Dot Grid Pattern */}
+      {/* Subtle Food & Dot Grid Pattern */}
       <div
         style={{
           position: 'absolute',
           inset: 0,
-          backgroundImage: 'radial-gradient(rgba(255, 255, 255, 0.09) 1px, transparent 1px)',
+          backgroundImage: 'radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px)',
           backgroundSize: '24px 24px',
           pointerEvents: 'none'
         }}
       />
-
-      {/* Floating Animated Badges (Desktop & Tablet) */}
-      <div
-        style={{
-          position: 'absolute',
-          top: '14%',
-          left: '10%',
-          background: 'rgba(255, 255, 255, 0.07)',
-          border: '1px solid rgba(255, 255, 255, 0.12)',
-          backdropFilter: 'blur(10px)',
-          padding: '8px 14px',
-          borderRadius: 'var(--radius-full)',
-          color: '#cbd5e1',
-          fontSize: '0.75rem',
-          fontWeight: 800,
-          display: 'flex',
-          alignItems: 'center',
-          gap: '6px',
-          animation: 'floatSlow 5s infinite ease-in-out',
-          boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
-          pointerEvents: 'none'
-        }}
-      >
-        <span>🌱</span>
-        <span>Farm Fresh Canteen</span>
-      </div>
-
-      <div
-        style={{
-          position: 'absolute',
-          bottom: '12%',
-          left: '12%',
-          background: 'rgba(255, 255, 255, 0.07)',
-          border: '1px solid rgba(255, 255, 255, 0.12)',
-          backdropFilter: 'blur(10px)',
-          padding: '8px 14px',
-          borderRadius: 'var(--radius-full)',
-          color: '#cbd5e1',
-          fontSize: '0.75rem',
-          fontWeight: 800,
-          display: 'flex',
-          alignItems: 'center',
-          gap: '6px',
-          animation: 'floatReverse 6s infinite ease-in-out',
-          boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
-          pointerEvents: 'none'
-        }}
-      >
-        <span>🧼</span>
-        <span>100% Hygiene Certified</span>
-      </div>
-
-      <div
-        style={{
-          position: 'absolute',
-          top: '20%',
-          right: '10%',
-          background: 'rgba(255, 255, 255, 0.07)',
-          border: '1px solid rgba(255, 255, 255, 0.12)',
-          backdropFilter: 'blur(10px)',
-          padding: '8px 14px',
-          borderRadius: 'var(--radius-full)',
-          color: '#cbd5e1',
-          fontSize: '0.75rem',
-          fontWeight: 800,
-          display: 'flex',
-          alignItems: 'center',
-          gap: '6px',
-          animation: 'floatReverse 5.5s infinite 0.5s ease-in-out',
-          boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
-          pointerEvents: 'none'
-        }}
-      >
-        <span>🍱</span>
-        <span>Classroom Break Delivery</span>
-      </div>
 
       {/* Loading Overlay Animation */}
       {isLoading && (
@@ -319,11 +251,11 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
         </div>
       )}
 
-      {/* Main Form Container */}
+      {/* Main Login Frame */}
       <div
         style={{
           width: '100%',
-          maxWidth: '420px',
+          maxWidth: '430px',
           position: 'relative',
           zIndex: 10,
           animation: 'slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
@@ -331,9 +263,9 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
       >
         
         {/* Prominent White-Label School Brand Hero */}
-        <div style={{ textAlign: 'center', marginBottom: '1.65rem' }}>
+        <div style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
           {/* Official School Crest Emblem with Luminous Aura */}
-          <div style={{ display: 'inline-block', position: 'relative', marginBottom: '0.85rem' }}>
+          <div style={{ display: 'inline-block', position: 'relative', marginBottom: '0.75rem' }}>
             <div
               style={{
                 position: 'absolute',
@@ -387,7 +319,7 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
               gap: '6px',
               background: 'rgba(255, 255, 255, 0.12)',
               backdropFilter: 'blur(8px)',
-              padding: '3px 12px',
+              padding: '4px 12px',
               borderRadius: 'var(--radius-full)',
               color: '#93c5fd',
               fontSize: '0.76rem',
@@ -397,8 +329,44 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
             }}
           >
             <span>🍱</span>
-            <span>{activeSchool?.canteenName || 'Official Student Dining & Canteen Portal'}</span>
+            <span>Official Campus Canteen & Dining Portal</span>
           </div>
+        </div>
+
+        {/* Appetizing Canteen Food Marquee Preview (Food App Vibe) */}
+        <div
+          style={{
+            display: 'flex',
+            gap: '0.45rem',
+            overflowX: 'auto',
+            scrollbarWidth: 'none',
+            padding: '2px 4px 0.85rem',
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}
+        >
+          {FOOD_SHOWCASE_PILLS.map((item, idx) => (
+            <div
+              key={idx}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+                background: 'rgba(255, 255, 255, 0.09)',
+                backdropFilter: 'blur(8px)',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                borderRadius: 'var(--radius-full)',
+                padding: '4px 10px',
+                color: '#e2e8f0',
+                fontSize: '0.72rem',
+                fontWeight: 800,
+                flexShrink: 0
+              }}
+            >
+              <span style={{ fontSize: '0.9rem' }}>{item.icon}</span>
+              <span>{item.label}</span>
+            </div>
+          ))}
         </div>
 
         {/* Auth Glassmorphism Card */}
@@ -407,8 +375,8 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
             background: 'rgba(255, 255, 255, 0.96)',
             backdropFilter: 'blur(20px)',
             borderRadius: '24px',
-            padding: '1.75rem 1.5rem',
-            boxShadow: '0 20px 50px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.2)',
+            padding: '1.65rem 1.4rem',
+            boxShadow: '0 20px 50px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.2)',
             marginBottom: '1rem',
             transition: 'all 0.3s ease'
           }}
@@ -799,7 +767,7 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
             alignItems: 'center',
             justifyContent: 'center',
             gap: '6px',
-            marginTop: '1.25rem',
+            marginTop: '1.15rem',
             fontSize: '0.72rem',
             color: '#64748b',
             fontWeight: 700
