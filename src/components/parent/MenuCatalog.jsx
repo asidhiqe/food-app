@@ -478,6 +478,78 @@ export default function MenuCatalog({
               </div>
             );
           })}
+
+          {/* 4. Charming End-of-Menu Illustration & School Kitchen Promise Card */}
+          <div
+            style={{
+              textAlign: 'center',
+              padding: '2rem 1.25rem 1.5rem',
+              marginTop: '0.5rem',
+              background: 'linear-gradient(180deg, #f8fafc 0%, #eff6ff 100%)',
+              borderRadius: 'var(--radius-xl)',
+              border: '1px dashed #cbd5e1'
+            }}
+          >
+            {/* Visual Icon Art */}
+            <div
+              style={{
+                width: '64px',
+                height: '64px',
+                borderRadius: '20px',
+                background: 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '2rem',
+                boxShadow: '0 4px 12px rgba(37,99,235,0.15)',
+                marginBottom: '0.75rem'
+              }}
+            >
+              🥗
+            </div>
+
+            <h4 style={{ fontSize: '1rem', fontWeight: 900, color: 'var(--text-main)', marginBottom: '0.35rem' }}>
+              You've reached the end of today's menu!
+            </h4>
+
+            <p style={{ fontSize: '0.76rem', color: '#64748b', lineHeight: 1.45, maxWidth: '280px', margin: '0 auto 1.15rem' }}>
+              All meals are prepared fresh every morning in our ISO-certified school kitchen with 100% nut & allergen safety checks.
+            </p>
+
+            {/* Quality Badges */}
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '0.45rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
+              <span style={{ fontSize: '0.68rem', fontWeight: 800, color: '#15803d', background: '#dcfce7', padding: '3px 8px', borderRadius: 'var(--radius-full)', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                <span>🌱</span>
+                <span>Farm Fresh Veggies</span>
+              </span>
+              <span style={{ fontSize: '0.68rem', fontWeight: 800, color: '#1e40af', background: '#dbeafe', padding: '3px 8px', borderRadius: 'var(--radius-full)', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                <span>🧼</span>
+                <span>FSSAI Hygiene Grade A</span>
+              </span>
+              <span style={{ fontSize: '0.68rem', fontWeight: 800, color: '#9a3412', background: '#ffedd5', padding: '3px 8px', borderRadius: 'var(--radius-full)', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                <span>❤️</span>
+                <span>Cooked with Love</span>
+              </span>
+            </div>
+
+            {/* Back to top helper button */}
+            <button
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              style={{
+                background: '#ffffff',
+                border: '1px solid #cbd5e1',
+                borderRadius: 'var(--radius-full)',
+                padding: '5px 14px',
+                fontSize: '0.74rem',
+                fontWeight: 800,
+                color: 'var(--text-main)',
+                cursor: 'pointer',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
+              }}
+            >
+              ↑ Back to Top
+            </button>
+          </div>
         </div>
       )}
 
