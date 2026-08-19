@@ -13,7 +13,9 @@ import StudentIDModal from './components/parent/StudentIDModal';
 import PaymentModal from './components/parent/PaymentModal';
 import OrderTracker from './components/parent/OrderTracker';
 import KitchenDashboard from './components/vendor/KitchenDashboard';
+import KitchenLoginScreen from './components/vendor/KitchenLoginScreen';
 import SchoolSettings from './components/admin/SchoolSettings';
+import AdminLoginScreen from './components/admin/AdminLoginScreen';
 import { StorageService } from './services/storageService';
 import { CheckCircle2 } from 'lucide-react';
 
@@ -22,6 +24,8 @@ export default function App() {
   const [schools, setSchools] = useState([]);
   const [activeSchool, setActiveSchool] = useState(null);
   const [activePortal, setActivePortal] = useState('parent'); // 'parent' | 'kitchen' | 'admin'
+  const [kitchenSession, setKitchenSession] = useState(null);
+  const [adminSession, setAdminSession] = useState(null);
   const [menuItems, setMenuItems] = useState([]);
   const [students, setStudents] = useState([]);
   const [orders, setOrders] = useState([]);
@@ -421,25 +425,43 @@ export default function App() {
 
       {/* PORTAL 2: KITCHEN DISPLAY & DISPATCH (KDS) */}
       {activePortal === 'kitchen' && (
-        <main className="main-content">
-          <KitchenDashboard
-            orders={orders}
+        !kitchenSession ? (
+          <KitchenLoginScreen
             activeSchool={activeSchool}
-            onRefresh={loadData}
+            onLoginSuccess={(sess) => setKitchenSession(sess)}
           />
-        </main>
+        ) : (
+          <main className="main-content">
+            <KitchenDashboard
+              orders={orders}
+              activeSchool={activeSchool}
+              onRefresh={loadData}
+              staffSession={kitchenSession}
+              onLogoutKitchen={() => setKitchenSession(null)}
+            />
+          </main>
+        )
       )}
 
       {/* PORTAL 3: SCHOOL ADMIN & ROSTER */}
       {activePortal === 'admin' && (
-        <main className="main-content">
-          <SchoolSettings
+        !adminSession ? (
+          <AdminLoginScreen
             activeSchool={activeSchool}
-            students={students}
-            orders={orders}
-            onRefresh={loadData}
+            onLoginSuccess={(sess) => setAdminSession(sess)}
           />
-        </main>
+        ) : (
+          <main className="main-content">
+            <SchoolSettings
+              activeSchool={activeSchool}
+              students={students}
+              orders={orders}
+              onRefresh={loadData}
+              adminSession={adminSession}
+              onLogoutAdmin={() => setAdminSession(null)}
+            />
+          </main>
+        )
       )}
 
       {/* Child Health & Allergy Preferences Modal */}

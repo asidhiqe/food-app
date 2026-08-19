@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShieldCheck, Phone, ArrowRight, Sparkles, CheckCircle2, Lock, School, Heart, ChevronDown, ChevronUp, User, Users, Check, Utensils } from 'lucide-react';
+import { ShieldCheck, Phone, ArrowRight, Sparkles, CheckCircle2, Lock, School, Heart, ChevronDown, ChevronUp, User, Users, Check, X, KeyRound } from 'lucide-react';
 import { StorageService } from '../../services/storageService';
 
 const DEMO_ACCOUNTS = [
@@ -29,14 +29,6 @@ const DEMO_ACCOUNTS = [
   }
 ];
 
-const FOOD_SHOWCASE_PILLS = [
-  { icon: '🌯', label: 'Fresh Wraps', tag: 'Chef Special' },
-  { icon: '🍱', label: 'Hot Thali', tag: 'Balanced Meal' },
-  { icon: '🥪', label: 'Club Sandwiches', tag: 'High Fiber' },
-  { icon: '🥗', label: 'Crunchy Salads', tag: '100% Organic' },
-  { icon: '🧃', label: 'Fresh Juices', tag: 'No Added Sugar' }
-];
-
 export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
   const [phone, setPhone] = useState('');
   const [otpStep, setOtpStep] = useState(false);
@@ -44,7 +36,7 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
   const [errorMsg, setErrorMsg] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [loadingText, setLoadingText] = useState('');
-  const [showDemoProfiles, setShowDemoProfiles] = useState(false);
+  const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
 
   // Handle Request OTP
@@ -68,6 +60,7 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
 
   // Handle Quick Demo Account Pick
   const handlePickDemo = (acc) => {
+    setIsDemoModalOpen(false);
     setPhone(acc.phone);
     setErrorMsg('');
     setIsLoading(true);
@@ -185,7 +178,7 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
         }}
       />
 
-      {/* Subtle Food & Dot Grid Pattern */}
+      {/* Subtle Dot Grid Pattern */}
       <div
         style={{
           position: 'absolute',
@@ -251,7 +244,7 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
         </div>
       )}
 
-      {/* Main Login Frame */}
+      {/* Main Login Card Container (Zero Layout Shift) */}
       <div
         style={{
           width: '100%',
@@ -333,7 +326,7 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
           </div>
         </div>
 
-        {/* Parent & Child Value Propositions (Why Parents Love This Service) */}
+        {/* Parent & Child Value Propositions */}
         <div
           style={{
             display: 'grid',
@@ -661,138 +654,49 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
           )}
         </div>
 
-        {/* Minimized Collapsible Demo Profiles Accordion */}
-        <div
+        {/* Minimized Trigger for Demo Sheet (Zero Layout Shift Button) */}
+        <button
+          onClick={() => setIsDemoModalOpen(true)}
           style={{
+            width: '100%',
+            padding: '0.7rem 1rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
             background: 'rgba(255, 255, 255, 0.08)',
             backdropFilter: 'blur(12px)',
-            borderRadius: '18px',
+            borderRadius: '16px',
             border: '1px solid rgba(255, 255, 255, 0.14)',
-            overflow: 'hidden',
-            transition: 'all 0.25s ease'
+            cursor: 'pointer',
+            color: '#e2e8f0',
+            transition: 'all 0.15s ease'
           }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.12)'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)'; }}
         >
-          {/* Header Accordion Trigger */}
-          <button
-            onClick={() => setShowDemoProfiles(!showDemoProfiles)}
-            style={{
-              width: '100%',
-              padding: '0.75rem 1rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              background: 'transparent',
-              border: 'none',
-              cursor: 'pointer',
-              color: '#e2e8f0',
-              transition: 'background 0.15s ease'
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '0.9rem' }}>⚡</span>
-              <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#f1f5f9' }}>
-                Quick Demo Test Logins
-              </span>
-              <span
-                style={{
-                  fontSize: '0.65rem',
-                  fontWeight: 800,
-                  background: 'rgba(255, 255, 255, 0.15)',
-                  color: '#ffffff',
-                  padding: '1px 6px',
-                  borderRadius: '10px'
-                }}
-              >
-                3 Profiles
-              </span>
-            </div>
-            <div style={{ color: '#94a3b8' }}>
-              {showDemoProfiles ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-            </div>
-          </button>
-
-          {/* Collapsible Content */}
-          {showDemoProfiles && (
-            <div
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ fontSize: '0.9rem' }}>⚡</span>
+            <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#f1f5f9' }}>
+              Quick Demo Test Logins
+            </span>
+            <span
               style={{
-                padding: '0.5rem 0.85rem 0.85rem',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '0.5rem',
-                borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-                animation: 'slideUpFade 0.25s cubic-bezier(0.16, 1, 0.3, 1)'
+                fontSize: '0.65rem',
+                fontWeight: 800,
+                background: 'rgba(255, 255, 255, 0.15)',
+                color: '#ffffff',
+                padding: '1px 6px',
+                borderRadius: '10px'
               }}
             >
-              {DEMO_ACCOUNTS.map((acc, i) => (
-                <div
-                  key={i}
-                  onClick={() => handlePickDemo(acc)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    background: 'rgba(255, 255, 255, 0.95)',
-                    borderRadius: '12px',
-                    padding: '0.55rem 0.75rem',
-                    cursor: 'pointer',
-                    transition: 'all 0.15s ease',
-                    boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow = '0 6px 14px rgba(0,0,0,0.15)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'none';
-                    e.currentTarget.style.boxShadow = '0 2px 6px rgba(0,0,0,0.1)';
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ fontSize: '1.1rem' }}>{acc.avatar}</span>
-                    <div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                        <span style={{ fontSize: '0.8rem', fontWeight: 900, color: 'var(--text-main)' }}>
-                          {acc.name}
-                        </span>
-                        <span
-                          style={{
-                            fontSize: '0.62rem',
-                            fontWeight: 800,
-                            color: 'var(--primary)',
-                            background: '#eff6ff',
-                            padding: '1px 5px',
-                            borderRadius: '6px'
-                          }}
-                        >
-                          {acc.badge}
-                        </span>
-                      </div>
-                      <div style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 600 }}>
-                        {acc.kidsDesc}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div
-                    style={{
-                      fontSize: '0.72rem',
-                      fontWeight: 800,
-                      color: 'var(--primary)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '2px'
-                    }}
-                  >
-                    <span>Use</span>
-                    <ArrowRight size={12} />
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+              3 Profiles
+            </span>
+          </div>
+          <div style={{ color: '#93c5fd', fontSize: '0.72rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <span>Select</span>
+            <ArrowRight size={12} />
+          </div>
+        </button>
 
         {/* Security Trust Micro-Footer */}
         <div
@@ -812,6 +716,139 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
         </div>
 
       </div>
+
+      {/* Non-Intrusive Bottom Sheet Modal for Demo Profiles (Prevents all layout shifts) */}
+      {isDemoModalOpen && (
+        <div
+          className="modal-overlay"
+          onClick={() => setIsDemoModalOpen(false)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 1000,
+            background: 'rgba(15, 23, 42, 0.7)',
+            backdropFilter: 'blur(8px)',
+            display: 'flex',
+            alignItems: 'flex-end',
+            justifyContent: 'center'
+          }}
+        >
+          <div
+            className="modal-content"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: '100%',
+              maxWidth: '440px',
+              background: '#ffffff',
+              borderTopLeftRadius: '24px',
+              borderTopRightRadius: '24px',
+              padding: '1.5rem 1.25rem',
+              boxShadow: '0 -10px 40px rgba(0,0,0,0.25)',
+              animation: 'slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1)'
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <div>
+                <h3 style={{ fontSize: '1.05rem', fontWeight: 900, color: 'var(--text-main)' }}>
+                  ⚡ Quick Demo Test Logins
+                </h3>
+                <p style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+                  Select a test parent account with pre-enrolled children
+                </p>
+              </div>
+              <button
+                onClick={() => setIsDemoModalOpen(false)}
+                style={{
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '50%',
+                  background: '#f1f5f9',
+                  border: 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer'
+                }}
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+              {DEMO_ACCOUNTS.map((acc, i) => (
+                <div
+                  key={i}
+                  onClick={() => handlePickDemo(acc)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    background: '#f8fafc',
+                    border: '1.5px solid #e2e8f0',
+                    borderRadius: '16px',
+                    padding: '0.85rem 1rem',
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = 'var(--primary)';
+                    e.currentTarget.style.background = '#eff6ff';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = '#e2e8f0';
+                    e.currentTarget.style.background = '#f8fafc';
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{ fontSize: '1.6rem' }}>{acc.avatar}</div>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <span style={{ fontSize: '0.9rem', fontWeight: 900, color: 'var(--text-main)' }}>
+                          {acc.name}
+                        </span>
+                        <span
+                          style={{
+                            fontSize: '0.65rem',
+                            fontWeight: 800,
+                            color: 'var(--primary)',
+                            background: '#eff6ff',
+                            padding: '2px 7px',
+                            borderRadius: '8px',
+                            border: '1px solid #bfdbfe'
+                          }}
+                        >
+                          {acc.badge}
+                        </span>
+                      </div>
+                      <div style={{ fontSize: '0.74rem', color: '#64748b', fontWeight: 600, marginTop: '2px' }}>
+                        {acc.kidsDesc}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      fontSize: '0.78rem',
+                      fontWeight: 900,
+                      color: 'var(--primary)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      background: '#ffffff',
+                      padding: '5px 10px',
+                      borderRadius: 'var(--radius-full)',
+                      border: '1px solid #bfdbfe'
+                    }}
+                  >
+                    <span>Login</span>
+                    <ArrowRight size={13} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

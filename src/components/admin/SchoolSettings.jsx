@@ -14,7 +14,9 @@ export default function SchoolSettings({
   activeSchool,
   students,
   orders,
-  onRefresh
+  onRefresh,
+  adminSession,
+  onLogoutAdmin
 }) {
   const [activeTab, setActiveTab] = useState('branding');
   const [formData, setFormData] = useState({ ...activeSchool });
@@ -96,16 +98,47 @@ export default function SchoolSettings({
             }}
           >
             <ArrowLeft size={14} />
-            <span>Back to Menu</span>
+            <span>Parent View</span>
           </button>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.72rem', color: '#cbd5e1', fontWeight: 700 }}>
-            <img
-              src="./bis-hapur-responsive-logo.png"
-              alt="Logo"
-              style={{ width: '18px', height: '18px', borderRadius: '50%', objectFit: 'contain', background: '#ffffff', padding: '1px' }}
-            />
-            <span>{activeSchool?.name}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {adminSession && (
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  background: 'rgba(124, 58, 237, 0.2)',
+                  border: '1px solid rgba(124, 58, 237, 0.4)',
+                  padding: '2px 8px',
+                  borderRadius: 'var(--radius-full)',
+                  fontSize: '0.72rem',
+                  fontWeight: 800,
+                  color: '#c4b5fd'
+                }}
+              >
+                <span>{adminSession.avatar || '🏫'}</span>
+                <span>{adminSession.adminName}</span>
+              </div>
+            )}
+
+            {onLogoutAdmin && (
+              <button
+                onClick={onLogoutAdmin}
+                style={{
+                  background: 'rgba(239, 68, 68, 0.2)',
+                  border: '1px solid rgba(239, 68, 68, 0.4)',
+                  color: '#fca5a5',
+                  padding: '2px 8px',
+                  borderRadius: 'var(--radius-full)',
+                  fontSize: '0.68rem',
+                  fontWeight: 800,
+                  cursor: 'pointer'
+                }}
+              >
+                Switch Admin
+              </button>
+            )}
           </div>
         </div>
 

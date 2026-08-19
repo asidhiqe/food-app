@@ -92,16 +92,47 @@ export default function KitchenDashboard({ orders, activeSchool, onRefresh }) {
             }}
           >
             <ArrowLeft size={14} />
-            <span>Back to Menu</span>
+            <span>Parent View</span>
           </button>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.72rem', color: '#cbd5e1', fontWeight: 700 }}>
-            <img
-              src="./bis-hapur-responsive-logo.png"
-              alt="Logo"
-              style={{ width: '18px', height: '18px', borderRadius: '50%', objectFit: 'contain', background: '#ffffff', padding: '1px' }}
-            />
-            <span>{activeSchool?.canteenName}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {staffSession && (
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  background: 'rgba(234, 88, 12, 0.2)',
+                  border: '1px solid rgba(234, 88, 12, 0.4)',
+                  padding: '2px 8px',
+                  borderRadius: 'var(--radius-full)',
+                  fontSize: '0.72rem',
+                  fontWeight: 800,
+                  color: '#fdba74'
+                }}
+              >
+                <span>{staffSession.avatar || '👨‍🍳'}</span>
+                <span>{staffSession.staffName}</span>
+              </div>
+            )}
+
+            {onLogoutKitchen && (
+              <button
+                onClick={onLogoutKitchen}
+                style={{
+                  background: 'rgba(239, 68, 68, 0.2)',
+                  border: '1px solid rgba(239, 68, 68, 0.4)',
+                  color: '#fca5a5',
+                  padding: '2px 8px',
+                  borderRadius: 'var(--radius-full)',
+                  fontSize: '0.68rem',
+                  fontWeight: 800,
+                  cursor: 'pointer'
+                }}
+              >
+                Switch Staff
+              </button>
+            )}
           </div>
         </div>
 
