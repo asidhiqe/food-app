@@ -333,40 +333,74 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
           </div>
         </div>
 
-        {/* Appetizing Canteen Food Marquee Preview (Food App Vibe) */}
+        {/* Parent & Child Value Propositions (Why Parents Love This Service) */}
         <div
           style={{
-            display: 'flex',
-            gap: '0.45rem',
-            overflowX: 'auto',
-            scrollbarWidth: 'none',
-            padding: '2px 4px 0.85rem',
-            justifyContent: 'center',
-            alignItems: 'center'
+            display: 'grid',
+            gridTemplateColumns: 'repeat(3, 1fr)',
+            gap: '0.55rem',
+            marginBottom: '1.1rem'
           }}
         >
-          {FOOD_SHOWCASE_PILLS.map((item, idx) => (
-            <div
-              key={idx}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '5px',
-                background: 'rgba(255, 255, 255, 0.09)',
-                backdropFilter: 'blur(8px)',
-                border: '1px solid rgba(255, 255, 255, 0.12)',
-                borderRadius: 'var(--radius-full)',
-                padding: '4px 10px',
-                color: '#e2e8f0',
-                fontSize: '0.72rem',
-                fontWeight: 800,
-                flexShrink: 0
-              }}
-            >
-              <span style={{ fontSize: '0.9rem' }}>{item.icon}</span>
-              <span>{item.label}</span>
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.08)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255, 255, 255, 0.12)',
+              borderRadius: '14px',
+              padding: '0.65rem 0.5rem',
+              textAlign: 'center',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+            }}
+          >
+            <div style={{ fontSize: '1.25rem', marginBottom: '2px' }}>🍱</div>
+            <div style={{ fontSize: '0.72rem', fontWeight: 900, color: '#ffffff', lineHeight: 1.2 }}>
+              Desk Delivery
             </div>
-          ))}
+            <div style={{ fontSize: '0.62rem', color: '#94a3b8', marginTop: '1px' }}>
+              Served hot at recess
+            </div>
+          </div>
+
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.08)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255, 255, 255, 0.12)',
+              borderRadius: '14px',
+              padding: '0.65rem 0.5rem',
+              textAlign: 'center',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+            }}
+          >
+            <div style={{ fontSize: '1.25rem', marginBottom: '2px' }}>🛡️</div>
+            <div style={{ fontSize: '0.72rem', fontWeight: 900, color: '#ffffff', lineHeight: 1.2 }}>
+              Allergen Safe
+            </div>
+            <div style={{ fontSize: '0.62rem', color: '#94a3b8', marginTop: '1px' }}>
+              FSSAI Grade A kitchen
+            </div>
+          </div>
+
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.08)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255, 255, 255, 0.12)',
+              borderRadius: '14px',
+              padding: '0.65rem 0.5rem',
+              textAlign: 'center',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+            }}
+          >
+            <div style={{ fontSize: '1.25rem', marginBottom: '2px' }}>⏰</div>
+            <div style={{ fontSize: '0.72rem', fontWeight: 900, color: '#ffffff', lineHeight: 1.2 }}>
+              No Morning Rush
+            </div>
+            <div style={{ fontSize: '0.62rem', color: '#94a3b8', marginTop: '1px' }}>
+              Book 7 days ahead
+            </div>
+          </div>
         </div>
 
         {/* Auth Glassmorphism Card */}
