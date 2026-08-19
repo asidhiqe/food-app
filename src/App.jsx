@@ -19,11 +19,20 @@ import AdminLoginScreen from './components/admin/AdminLoginScreen';
 import { StorageService } from './services/storageService';
 import { CheckCircle2 } from 'lucide-react';
 
+// Helper to parse current portal from window.location.hash
+const getInitialPortal = () => {
+  if (typeof window === 'undefined') return 'parent';
+  const hash = (window.location.hash || '').toLowerCase();
+  if (hash.includes('kitchen')) return 'kitchen';
+  if (hash.includes('admin')) return 'admin';
+  return 'parent';
+};
+
 export default function App() {
   // State
   const [schools, setSchools] = useState([]);
   const [activeSchool, setActiveSchool] = useState(null);
-  const [activePortal, setActivePortal] = useState('parent'); // 'parent' | 'kitchen' | 'admin'
+  const [activePortal, setActivePortal] = useState(getInitialPortal); // 'parent' | 'kitchen' | 'admin'
   const [kitchenSession, setKitchenSession] = useState(null);
   const [adminSession, setAdminSession] = useState(null);
   const [menuItems, setMenuItems] = useState([]);
@@ -71,9 +80,11 @@ export default function App() {
   // Sync with URL Hash (#/order, #/kitchen, #/admin)
   useEffect(() => {
     const handleHashChange = () => {
-      const hash = window.location.hash.replace('#/', '').replace('#', '');
-      if (hash === 'kitchen' || hash === 'admin' || hash === 'order') {
-        setActivePortal(hash === 'order' ? 'parent' : hash);
+      const hash = (window.location.hash || '').toLowerCase();
+      if (hash.includes('kitchen')) {
+        setActivePortal('kitchen');
+      } else if (hash.includes('admin')) {
+        setActivePortal('admin');
       } else {
         setActivePortal('parent');
       }
