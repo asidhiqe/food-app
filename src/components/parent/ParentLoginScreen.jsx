@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShieldCheck, Phone, ArrowRight, Sparkles, CheckCircle2, Lock, School, Heart } from 'lucide-react';
+import { ShieldCheck, Phone, ArrowRight, Sparkles, CheckCircle2, Lock, School, Heart, ChevronRight, User, Users } from 'lucide-react';
 import { StorageService } from '../../services/storageService';
 
 const DEMO_ACCOUNTS = [
@@ -7,22 +7,25 @@ const DEMO_ACCOUNTS = [
     name: 'Rajesh Sharma',
     phone: '9876543210',
     relation: 'Father',
-    kidsDesc: '👦 Aarav (4-B) & 👧 Ananya (8-A)',
-    badge: '2 Kids'
+    avatar: '👨‍💼',
+    kidsDesc: 'Aarav (Grade 4) & Ananya (Grade 8)',
+    badge: '2 Students'
   },
   {
     name: 'Vikram Verma',
     phone: '9123456780',
     relation: 'Father',
-    kidsDesc: '👧 Riya (2-C) & 👦 Aryan (6-B)',
-    badge: '2 Kids'
+    avatar: '👨‍⚕️',
+    kidsDesc: 'Riya (Grade 2) & Aryan (Grade 6)',
+    badge: '2 Students'
   },
   {
     name: 'Amit Gupta',
     phone: '9988776655',
     relation: 'Father',
-    kidsDesc: '👦 Rohan (5-A)',
-    badge: '1 Kid'
+    avatar: '👨‍🏫',
+    kidsDesc: 'Rohan (Grade 5)',
+    badge: '1 Student'
   }
 ];
 
@@ -50,7 +53,7 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
     setTimeout(() => {
       setIsLoading(false);
       setOtpStep(true);
-    }, 600);
+    }, 500);
   };
 
   // Handle Quick Demo Account Pick
@@ -64,7 +67,7 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
       setIsLoading(false);
       setOtpStep(true);
       setOtp(['4', '5', '8', '2']);
-    }, 500);
+    }, 400);
   };
 
   // Handle OTP Input
@@ -99,7 +102,7 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
 
       if (matchedKids.length === 0) {
         setIsLoading(false);
-        setErrorMsg('No registered students found for this mobile number. Try demo number: 9876543210');
+        setErrorMsg('No registered students found for this mobile number. Try demo: 9876543210');
         return;
       }
 
@@ -125,19 +128,20 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
         setIsLoading(false);
         onLoginSuccess(session, matchedKids);
         window.scrollTo({ top: 0, behavior: 'smooth' });
-      }, 900);
-    }, 800);
+      }, 700);
+    }, 600);
   };
 
   return (
     <div
       style={{
         minHeight: '100vh',
-        background: 'linear-gradient(180deg, #f8fafc 0%, #eff6ff 100%)',
+        background: 'radial-gradient(circle at 50% 0%, #eff6ff 0%, #f8fafc 50%, #f1f5f9 100%)',
         display: 'flex',
         flexDirection: 'column',
+        alignItems: 'center',
         justifyContent: 'center',
-        padding: '1.5rem 1.25rem'
+        padding: '1.5rem 1rem'
       }}
     >
       {/* Loading Overlay Animation */}
@@ -147,8 +151,8 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
             position: 'fixed',
             inset: 0,
             zIndex: 9999,
-            background: 'rgba(15, 23, 42, 0.75)',
-            backdropFilter: 'blur(8px)',
+            background: 'rgba(15, 23, 42, 0.8)',
+            backdropFilter: 'blur(10px)',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -162,29 +166,29 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
             src="./bis-hapur-responsive-logo.png"
             alt="School Logo"
             style={{
-              width: '72px',
-              height: '72px',
+              width: '68px',
+              height: '68px',
               borderRadius: '20px',
               objectFit: 'contain',
               background: '#ffffff',
               padding: '6px',
-              boxShadow: '0 10px 30px rgba(0,0,0,0.35)',
+              boxShadow: '0 12px 30px rgba(0,0,0,0.4)',
               marginBottom: '1.25rem',
               animation: 'fabBounce 1s infinite alternate cubic-bezier(0.34, 1.56, 0.64, 1)'
             }}
           />
 
-          <h3 style={{ color: '#ffffff', fontSize: '1.15rem', fontWeight: 900, marginBottom: '0.4rem' }}>
+          <h3 style={{ color: '#ffffff', fontSize: '1.15rem', fontWeight: 900, marginBottom: '0.35rem' }}>
             {loadingText}
           </h3>
-          <p style={{ color: '#94a3b8', fontSize: '0.8rem' }}>
+          <p style={{ color: '#94a3b8', fontSize: '0.78rem' }}>
             Securing student privacy & campus canteen access
           </p>
 
           <div
             style={{
-              width: '40px',
-              height: '40px',
+              width: '36px',
+              height: '36px',
               borderRadius: '50%',
               border: '3px solid rgba(255,255,255,0.2)',
               borderTopColor: '#60a5fa',
@@ -195,236 +199,418 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
         </div>
       )}
 
-      {/* Main Login Card */}
-      <div
-        style={{
-          background: '#ffffff',
-          borderRadius: 'var(--radius-xl)',
-          padding: '1.75rem 1.5rem',
-          boxShadow: 'var(--shadow-card)',
-          border: '1px solid rgba(226, 232, 240, 0.9)',
-          animation: 'slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
-        }}
-      >
-        {/* School Emblem & Header */}
+      {/* Main Container */}
+      <div style={{ width: '100%', maxWidth: '440px' }}>
+        
+        {/* Brand Header */}
         <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-          <img
-            src="./bis-hapur-responsive-logo.png"
-            alt="School Logo"
+          <div
             style={{
-              width: '64px',
-              height: '64px',
-              borderRadius: '18px',
-              objectFit: 'contain',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
               background: '#ffffff',
-              border: '1.5px solid #e2e8f0',
-              padding: '4px',
-              boxShadow: '0 6px 20px rgba(0,0,0,0.06)',
-              marginBottom: '0.75rem',
-              display: 'inline-block'
+              padding: '6px 14px 6px 8px',
+              borderRadius: 'var(--radius-full)',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+              border: '1px solid rgba(226, 232, 240, 0.9)',
+              marginBottom: '1rem'
             }}
-          />
-
-          <h2 style={{ fontSize: '1.35rem', fontWeight: 900, color: 'var(--text-main)', lineHeight: 1.25 }}>
-            {activeSchool?.name || 'School Food Court'}
-          </h2>
-          <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
-            {activeSchool?.canteenName} • Parent Ordering Portal
-          </p>
-        </div>
-
-        {/* Step 1: Mobile Phone Number */}
-        {!otpStep ? (
-          <form onSubmit={handleRequestOtp}>
-            <div style={{ marginBottom: '1.25rem' }}>
-              <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.45rem' }}>
-                Parent Registered Mobile Number:
-              </label>
-
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  border: '1.5px solid #cbd5e1',
-                  borderRadius: 'var(--radius-md)',
-                  background: '#f8fafc',
-                  padding: '0.35rem 0.75rem',
-                  gap: '8px'
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 800, fontSize: '0.9rem', color: 'var(--text-main)', borderRight: '1px solid #cbd5e1', paddingRight: '8px' }}>
-                  <span>🇮🇳</span>
-                  <span>+91</span>
-                </div>
-
-                <input
-                  type="tel"
-                  placeholder="Enter 10-digit mobile"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  maxLength={10}
-                  autoFocus
-                  style={{
-                    border: 'none',
-                    background: 'transparent',
-                    width: '100%',
-                    fontSize: '1rem',
-                    fontWeight: 800,
-                    outline: 'none',
-                    color: 'var(--text-main)',
-                    letterSpacing: '1px'
-                  }}
-                />
-              </div>
-            </div>
-
-            {errorMsg && (
-              <div style={{ background: '#fee2e2', color: '#b91c1c', padding: '0.6rem 0.85rem', borderRadius: 'var(--radius-md)', fontSize: '0.78rem', fontWeight: 700, marginBottom: '1rem' }}>
-                ⚠️ {errorMsg}
-              </div>
-            )}
-
-            <button
-              type="submit"
-              className="btn-primary"
-              style={{ width: '100%', padding: '0.9rem', fontSize: '0.95rem', borderRadius: 'var(--radius-full)' }}
-            >
-              <span>Continue with Secure OTP</span>
-              <ArrowRight size={17} />
-            </button>
-          </form>
-        ) : (
-          /* Step 2: 4-Digit OTP Input */
-          <form onSubmit={handleVerifyOtp}>
-            <div style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
-              <div style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: '0.2rem' }}>
-                Enter 4-Digit Security Code
-              </div>
-              <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                Sent to <strong>+91 {phone}</strong>
-              </div>
-            </div>
-
-            {/* OTP Input Boxes */}
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '0.65rem', marginBottom: '1.25rem' }}>
-              {otp.map((digit, idx) => (
-                <input
-                  key={idx}
-                  id={`otp-input-${idx}`}
-                  type="text"
-                  maxLength={1}
-                  value={digit}
-                  onChange={(e) => handleOtpChange(idx, e.target.value)}
-                  style={{
-                    width: '52px',
-                    height: '56px',
-                    borderRadius: 'var(--radius-md)',
-                    border: digit ? '2px solid var(--primary)' : '1.5px solid #cbd5e1',
-                    background: digit ? '#eff6ff' : '#f8fafc',
-                    fontSize: '1.5rem',
-                    fontWeight: 900,
-                    textAlign: 'center',
-                    outline: 'none',
-                    color: 'var(--text-main)',
-                    boxShadow: digit ? '0 2px 8px rgba(37,99,235,0.15)' : 'none'
-                  }}
-                />
-              ))}
-            </div>
-
-            {errorMsg && (
-              <div style={{ background: '#fee2e2', color: '#b91c1c', padding: '0.6rem 0.85rem', borderRadius: 'var(--radius-md)', fontSize: '0.78rem', fontWeight: 700, marginBottom: '1rem', textAlign: 'center' }}>
-                ⚠️ {errorMsg}
-              </div>
-            )}
-
-            <button
-              type="submit"
-              className="btn-primary"
-              style={{ width: '100%', padding: '0.9rem', fontSize: '0.95rem', borderRadius: 'var(--radius-full)', marginBottom: '0.75rem' }}
-            >
-              <CheckCircle2 size={17} />
-              <span>Verify & Unlock Lunch Menu</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                setOtpStep(false);
-                setOtp(['', '', '', '']);
-                setErrorMsg('');
-              }}
-              style={{
-                width: '100%',
-                background: 'transparent',
-                border: 'none',
-                color: 'var(--text-muted)',
-                fontSize: '0.78rem',
-                fontWeight: 700,
-                cursor: 'pointer',
-                padding: '4px'
-              }}
-            >
-              Change phone number
-            </button>
-          </form>
-        )}
-
-        {/* Demo Fast-Testing Pill Cards */}
-        <div style={{ marginTop: '1.75rem', borderTop: '1px dashed #cbd5e1', paddingTop: '1.15rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '0.65rem' }}>
-            <Sparkles size={14} color="var(--primary)" />
-            <span style={{ fontSize: '0.72rem', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-              Quick Demo Logins (For Testing)
+          >
+            <img
+              src="./bis-hapur-responsive-logo.png"
+              alt="Logo"
+              style={{ width: '26px', height: '26px', borderRadius: '50%', objectFit: 'contain' }}
+            />
+            <span style={{ fontSize: '0.82rem', fontWeight: 800, color: 'var(--text-main)' }}>
+              {activeSchool?.name || 'Brainwaves International School'}
             </span>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            {DEMO_ACCOUNTS.map((acc) => (
+          <h1
+            style={{
+              fontSize: '1.65rem',
+              fontWeight: 900,
+              color: 'var(--text-main)',
+              lineHeight: 1.2,
+              letterSpacing: '-0.02em',
+              marginBottom: '0.4rem'
+            }}
+          >
+            Fresh Meals for Your Child
+          </h1>
+          <p
+            style={{
+              fontSize: '0.84rem',
+              color: '#64748b',
+              lineHeight: 1.45,
+              maxWidth: '340px',
+              margin: '0 auto'
+            }}
+          >
+            Order wholesome, hygienic canteen meals delivered straight to classroom break times.
+          </p>
+        </div>
+
+        {/* Auth Card */}
+        <div
+          style={{
+            background: '#ffffff',
+            borderRadius: '24px',
+            padding: '1.75rem 1.5rem',
+            boxShadow: '0 12px 36px rgba(15, 23, 42, 0.08), 0 2px 6px rgba(15, 23, 42, 0.04)',
+            border: '1px solid rgba(226, 232, 240, 0.9)',
+            marginBottom: '1.25rem'
+          }}
+        >
+          {!otpStep ? (
+            /* Step 1: Mobile Phone Number */
+            <form onSubmit={handleRequestOtp}>
+              <div style={{ marginBottom: '1.25rem' }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '0.78rem',
+                    fontWeight: 800,
+                    color: 'var(--text-main)',
+                    marginBottom: '0.5rem'
+                  }}
+                >
+                  Parent Mobile Number
+                </label>
+
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    border: '1.5px solid #cbd5e1',
+                    borderRadius: '14px',
+                    background: '#f8fafc',
+                    padding: '0.4rem 0.85rem',
+                    gap: '10px',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '5px',
+                      fontWeight: 800,
+                      fontSize: '0.92rem',
+                      color: 'var(--text-main)',
+                      borderRight: '1.5px solid #e2e8f0',
+                      paddingRight: '10px'
+                    }}
+                  >
+                    <span style={{ fontSize: '1.1rem' }}>🇮🇳</span>
+                    <span>+91</span>
+                  </div>
+
+                  <input
+                    type="tel"
+                    placeholder="Enter 10-digit number"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    maxLength={10}
+                    autoFocus
+                    style={{
+                      border: 'none',
+                      background: 'transparent',
+                      width: '100%',
+                      fontSize: '1.05rem',
+                      fontWeight: 800,
+                      outline: 'none',
+                      color: 'var(--text-main)',
+                      letterSpacing: '1px'
+                    }}
+                  />
+                </div>
+                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.4rem' }}>
+                  We'll send a 4-digit verification code to match your student.
+                </div>
+              </div>
+
+              {errorMsg && (
+                <div
+                  style={{
+                    background: '#fee2e2',
+                    color: '#b91c1c',
+                    padding: '0.65rem 0.85rem',
+                    borderRadius: '12px',
+                    fontSize: '0.78rem',
+                    fontWeight: 700,
+                    marginBottom: '1.1rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}
+                >
+                  <span>⚠️</span>
+                  <span>{errorMsg}</span>
+                </div>
+              )}
+
               <button
-                key={acc.phone}
-                onClick={() => handlePickDemo(acc)}
-                type="button"
+                type="submit"
                 style={{
-                  background: '#f8fafc',
-                  border: '1px solid #e2e8f0',
-                  borderRadius: 'var(--radius-md)',
-                  padding: '0.6rem 0.85rem',
+                  width: '100%',
+                  padding: '0.85rem',
+                  fontSize: '0.92rem',
+                  fontWeight: 900,
+                  color: '#ffffff',
+                  background: 'var(--primary)',
+                  border: 'none',
+                  borderRadius: 'var(--radius-full)',
+                  cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'space-between',
-                  cursor: 'pointer',
-                  textAlign: 'left',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  boxShadow: '0 4px 14px rgba(37, 99, 235, 0.3)',
                   transition: 'all 0.15s ease'
                 }}
               >
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <span style={{ fontSize: '0.82rem', fontWeight: 900, color: 'var(--text-main)' }}>
-                      {acc.name}
-                    </span>
-                    <span style={{ background: '#dbeafe', color: '#1e40af', padding: '1px 6px', borderRadius: '10px', fontSize: '0.62rem', fontWeight: 900 }}>
-                      {acc.badge}
-                    </span>
+                <span>Continue</span>
+                <ArrowRight size={16} />
+              </button>
+            </form>
+          ) : (
+            /* Step 2: 4-Digit OTP */
+            <form onSubmit={handleVerifyOtp}>
+              <div style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
+                <div style={{ fontSize: '0.95rem', fontWeight: 900, color: 'var(--text-main)', marginBottom: '0.25rem' }}>
+                  Enter Verification Code
+                </div>
+                <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>
+                  Sent to <strong style={{ color: 'var(--text-main)' }}>+91 {phone}</strong>
+                </div>
+              </div>
+
+              {/* OTP Input Boxes */}
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '0.65rem', marginBottom: '1.25rem' }}>
+                {otp.map((digit, idx) => (
+                  <input
+                    key={idx}
+                    id={`otp-input-${idx}`}
+                    type="text"
+                    maxLength={1}
+                    value={digit}
+                    onChange={(e) => handleOtpChange(idx, e.target.value)}
+                    style={{
+                      width: '52px',
+                      height: '56px',
+                      borderRadius: '14px',
+                      border: digit ? '2px solid var(--primary)' : '1.5px solid #cbd5e1',
+                      background: digit ? '#eff6ff' : '#f8fafc',
+                      fontSize: '1.45rem',
+                      fontWeight: 900,
+                      textAlign: 'center',
+                      outline: 'none',
+                      color: 'var(--text-main)',
+                      boxShadow: digit ? '0 2px 8px rgba(37,99,235,0.18)' : 'none'
+                    }}
+                  />
+                ))}
+              </div>
+
+              {errorMsg && (
+                <div
+                  style={{
+                    background: '#fee2e2',
+                    color: '#b91c1c',
+                    padding: '0.65rem 0.85rem',
+                    borderRadius: '12px',
+                    fontSize: '0.78rem',
+                    fontWeight: 700,
+                    marginBottom: '1rem',
+                    textAlign: 'center'
+                  }}
+                >
+                  ⚠️ {errorMsg}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                style={{
+                  width: '100%',
+                  padding: '0.85rem',
+                  fontSize: '0.92rem',
+                  fontWeight: 900,
+                  color: '#ffffff',
+                  background: 'var(--primary)',
+                  border: 'none',
+                  borderRadius: 'var(--radius-full)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  boxShadow: '0 4px 14px rgba(37, 99, 235, 0.3)',
+                  marginBottom: '0.75rem'
+                }}
+              >
+                <CheckCircle2 size={16} />
+                <span>Verify & View Menu</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setOtpStep(false);
+                  setOtp(['', '', '', '']);
+                  setErrorMsg('');
+                }}
+                style={{
+                  width: '100%',
+                  background: 'transparent',
+                  border: 'none',
+                  fontSize: '0.76rem',
+                  fontWeight: 800,
+                  color: 'var(--text-muted)',
+                  cursor: 'pointer',
+                  padding: '0.4rem'
+                }}
+              >
+                ← Change Phone Number
+              </button>
+            </form>
+          )}
+        </div>
+
+        {/* Quick Demo Test Profiles Section */}
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.85)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '20px',
+            padding: '1.1rem 1.15rem',
+            border: '1px solid rgba(226, 232, 240, 0.8)',
+            boxShadow: '0 4px 16px rgba(0,0,0,0.03)'
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '0.75rem'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ fontSize: '0.9rem' }}>⚡</span>
+              <span style={{ fontSize: '0.76rem', fontWeight: 900, color: 'var(--text-main)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                Quick Demo Profiles
+              </span>
+            </div>
+            <span style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: 700 }}>
+              1-Tap Test Login
+            </span>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
+            {DEMO_ACCOUNTS.map((acc, i) => (
+              <div
+                key={i}
+                onClick={() => handlePickDemo(acc)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  background: '#ffffff',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '14px',
+                  padding: '0.65rem 0.85rem',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.03)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--primary)';
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = '#e2e8f0';
+                  e.currentTarget.style.transform = 'none';
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div
+                    style={{
+                      width: '34px',
+                      height: '34px',
+                      borderRadius: '10px',
+                      background: '#f1f5f9',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '1.1rem'
+                    }}
+                  >
+                    {acc.avatar}
                   </div>
-                  <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '1px' }}>
-                    {acc.kidsDesc}
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ fontSize: '0.82rem', fontWeight: 900, color: 'var(--text-main)' }}>
+                        {acc.name}
+                      </span>
+                      <span
+                        style={{
+                          fontSize: '0.65rem',
+                          fontWeight: 800,
+                          color: 'var(--primary)',
+                          background: '#eff6ff',
+                          padding: '1px 6px',
+                          borderRadius: '8px'
+                        }}
+                      >
+                        {acc.badge}
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 600 }}>
+                      {acc.kidsDesc}
+                    </div>
                   </div>
                 </div>
 
-                <div style={{ fontSize: '0.72rem', color: 'var(--primary)', fontWeight: 800 }}>
-                  1-Tap Login ➔
+                <div
+                  style={{
+                    width: '28px',
+                    height: '28px',
+                    borderRadius: '50%',
+                    background: '#f8fafc',
+                    border: '1px solid #e2e8f0',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--primary)'
+                  }}
+                >
+                  <ArrowRight size={14} />
                 </div>
-              </button>
+              </div>
             ))}
           </div>
         </div>
-      </div>
 
-      {/* Footer Security Note */}
-      <div style={{ textAlign: 'center', marginTop: '1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-        <Lock size={12} />
-        <span>Student privacy protected • Verified parent access only</span>
+        {/* Security Trust Micro-Footer */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '6px',
+            marginTop: '1.25rem',
+            fontSize: '0.72rem',
+            color: '#94a3b8',
+            fontWeight: 700
+          }}
+        >
+          <Lock size={12} />
+          <span>Zero-Trust Privacy • Only registered parents can access</span>
+        </div>
+
       </div>
     </div>
   );
