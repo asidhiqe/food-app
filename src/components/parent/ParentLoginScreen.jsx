@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShieldCheck, Phone, ArrowRight, Sparkles, CheckCircle2, Lock, School, Heart, ChevronDown, ChevronUp, User, Users } from 'lucide-react';
+import { ShieldCheck, Phone, ArrowRight, Sparkles, CheckCircle2, Lock, School, Heart, ChevronDown, ChevronUp, User, Users, Check } from 'lucide-react';
 import { StorageService } from '../../services/storageService';
 
 const DEMO_ACCOUNTS = [
@@ -37,6 +37,7 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
   const [isLoading, setIsLoading] = useState(false);
   const [loadingText, setLoadingText] = useState('');
   const [showDemoProfiles, setShowDemoProfiles] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
 
   // Handle Request OTP
   const handleRequestOtp = (e) => {
@@ -138,7 +139,7 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
       style={{
         minHeight: '100vh',
         position: 'relative',
-        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)',
+        background: 'linear-gradient(135deg, #090e17 0%, #0f172a 45%, #1e1b4b 100%)',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -147,17 +148,18 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
         overflow: 'hidden'
       }}
     >
-      {/* Ambient Background Glows & Pattern */}
+      {/* Ambient Pulsing Background Glows */}
       <div
         style={{
           position: 'absolute',
-          top: '-15%',
+          top: '-10%',
           left: '50%',
           transform: 'translateX(-50%)',
-          width: '600px',
-          height: '600px',
-          background: 'radial-gradient(circle, rgba(37, 99, 235, 0.35) 0%, rgba(37, 99, 235, 0) 70%)',
-          filter: 'blur(60px)',
+          width: '550px',
+          height: '550px',
+          background: 'radial-gradient(circle, rgba(37, 99, 235, 0.4) 0%, rgba(37, 99, 235, 0) 70%)',
+          filter: 'blur(70px)',
+          animation: 'pulseGlow 6s infinite ease-in-out',
           pointerEvents: 'none'
         }}
       />
@@ -166,44 +168,100 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
           position: 'absolute',
           bottom: '-10%',
           right: '5%',
-          width: '400px',
-          height: '400px',
-          background: 'radial-gradient(circle, rgba(245, 158, 11, 0.2) 0%, rgba(245, 158, 11, 0) 70%)',
-          filter: 'blur(50px)',
+          width: '450px',
+          height: '450px',
+          background: 'radial-gradient(circle, rgba(245, 158, 11, 0.25) 0%, rgba(245, 158, 11, 0) 70%)',
+          filter: 'blur(60px)',
+          animation: 'pulseGlow 7s infinite 1s ease-in-out',
           pointerEvents: 'none'
         }}
       />
 
-      {/* Subtle Dot Grid Pattern Overlay */}
+      {/* Modern Micro-Dot Grid Pattern */}
       <div
         style={{
           position: 'absolute',
           inset: 0,
-          backgroundImage: 'radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px)',
+          backgroundImage: 'radial-gradient(rgba(255, 255, 255, 0.09) 1px, transparent 1px)',
           backgroundSize: '24px 24px',
           pointerEvents: 'none'
         }}
       />
 
-      {/* Floating Trust Pills in Background */}
+      {/* Floating Animated Badges (Desktop & Tablet) */}
       <div
         style={{
           position: 'absolute',
-          top: '12%',
-          left: '8%',
-          background: 'rgba(255, 255, 255, 0.06)',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
-          backdropFilter: 'blur(8px)',
-          padding: '6px 12px',
+          top: '14%',
+          left: '10%',
+          background: 'rgba(255, 255, 255, 0.07)',
+          border: '1px solid rgba(255, 255, 255, 0.12)',
+          backdropFilter: 'blur(10px)',
+          padding: '8px 14px',
           borderRadius: 'var(--radius-full)',
-          color: '#94a3b8',
-          fontSize: '0.72rem',
-          fontWeight: 700,
-          display: 'none'
+          color: '#cbd5e1',
+          fontSize: '0.75rem',
+          fontWeight: 800,
+          display: 'flex',
+          alignItems: 'center',
+          gap: '6px',
+          animation: 'floatSlow 5s infinite ease-in-out',
+          boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
+          pointerEvents: 'none'
         }}
-        className="hide-mobile"
       >
-        🌱 Farm Fresh Ingredients
+        <span>🌱</span>
+        <span>Farm Fresh Canteen</span>
+      </div>
+
+      <div
+        style={{
+          position: 'absolute',
+          bottom: '12%',
+          left: '12%',
+          background: 'rgba(255, 255, 255, 0.07)',
+          border: '1px solid rgba(255, 255, 255, 0.12)',
+          backdropFilter: 'blur(10px)',
+          padding: '8px 14px',
+          borderRadius: 'var(--radius-full)',
+          color: '#cbd5e1',
+          fontSize: '0.75rem',
+          fontWeight: 800,
+          display: 'flex',
+          alignItems: 'center',
+          gap: '6px',
+          animation: 'floatReverse 6s infinite ease-in-out',
+          boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
+          pointerEvents: 'none'
+        }}
+      >
+        <span>🧼</span>
+        <span>100% Hygiene Certified</span>
+      </div>
+
+      <div
+        style={{
+          position: 'absolute',
+          top: '20%',
+          right: '10%',
+          background: 'rgba(255, 255, 255, 0.07)',
+          border: '1px solid rgba(255, 255, 255, 0.12)',
+          backdropFilter: 'blur(10px)',
+          padding: '8px 14px',
+          borderRadius: 'var(--radius-full)',
+          color: '#cbd5e1',
+          fontSize: '0.75rem',
+          fontWeight: 800,
+          display: 'flex',
+          alignItems: 'center',
+          gap: '6px',
+          animation: 'floatReverse 5.5s infinite 0.5s ease-in-out',
+          boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
+          pointerEvents: 'none'
+        }}
+      >
+        <span>🍱</span>
+        <span>Classroom Break Delivery</span>
       </div>
 
       {/* Loading Overlay Animation */}
@@ -261,8 +319,16 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
         </div>
       )}
 
-      {/* Main Form Box */}
-      <div style={{ width: '100%', maxWidth: '420px', position: 'relative', zIndex: 10 }}>
+      {/* Main Form Container */}
+      <div
+        style={{
+          width: '100%',
+          maxWidth: '420px',
+          position: 'relative',
+          zIndex: 10,
+          animation: 'slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
+        }}
+      >
         
         {/* Brand Header */}
         <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
@@ -277,7 +343,8 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
               borderRadius: 'var(--radius-full)',
               boxShadow: '0 4px 16px rgba(0,0,0,0.2)',
               border: '1px solid rgba(255, 255, 255, 0.15)',
-              marginBottom: '0.85rem'
+              marginBottom: '0.85rem',
+              transition: 'all 0.2s ease'
             }}
           >
             <img
@@ -292,7 +359,7 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
 
           <h1
             style={{
-              fontSize: '1.65rem',
+              fontSize: '1.75rem',
               fontWeight: 900,
               color: '#ffffff',
               lineHeight: 1.2,
@@ -322,36 +389,43 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
             backdropFilter: 'blur(20px)',
             borderRadius: '24px',
             padding: '1.75rem 1.5rem',
-            boxShadow: '0 20px 50px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.2)',
-            marginBottom: '1rem'
+            boxShadow: '0 20px 50px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.2)',
+            marginBottom: '1rem',
+            transition: 'all 0.3s ease'
           }}
         >
           {!otpStep ? (
             /* Step 1: Mobile Phone Number */
             <form onSubmit={handleRequestOtp}>
               <div style={{ marginBottom: '1.25rem' }}>
-                <label
-                  style={{
-                    display: 'block',
-                    fontSize: '0.78rem',
-                    fontWeight: 800,
-                    color: 'var(--text-main)',
-                    marginBottom: '0.5rem'
-                  }}
-                >
-                  Parent Mobile Number
-                </label>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                  <label
+                    style={{
+                      fontSize: '0.78rem',
+                      fontWeight: 800,
+                      color: 'var(--text-main)'
+                    }}
+                  >
+                    Parent Mobile Number
+                  </label>
+                  {phone.length === 10 && (
+                    <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#16a34a', display: 'flex', alignItems: 'center', gap: '2px' }}>
+                      <Check size={12} /> Ready
+                    </span>
+                  )}
+                </div>
 
                 <div
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    border: '1.5px solid #cbd5e1',
+                    border: isFocused ? '1.5px solid var(--primary)' : '1.5px solid #cbd5e1',
                     borderRadius: '14px',
-                    background: '#f8fafc',
-                    padding: '0.4rem 0.85rem',
+                    background: isFocused ? '#ffffff' : '#f8fafc',
+                    padding: '0.45rem 0.85rem',
                     gap: '10px',
-                    transition: 'all 0.2s ease'
+                    boxShadow: isFocused ? '0 0 0 4px rgba(37, 99, 235, 0.15)' : 'none',
+                    transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
                   }}
                 >
                   <div
@@ -375,6 +449,8 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
                     placeholder="Enter 10-digit number"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
+                    onFocus={() => setIsFocused(true)}
+                    onBlur={() => setIsFocused(false)}
                     maxLength={10}
                     autoFocus
                     style={{
@@ -418,11 +494,11 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
                 type="submit"
                 style={{
                   width: '100%',
-                  padding: '0.85rem',
-                  fontSize: '0.92rem',
+                  padding: '0.88rem',
+                  fontSize: '0.95rem',
                   fontWeight: 900,
                   color: '#ffffff',
-                  background: 'var(--primary)',
+                  background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
                   border: 'none',
                   borderRadius: 'var(--radius-full)',
                   cursor: 'pointer',
@@ -430,11 +506,19 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '8px',
-                  boxShadow: '0 4px 14px rgba(37, 99, 235, 0.3)',
+                  boxShadow: '0 4px 14px rgba(37, 99, 235, 0.35)',
                   transition: 'all 0.15s ease'
                 }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(37, 99, 235, 0.45)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'none';
+                  e.currentTarget.style.boxShadow = '0 4px 14px rgba(37, 99, 235, 0.35)';
+                }}
               >
-                <span>Continue</span>
+                <span>Continue with OTP</span>
                 <ArrowRight size={16} />
               </button>
             </form>
@@ -450,7 +534,7 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
                 </div>
               </div>
 
-              {/* OTP Input Boxes */}
+              {/* OTP Input Boxes with Micro-Interaction */}
               <div style={{ display: 'flex', justifyContent: 'center', gap: '0.65rem', marginBottom: '1.25rem' }}>
                 {otp.map((digit, idx) => (
                   <input
@@ -471,7 +555,9 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
                       textAlign: 'center',
                       outline: 'none',
                       color: 'var(--text-main)',
-                      boxShadow: digit ? '0 2px 8px rgba(37,99,235,0.18)' : 'none'
+                      boxShadow: digit ? '0 2px 10px rgba(37,99,235,0.22)' : 'none',
+                      transform: digit ? 'scale(1.04)' : 'none',
+                      transition: 'all 0.15s ease'
                     }}
                   />
                 ))}
@@ -498,11 +584,11 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
                 type="submit"
                 style={{
                   width: '100%',
-                  padding: '0.85rem',
-                  fontSize: '0.92rem',
+                  padding: '0.88rem',
+                  fontSize: '0.95rem',
                   fontWeight: 900,
                   color: '#ffffff',
-                  background: 'var(--primary)',
+                  background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
                   border: 'none',
                   borderRadius: 'var(--radius-full)',
                   cursor: 'pointer',
@@ -510,8 +596,17 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '8px',
-                  boxShadow: '0 4px 14px rgba(37, 99, 235, 0.3)',
-                  marginBottom: '0.75rem'
+                  boxShadow: '0 4px 14px rgba(22, 163, 74, 0.35)',
+                  marginBottom: '0.75rem',
+                  transition: 'all 0.15s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(22, 163, 74, 0.45)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'none';
+                  e.currentTarget.style.boxShadow = '0 4px 14px rgba(22, 163, 74, 0.35)';
                 }}
               >
                 <CheckCircle2 size={16} />
@@ -533,8 +628,11 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
                   fontWeight: 800,
                   color: 'var(--text-muted)',
                   cursor: 'pointer',
-                  padding: '0.4rem'
+                  padding: '0.4rem',
+                  transition: 'color 0.15s ease'
                 }}
+                onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text-main)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; }}
               >
                 ← Change Phone Number
               </button>
@@ -542,13 +640,13 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
           )}
         </div>
 
-        {/* Minimized Demo Profiles Accordion / Trigger */}
+        {/* Minimized Collapsible Demo Profiles Accordion */}
         <div
           style={{
             background: 'rgba(255, 255, 255, 0.08)',
-            backdropFilter: 'blur(10px)',
+            backdropFilter: 'blur(12px)',
             borderRadius: '18px',
-            border: '1px solid rgba(255, 255, 255, 0.12)',
+            border: '1px solid rgba(255, 255, 255, 0.14)',
             overflow: 'hidden',
             transition: 'all 0.25s ease'
           }}
@@ -565,8 +663,11 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
               background: 'transparent',
               border: 'none',
               cursor: 'pointer',
-              color: '#e2e8f0'
+              color: '#e2e8f0',
+              transition: 'background 0.15s ease'
             }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <span style={{ fontSize: '0.9rem' }}>⚡</span>
@@ -600,7 +701,7 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
                 flexDirection: 'column',
                 gap: '0.5rem',
                 borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-                animation: 'slideDown 0.2s ease'
+                animation: 'slideUpFade 0.25s cubic-bezier(0.16, 1, 0.3, 1)'
               }}
             >
               {DEMO_ACCOUNTS.map((acc, i) => (
@@ -619,10 +720,12 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
                     boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-1px)';
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 6px 14px rgba(0,0,0,0.15)';
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.transform = 'none';
+                    e.currentTarget.style.boxShadow = '0 2px 6px rgba(0,0,0,0.1)';
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
