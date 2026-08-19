@@ -1,18 +1,16 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Plus, Minus, Flame, Filter, Leaf, AlertTriangle, Check, X } from 'lucide-react';
+import { Search, Plus, Minus, Flame, Filter, Leaf, AlertTriangle, Check, X, Sparkles } from 'lucide-react';
 
-const CATEGORY_ICON_MAP = {
-  'all': '✨',
-  'Snacks & Rolls': '🌯',
-  'Lunch Thali': '🍱',
-  'Lunch Meals': '🍱',
-  'Sandwiches & Burgers': '🥪',
-  'Pasta & Noodles': '🍝',
-  'Healthy & Salads': '🥗',
-  'Beverages & Juices': '🧃',
-  'Bakery & Sweets': '🧁',
-  'South Indian': '🥞',
-  'Wraps': '🌯'
+const CATEGORY_TILE_STYLES = {
+  'all': { icon: '✨', label: 'All', bg: '#f1f5f9', activeBg: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)', text: '#0f172a', activeText: '#ffffff' },
+  'Snacks & Rolls': { icon: '🌯', label: 'Rolls & Wraps', bg: '#fff7ed', activeBg: 'linear-gradient(135deg, #ea580c 0%, #c2410c 100%)', text: '#9a3412', activeText: '#ffffff' },
+  'Lunch Thali': { icon: '🍱', label: 'Lunch Meals', bg: '#f0fdf4', activeBg: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)', text: '#166534', activeText: '#ffffff' },
+  'Lunch Meals': { icon: '🍱', label: 'Lunch Meals', bg: '#f0fdf4', activeBg: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)', text: '#166534', activeText: '#ffffff' },
+  'Sandwiches & Burgers': { icon: '🥪', label: 'Sandwiches', bg: '#fff1f2', activeBg: 'linear-gradient(135deg, #e11d48 0%, #be123c 100%)', text: '#9f1239', activeText: '#ffffff' },
+  'Pasta & Noodles': { icon: '🍝', label: 'Pasta & Noodles', bg: '#faf5ff', activeBg: 'linear-gradient(135deg, #9333ea 0%, #7e22ce 100%)', text: '#6b21a8', activeText: '#ffffff' },
+  'Healthy & Salads': { icon: '🥗', label: 'Fresh Salads', bg: '#ecfdf5', activeBg: 'linear-gradient(135deg, #059669 0%, #047857 100%)', text: '#065f46', activeText: '#ffffff' },
+  'Beverages & Juices': { icon: '🧃', label: 'Juices & Milk', bg: '#eff6ff', activeBg: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)', text: '#1e40af', activeText: '#ffffff' },
+  'Bakery & Sweets': { icon: '🧁', label: 'Bakery', bg: '#fdf2f8', activeBg: 'linear-gradient(135deg, #db2777 0%, #be185d 100%)', text: '#9d174d', activeText: '#ffffff' }
 };
 
 const ALLERGEN_MAP = {
@@ -70,12 +68,8 @@ export default function MenuCatalog({
       if (item.category) cats.add(item.category);
     });
     return [
-      { id: 'all', label: 'All Dishes', icon: '✨' },
-      ...Array.from(cats).map((cat) => ({
-        id: cat,
-        label: cat,
-        icon: CATEGORY_ICON_MAP[cat] || '🍽️'
-      }))
+      'all',
+      ...Array.from(cats)
     ];
   }, [menuItems]);
 
@@ -111,45 +105,53 @@ export default function MenuCatalog({
 
   return (
     <div>
-      {/* 1. Category Carousel */}
-      <div
-        style={{
-          display: 'flex',
-          gap: '0.45rem',
-          overflowX: 'auto',
-          paddingBottom: '0.5rem',
-          marginBottom: '0.65rem',
-          scrollbarWidth: 'none'
-        }}
-      >
-        {availableCategories.map((cat) => {
-          const isSelected = selectedCategory === cat.id;
-          return (
-            <button
-              key={cat.id}
-              onClick={() => setSelectedCategory(cat.id)}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px',
-                padding: '0.4rem 0.8rem',
-                borderRadius: 'var(--radius-full)',
-                border: isSelected ? '1.5px solid var(--primary)' : '1px solid #e2e8f0',
-                background: isSelected ? 'var(--primary)' : '#ffffff',
-                color: isSelected ? '#ffffff' : 'var(--text-main)',
-                fontWeight: isSelected ? 800 : 600,
-                fontSize: '0.74rem',
-                cursor: 'pointer',
-                flexShrink: 0,
-                boxShadow: isSelected ? '0 2px 8px rgba(37,99,235,0.2)' : 'none',
-                transition: 'all 0.15s ease'
-              }}
-            >
-              <span>{cat.icon}</span>
-              <span>{cat.label}</span>
-            </button>
-          );
-        })}
+      {/* 1. Appetizing Category Carousel (Visual Food Storytelling) */}
+      <div style={{ marginBottom: '0.85rem' }}>
+        <div
+          style={{
+            display: 'flex',
+            gap: '0.55rem',
+            overflowX: 'auto',
+            paddingBottom: '4px',
+            scrollbarWidth: 'none'
+          }}
+        >
+          {availableCategories.map((catKey) => {
+            const isSelected = selectedCategory === catKey;
+            const style = CATEGORY_TILE_STYLES[catKey] || {
+              icon: '🍽️',
+              label: catKey,
+              bg: '#f8fafc',
+              activeBg: 'var(--primary)',
+              text: 'var(--text-main)',
+              activeText: '#ffffff'
+            };
+
+            return (
+              <div
+                key={catKey}
+                onClick={() => setSelectedCategory(catKey)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '6px 12px',
+                  borderRadius: '12px',
+                  background: isSelected ? style.activeBg : style.bg,
+                  color: isSelected ? style.activeText : style.text,
+                  boxShadow: isSelected ? '0 4px 12px rgba(0,0,0,0.15)' : 'none',
+                  cursor: 'pointer',
+                  flexShrink: 0,
+                  transition: 'all 0.15s ease',
+                  transform: isSelected ? 'scale(1.02)' : 'none'
+                }}
+              >
+                <span style={{ fontSize: '1.1rem' }}>{style.icon}</span>
+                <span style={{ fontSize: '0.78rem', fontWeight: 800 }}>{style.label}</span>
+              </div>
+            );
+          })}
+        </div>
       </div>
 
       {/* 2. Quick Search & Dietary / Safe Filters */}
@@ -170,13 +172,13 @@ export default function MenuCatalog({
           />
           <input
             type="text"
-            placeholder={`Search dishes...`}
+            placeholder={`Search dishes for ${childName}...`}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             style={{
               width: '100%',
-              padding: '0.45rem 0.6rem 0.45rem 30px',
-              borderRadius: 'var(--radius-full)',
+              padding: '0.5rem 0.6rem 0.5rem 30px',
+              borderRadius: 'var(--radius-md)',
               border: '1px solid #cbd5e1',
               background: '#ffffff',
               fontSize: '0.78rem',
@@ -186,16 +188,16 @@ export default function MenuCatalog({
           />
         </div>
 
-        {/* 100% Safe Filter for Child (If child has allergies) */}
+        {/* Safe Filter */}
         {childAllergies.length > 0 && (
           <button
             onClick={() => setIsSafeOnly(!isSafeOnly)}
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '4px',
-              padding: '0.42rem 0.65rem',
-              borderRadius: 'var(--radius-full)',
+              gap: '3px',
+              padding: '0.45rem 0.65rem',
+              borderRadius: 'var(--radius-md)',
               border: isSafeOnly ? '1.5px solid #059669' : '1px solid #cbd5e1',
               background: isSafeOnly ? '#ecfdf5' : '#ffffff',
               color: isSafeOnly ? '#065f46' : 'var(--text-main)',
@@ -210,15 +212,15 @@ export default function MenuCatalog({
           </button>
         )}
 
-        {/* Veg-Only Toggle Pill */}
+        {/* Veg-Only Filter */}
         <button
           onClick={() => setIsVegOnly(!isVegOnly)}
           style={{
             display: 'flex',
             alignItems: 'center',
             gap: '4px',
-            padding: '0.42rem 0.65rem',
-            borderRadius: 'var(--radius-full)',
+            padding: '0.45rem 0.65rem',
+            borderRadius: 'var(--radius-md)',
             border: isVegOnly ? '1.5px solid #16a34a' : '1px solid #cbd5e1',
             background: isVegOnly ? '#ecfdf5' : '#ffffff',
             color: isVegOnly ? '#15803d' : 'var(--text-main)',
@@ -245,7 +247,7 @@ export default function MenuCatalog({
         </button>
       </div>
 
-      {/* 3. Clean Food Dish Cards */}
+      {/* 3. Appetizing Food Dish Cards */}
       {filteredItems.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '3rem 1rem', background: '#ffffff', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-color)' }}>
           <div style={{ fontSize: '2rem', marginBottom: '0.4rem' }}>🔍</div>
@@ -330,7 +332,7 @@ export default function MenuCatalog({
                     {item.description}
                   </p>
 
-                  {/* Clean Allergen Micro-Chips (Integrated Conflict Alert) */}
+                  {/* Clean Allergen Micro-Chips */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: '3px', flexWrap: 'wrap' }}>
                     {rawAllergens.length > 0 ? (
                       rawAllergens.map((alg) => {
