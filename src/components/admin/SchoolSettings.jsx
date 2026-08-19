@@ -683,34 +683,75 @@ export default function SchoolSettings({
                   </div>
                 </div>
 
-                {/* Parent / Father Details (For Phone OTP Matching) */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1.2fr', gap: '0.6rem' }}>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '0.25rem' }}>
-                      Parent Mobile (+91) *
-                    </label>
-                    <input
-                      type="tel"
-                      required
-                      maxLength={10}
-                      placeholder="10-digit number"
-                      value={newStudent.fatherPhone}
-                      onChange={(e) => setNewStudent({ ...newStudent, fatherPhone: e.target.value })}
-                      style={{ width: '100%', padding: '0.55rem 0.75rem', borderRadius: '10px', border: '1.5px solid #cbd5e1', fontSize: '0.84rem', fontWeight: 800 }}
-                    />
+                {/* 👨 FATHER / PARENT 1 DETAILS */}
+                <div style={{ background: '#f8fafc', padding: '0.75rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                  <div style={{ fontSize: '0.76rem', fontWeight: 900, color: 'var(--primary)', marginBottom: '0.45rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <span>👨</span>
+                    <span>Father's Details (Primary Contact) *</span>
                   </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1.2fr', gap: '0.6rem' }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '0.25rem' }}>
+                        Father's Name *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="e.g. Rajesh Sharma"
+                        value={newStudent.fatherName}
+                        onChange={(e) => setNewStudent({ ...newStudent, fatherName: e.target.value })}
+                        style={{ width: '100%', padding: '0.5rem 0.65rem', borderRadius: '8px', border: '1.5px solid #cbd5e1', fontSize: '0.82rem', fontWeight: 700 }}
+                      />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '0.25rem' }}>
+                        Father's Mobile (+91) *
+                      </label>
+                      <input
+                        type="tel"
+                        required
+                        maxLength={10}
+                        placeholder="10-digit number"
+                        value={newStudent.fatherPhone}
+                        onChange={(e) => setNewStudent({ ...newStudent, fatherPhone: e.target.value })}
+                        style={{ width: '100%', padding: '0.5rem 0.65rem', borderRadius: '8px', border: '1.5px solid #cbd5e1', fontSize: '0.82rem', fontWeight: 800 }}
+                      />
+                    </div>
+                  </div>
+                </div>
 
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '0.25rem' }}>
-                      Parent Name
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Rajesh Sharma"
-                      value={newStudent.fatherName}
-                      onChange={(e) => setNewStudent({ ...newStudent, fatherName: e.target.value })}
-                      style={{ width: '100%', padding: '0.55rem 0.75rem', borderRadius: '10px', border: '1.5px solid #cbd5e1', fontSize: '0.84rem', fontWeight: 700 }}
-                    />
+                {/* 👩 MOTHER / PARENT 2 DETAILS */}
+                <div style={{ background: '#f8fafc', padding: '0.75rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                  <div style={{ fontSize: '0.76rem', fontWeight: 900, color: '#db2777', marginBottom: '0.45rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <span>👩</span>
+                    <span>Mother's Details (Co-Parent / Login)</span>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1.2fr', gap: '0.6rem' }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '0.25rem' }}>
+                        Mother's Name
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Pooja Sharma"
+                        value={newStudent.motherName}
+                        onChange={(e) => setNewStudent({ ...newStudent, motherName: e.target.value })}
+                        style={{ width: '100%', padding: '0.5rem 0.65rem', borderRadius: '8px', border: '1.5px solid #cbd5e1', fontSize: '0.82rem', fontWeight: 700 }}
+                      />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '0.25rem' }}>
+                        Mother's Mobile (+91)
+                      </label>
+                      <input
+                        type="tel"
+                        maxLength={10}
+                        placeholder="10-digit number"
+                        value={newStudent.motherPhone}
+                        onChange={(e) => setNewStudent({ ...newStudent, motherPhone: e.target.value })}
+                        style={{ width: '100%', padding: '0.5rem 0.65rem', borderRadius: '8px', border: '1.5px solid #cbd5e1', fontSize: '0.82rem', fontWeight: 800 }}
+                      />
+                    </div>
                   </div>
                 </div>
 
