@@ -80,21 +80,23 @@ export default function SchoolSettings({
           <button
             onClick={() => { window.location.hash = '#/order'; }}
             style={{
-              background: 'rgba(255,255,255,0.15)',
-              color: '#ffffff',
-              border: 'none',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '5px 12px',
               borderRadius: 'var(--radius-full)',
-              padding: '4px 10px',
-              fontSize: '0.75rem',
+              background: 'rgba(255,255,255,0.15)',
+              border: '1px solid rgba(255,255,255,0.25)',
+              color: '#ffffff',
+              fontSize: '0.76rem',
               fontWeight: 800,
               cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px'
+              backdropFilter: 'blur(8px)',
+              transition: 'all 0.15s ease'
             }}
           >
             <ArrowLeft size={14} />
-            <span>Parent App</span>
+            <span>Back to Menu</span>
           </button>
 
           <div style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 700 }}>

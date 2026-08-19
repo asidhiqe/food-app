@@ -64,10 +64,23 @@ export default function OrderTracker({ orders, onBackToMenu, currency, activeSch
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
         <button
           onClick={onBackToMenu}
-          className="btn-secondary"
-          style={{ padding: '0.45rem 0.85rem', fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '4px' }}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            padding: '5px 12px',
+            borderRadius: 'var(--radius-full)',
+            background: '#ffffff',
+            border: '1px solid #cbd5e1',
+            color: 'var(--text-main)',
+            fontSize: '0.78rem',
+            fontWeight: 800,
+            cursor: 'pointer',
+            boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+            transition: 'all 0.15s ease'
+          }}
         >
-          <ArrowLeft size={16} />
+          <ArrowLeft size={14} />
           <span>Back to Menu</span>
         </button>
 
