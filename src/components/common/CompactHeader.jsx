@@ -197,33 +197,45 @@ export default function CompactHeader({
           </div>
         </div>
 
-        {/* ROW 2: Prominent Date & Delivery Time Slot Banner (Below Masthead) */}
-        <div
-          onClick={onOpenDateSlotSheet}
-          style={{
-            padding: '0.55rem 0.95rem',
-            background: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)',
-            borderBottom: '1px solid #bbf7d0',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            cursor: 'pointer'
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <div style={{ width: '22px', height: '22px', borderRadius: '50%', background: '#16a34a', color: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Clock size={12} strokeWidth={2.5} />
-            </div>
-            <div style={{ fontSize: '0.78rem', color: '#14532d', fontWeight: 700 }}>
-              Ordering for: <strong style={{ fontWeight: 900, color: '#166534' }}>{dateFormatted} • {selectedSlot?.name || 'Meal Break'} ({selectedSlot?.startTime || '10:30 AM'})</strong>
-            </div>
-          </div>
+        {/* ROW 2: Prominent Date & Delivery Time Slot Banner (Guaranteed Single 1-Line) */}
+        {(() => {
+          const shortSlot = (selectedSlot?.name || 'Meal Break')
+            .replace(/\s*\/\s*Short Break/i, '')
+            .replace(/Morning Snack \/\s*/i, '');
 
-          <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#15803d', display: 'flex', alignItems: 'center', gap: '2px', background: '#ffffff', padding: '2px 8px', borderRadius: 'var(--radius-full)', border: '1px solid #86efac' }}>
-            <span>Change</span>
-            <ChevronDown size={11} />
-          </span>
-        </div>
+          return (
+            <div
+              onClick={onOpenDateSlotSheet}
+              style={{
+                padding: '0.45rem 0.95rem',
+                background: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)',
+                borderBottom: '1px solid #bbf7d0',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: '8px',
+                cursor: 'pointer'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, overflow: 'hidden' }}>
+                <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: '#16a34a', color: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <Clock size={11} strokeWidth={2.5} />
+                </div>
+
+                <div style={{ fontSize: '0.76rem', color: '#166534', fontWeight: 800, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  <span>{dateFormatted}</span>
+                  <span style={{ color: '#86efac', margin: '0 5px' }}>•</span>
+                  <strong style={{ color: '#14532d', fontWeight: 900 }}>{shortSlot} ({selectedSlot?.startTime || '10:30 AM'})</strong>
+                </div>
+              </div>
+
+              <span style={{ fontSize: '0.68rem', fontWeight: 800, color: '#15803d', display: 'flex', alignItems: 'center', gap: '2px', background: '#ffffff', padding: '2px 7px', borderRadius: 'var(--radius-full)', border: '1px solid #86efac', flexShrink: 0 }}>
+                <span>Change</span>
+                <ChevronDown size={10} />
+              </span>
+            </div>
+          );
+        })()}
       </header>
 
       {/* Switch School Modal */}
