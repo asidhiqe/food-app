@@ -120,6 +120,47 @@ export const StorageService = {
     return students.find((s) => s.id.toLowerCase() === cleanId);
   },
 
+  addStudent(schoolId, studentData) {
+    const students = this.getStudents(schoolId);
+    const newStudent = {
+      id: studentData.id || `BIS-${Date.now().toString().slice(-4)}`,
+      studentName: studentData.studentName.trim(),
+      class: studentData.class || '4',
+      section: studentData.section || 'A',
+      fatherName: studentData.fatherName || 'Parent',
+      fatherPhone: studentData.fatherPhone || studentData.parentPhone || '',
+      motherName: studentData.motherName || '',
+      motherPhone: studentData.motherPhone || '',
+      allergies: studentData.allergies || [],
+      dietary: studentData.dietary || 'Veg',
+      healthNotes: studentData.healthNotes || '',
+      gender: studentData.gender || 'boy',
+      deskLocation: studentData.deskLocation || `Room ${studentData.class || '4'}${studentData.section || 'A'}`
+    };
+
+    // Prevent duplicate ID by updating or appending
+    const existingIndex = students.findIndex((s) => s.id === newStudent.id);
+    let updated;
+    if (existingIndex !== -1) {
+      students[existingIndex] = newStudent;
+      updated = [...students];
+    } else {
+      updated = [newStudent, ...students];
+    }
+
+    localStorage.setItem(KEYS.STUDENTS_PREFIX + schoolId, JSON.stringify(updated));
+    this.notify('STUDENT_ADDED', { schoolId, student: newStudent });
+    return newStudent;
+  },
+
+  deleteStudent(schoolId, studentId) {
+    const students = this.getStudents(schoolId);
+    const updated = students.filter((s) => s.id !== studentId);
+    localStorage.setItem(KEYS.STUDENTS_PREFIX + schoolId, JSON.stringify(updated));
+    this.notify('STUDENT_DELETED', { schoolId, studentId });
+    return updated;
+  },
+
   importStudents(schoolId, newStudents) {
     const existing = this.getStudents(schoolId);
     const map = new Map();
