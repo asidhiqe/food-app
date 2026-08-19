@@ -114,16 +114,27 @@ export default function ParentAuthModal({
       <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '440px', padding: '1.75rem' }}>
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-            <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: 'var(--primary-light)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Lock size={20} />
-            </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <img
+              src="./bis-hapur-responsive-logo.png"
+              alt="School Logo"
+              style={{
+                width: '42px',
+                height: '42px',
+                borderRadius: '12px',
+                objectFit: 'contain',
+                background: '#ffffff',
+                border: '1.5px solid #e2e8f0',
+                padding: '3px',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.06)'
+              }}
+            />
             <div>
-              <h2 style={{ fontSize: '1.15rem', fontWeight: 800 }}>Parent Verification</h2>
-              <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Secure Zero-Trust Student Access</p>
+              <h2 style={{ fontSize: '1.12rem', fontWeight: 900, color: 'var(--text-main)' }}>Parent Verification</h2>
+              <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{activeSchool?.name || 'School Student Portal'}</p>
             </div>
           </div>
-          <button onClick={handleClose} style={{ padding: '0.4rem', borderRadius: '50%', background: '#f1f5f9' }}>
+          <button onClick={handleClose} style={{ padding: '0.4rem', borderRadius: '50%', background: '#f1f5f9', border: 'none', cursor: 'pointer' }}>
             <X size={18} />
           </button>
         </div>

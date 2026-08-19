@@ -158,24 +158,21 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
             animation: 'fadeIn 0.2s ease'
           }}
         >
-          <div
+          <img
+            src="./bis-hapur-responsive-logo.png"
+            alt="School Logo"
             style={{
               width: '72px',
               height: '72px',
-              borderRadius: '24px',
-              background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
-              color: '#ffffff',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '2.2rem',
-              boxShadow: '0 10px 30px rgba(37,99,235,0.4)',
+              borderRadius: '20px',
+              objectFit: 'contain',
+              background: '#ffffff',
+              padding: '6px',
+              boxShadow: '0 10px 30px rgba(0,0,0,0.35)',
               marginBottom: '1.25rem',
               animation: 'fabBounce 1s infinite alternate cubic-bezier(0.34, 1.56, 0.64, 1)'
             }}
-          >
-            🍱
-          </div>
+          />
 
           <h3 style={{ color: '#ffffff', fontSize: '1.15rem', fontWeight: 900, marginBottom: '0.4rem' }}>
             {loadingText}
@@ -211,23 +208,22 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
       >
         {/* School Emblem & Header */}
         <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-          <div
+          <img
+            src="./bis-hapur-responsive-logo.png"
+            alt="School Logo"
             style={{
-              width: '56px',
-              height: '56px',
-              borderRadius: '16px',
-              background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
-              color: '#ffffff',
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '1.8rem',
-              boxShadow: '0 8px 24px rgba(37,99,235,0.25)',
-              marginBottom: '0.75rem'
+              width: '64px',
+              height: '64px',
+              borderRadius: '18px',
+              objectFit: 'contain',
+              background: '#ffffff',
+              border: '1.5px solid #e2e8f0',
+              padding: '4px',
+              boxShadow: '0 6px 20px rgba(0,0,0,0.06)',
+              marginBottom: '0.75rem',
+              display: 'inline-block'
             }}
-          >
-            🏫
-          </div>
+          />
 
           <h2 style={{ fontSize: '1.35rem', fontWeight: 900, color: 'var(--text-main)', lineHeight: 1.25 }}>
             {activeSchool?.name || 'School Food Court'}

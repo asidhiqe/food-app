@@ -62,25 +62,23 @@ export default function CompactHeader({
               background: '#f8fafc',
               border: '1px solid #e2e8f0',
               borderRadius: 'var(--radius-full)',
-              padding: '4px 10px 4px 6px',
+              padding: '3px 10px 3px 4px',
               cursor: 'pointer'
             }}
           >
-            <div
+            <img
+              src="./bis-hapur-responsive-logo.png"
+              alt="School Logo"
               style={{
                 width: '24px',
                 height: '24px',
                 borderRadius: '50%',
-                background: 'var(--primary)',
-                color: 'white',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '0.8rem'
+                objectFit: 'contain',
+                background: '#ffffff',
+                border: '1px solid #e2e8f0',
+                padding: '1px'
               }}
-            >
-              🏫
-            </div>
+            />
             <div style={{ textAlign: 'left' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
                 <span style={{ fontSize: '0.82rem', fontWeight: 900, color: 'var(--text-main)' }}>

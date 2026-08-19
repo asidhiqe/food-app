@@ -95,8 +95,13 @@ export default function KitchenDashboard({ orders, activeSchool, onRefresh }) {
             <span>Back to Menu</span>
           </button>
 
-          <div style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 700 }}>
-            🍱 {activeSchool?.canteenName}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.72rem', color: '#cbd5e1', fontWeight: 700 }}>
+            <img
+              src="./bis-hapur-responsive-logo.png"
+              alt="Logo"
+              style={{ width: '18px', height: '18px', borderRadius: '50%', objectFit: 'contain', background: '#ffffff', padding: '1px' }}
+            />
+            <span>{activeSchool?.canteenName}</span>
           </div>
         </div>
 
