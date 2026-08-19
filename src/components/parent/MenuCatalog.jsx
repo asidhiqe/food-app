@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Plus, Minus, Flame, ShieldAlert, Sparkles, Filter, Leaf, Heart, Star, AlertTriangle, Check, X } from 'lucide-react';
+import { Search, Plus, Minus, Flame, Filter, Leaf, AlertTriangle, Check, X } from 'lucide-react';
 
 const CATEGORY_ICON_MAP = {
   'all': '✨',
@@ -50,7 +50,7 @@ export default function MenuCatalog({
   const [isSafeOnly, setIsSafeOnly] = useState(false);
   const [pendingAllergyItem, setPendingAllergyItem] = useState(null);
 
-  const childName = activeChild ? activeChild.studentName.split(' ')[0] : 'Your child';
+  const childName = activeChild ? activeChild.studentName.split(' ')[0] : 'Child';
   const childAllergies = (activeChild?.allergies || []).map((a) => a.toLowerCase().trim());
 
   // Check if an item conflicts with active child's allergies
@@ -115,12 +115,11 @@ export default function MenuCatalog({
       <div
         style={{
           display: 'flex',
-          gap: '0.5rem',
+          gap: '0.45rem',
           overflowX: 'auto',
-          paddingBottom: '0.65rem',
-          marginBottom: '0.75rem',
-          scrollbarWidth: 'none',
-          msOverflowStyle: 'none'
+          paddingBottom: '0.5rem',
+          marginBottom: '0.65rem',
+          scrollbarWidth: 'none'
         }}
       >
         {availableCategories.map((cat) => {
@@ -132,21 +131,18 @@ export default function MenuCatalog({
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '5px',
-                padding: '0.45rem 0.9rem',
+                gap: '4px',
+                padding: '0.4rem 0.8rem',
                 borderRadius: 'var(--radius-full)',
                 border: isSelected ? '1.5px solid var(--primary)' : '1px solid #e2e8f0',
-                background: isSelected
-                  ? 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)'
-                  : '#ffffff',
+                background: isSelected ? 'var(--primary)' : '#ffffff',
                 color: isSelected ? '#ffffff' : 'var(--text-main)',
-                fontWeight: isSelected ? 900 : 700,
-                fontSize: '0.76rem',
+                fontWeight: isSelected ? 800 : 600,
+                fontSize: '0.74rem',
                 cursor: 'pointer',
                 flexShrink: 0,
-                boxShadow: isSelected ? '0 4px 12px rgba(37,99,235,0.25)' : '0 1px 3px rgba(0,0,0,0.03)',
-                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                transform: isSelected ? 'translateY(-1px)' : 'none'
+                boxShadow: isSelected ? '0 2px 8px rgba(37,99,235,0.2)' : 'none',
+                transition: 'all 0.15s ease'
               }}
             >
               <span>{cat.icon}</span>
@@ -161,30 +157,29 @@ export default function MenuCatalog({
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '0.5rem',
-          marginBottom: '1rem',
-          flexWrap: 'wrap'
+          gap: '0.45rem',
+          marginBottom: '0.85rem'
         }}
       >
         {/* Search Input */}
-        <div style={{ position: 'relative', flex: 1, minWidth: '160px' }}>
+        <div style={{ position: 'relative', flex: 1 }}>
           <Search
-            size={16}
-            color="#64748b"
-            style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }}
+            size={14}
+            color="#94a3b8"
+            style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)' }}
           />
           <input
             type="text"
-            placeholder={`Search dishes for ${childName}...`}
+            placeholder={`Search dishes...`}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             style={{
               width: '100%',
-              padding: '0.55rem 0.75rem 0.55rem 36px',
+              padding: '0.45rem 0.6rem 0.45rem 30px',
               borderRadius: 'var(--radius-full)',
               border: '1px solid #cbd5e1',
               background: '#ffffff',
-              fontSize: '0.82rem',
+              fontSize: '0.78rem',
               fontWeight: 600,
               outline: 'none'
             }}
@@ -198,20 +193,20 @@ export default function MenuCatalog({
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '5px',
-              padding: '0.45rem 0.75rem',
+              gap: '4px',
+              padding: '0.42rem 0.65rem',
               borderRadius: 'var(--radius-full)',
               border: isSafeOnly ? '1.5px solid #059669' : '1px solid #cbd5e1',
               background: isSafeOnly ? '#ecfdf5' : '#ffffff',
               color: isSafeOnly ? '#065f46' : 'var(--text-main)',
               fontWeight: 800,
-              fontSize: '0.74rem',
+              fontSize: '0.72rem',
               cursor: 'pointer',
               flexShrink: 0
             }}
           >
             <span>🛡️</span>
-            <span>Safe for {childName}</span>
+            <span>Safe Only</span>
           </button>
         )}
 
@@ -221,22 +216,22 @@ export default function MenuCatalog({
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '5px',
-            padding: '0.45rem 0.75rem',
+            gap: '4px',
+            padding: '0.42rem 0.65rem',
             borderRadius: 'var(--radius-full)',
             border: isVegOnly ? '1.5px solid #16a34a' : '1px solid #cbd5e1',
             background: isVegOnly ? '#ecfdf5' : '#ffffff',
             color: isVegOnly ? '#15803d' : 'var(--text-main)',
             fontWeight: 800,
-            fontSize: '0.74rem',
+            fontSize: '0.72rem',
             cursor: 'pointer',
             flexShrink: 0
           }}
         >
           <div
             style={{
-              width: '13px',
-              height: '13px',
+              width: '10px',
+              height: '10px',
               border: '1.5px solid #16a34a',
               display: 'flex',
               alignItems: 'center',
@@ -244,42 +239,21 @@ export default function MenuCatalog({
               borderRadius: '2px'
             }}
           >
-            <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#16a34a' }} />
+            <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#16a34a' }} />
           </div>
           <span>VEG</span>
         </button>
       </div>
 
-      {/* 3. Elevated Food Dish Cards */}
+      {/* 3. Clean Food Dish Cards */}
       {filteredItems.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '3.5rem 1rem', background: '#ffffff', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-sm)' }}>
-          <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>🔍</div>
-          <h4 style={{ fontSize: '1rem', fontWeight: 800 }}>No matching dishes found</h4>
-          <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Try resetting the search or category filters</p>
-          <button
-            onClick={() => {
-              setSearchQuery('');
-              setSelectedCategory('all');
-              setIsVegOnly(false);
-              setIsSafeOnly(false);
-            }}
-            style={{
-              marginTop: '0.75rem',
-              background: 'var(--primary-light)',
-              color: 'var(--primary)',
-              border: 'none',
-              borderRadius: 'var(--radius-full)',
-              padding: '0.45rem 1rem',
-              fontSize: '0.78rem',
-              fontWeight: 800,
-              cursor: 'pointer'
-            }}
-          >
-            Reset Filters
-          </button>
+        <div style={{ textAlign: 'center', padding: '3rem 1rem', background: '#ffffff', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-color)' }}>
+          <div style={{ fontSize: '2rem', marginBottom: '0.4rem' }}>🔍</div>
+          <h4 style={{ fontSize: '0.92rem', fontWeight: 800 }}>No matching dishes found</h4>
+          <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Try resetting the search or category filters</p>
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.95rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', paddingBottom: '5rem' }}>
           {filteredItems.map((item) => {
             const qty = getItemQuantity(item.id);
             const foodImg = item.image || item.imageUrl || FALLBACK_IMAGES[item.category] || FALLBACK_IMAGES['Snacks & Rolls'];
@@ -293,71 +267,62 @@ export default function MenuCatalog({
                   background: '#ffffff',
                   borderRadius: 'var(--radius-lg)',
                   border: conflicts ? '1.5px solid #fecaca' : '1px solid rgba(226, 232, 240, 0.9)',
-                  padding: '1rem',
+                  padding: '0.85rem',
                   display: 'flex',
-                  gap: '1rem',
-                  alignItems: 'flex-start',
+                  gap: '0.85rem',
+                  alignItems: 'center',
                   justifyContent: 'space-between',
-                  boxShadow: 'var(--shadow-card)',
-                  transition: 'transform 0.2s ease, box-shadow 0.2s ease'
+                  boxShadow: '0 1px 4px rgba(0,0,0,0.04)'
                 }}
               >
-                {/* Left: Info & Details (65% width) */}
+                {/* Left: Info */}
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  {/* Veg / Non-Veg Indicator & Badges */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px', flexWrap: 'wrap' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '2px' }}>
                     <div
                       style={{
-                        width: '14px',
-                        height: '14px',
+                        width: '12px',
+                        height: '12px',
                         border: `1.5px solid ${item.isVeg ? '#16a34a' : '#dc2626'}`,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        borderRadius: '3px',
+                        borderRadius: '2px',
                         flexShrink: 0
                       }}
                     >
                       <div
                         style={{
-                          width: '6px',
-                          height: '6px',
+                          width: '4px',
+                          height: '4px',
                           borderRadius: '50%',
                           background: item.isVeg ? '#16a34a' : '#dc2626'
                         }}
                       />
                     </div>
 
-                    {item.calories && (
-                      <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#b45309', background: '#fef3c7', padding: '1px 6px', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '2px' }}>
-                        <Flame size={11} />
-                        {item.calories} kcal
-                      </span>
-                    )}
-
-                    <span style={{ fontSize: '0.68rem', color: '#64748b', fontWeight: 700, background: '#f1f5f9', padding: '1px 6px', borderRadius: '4px' }}>
+                    <span style={{ fontSize: '0.66rem', color: '#64748b', fontWeight: 700 }}>
                       {item.category}
                     </span>
                   </div>
 
                   {/* Title & Price */}
-                  <div style={{ fontSize: '0.98rem', fontWeight: 900, color: '#0f172a', lineHeight: 1.25, marginBottom: '3px' }}>
+                  <div style={{ fontSize: '0.92rem', fontWeight: 900, color: '#0f172a', lineHeight: 1.25 }}>
                     {item.name}
                   </div>
 
-                  <div style={{ fontSize: '0.95rem', fontWeight: 900, color: '#1e293b', marginBottom: '5px' }}>
+                  <div style={{ fontSize: '0.88rem', fontWeight: 900, color: '#1e293b', marginTop: '1px' }}>
                     {currency} {item.price}
                   </div>
 
-                  {/* Description */}
+                  {/* Short Description */}
                   <p
                     style={{
-                      fontSize: '0.76rem',
+                      fontSize: '0.72rem',
                       color: '#64748b',
-                      lineHeight: 1.4,
-                      margin: 0,
+                      lineHeight: 1.35,
+                      margin: '2px 0 4px 0',
                       display: '-webkit-box',
-                      WebkitLineClamp: 2,
+                      WebkitLineClamp: 1,
                       WebkitBoxOrient: 'vertical',
                       overflow: 'hidden'
                     }}
@@ -365,75 +330,67 @@ export default function MenuCatalog({
                     {item.description}
                   </p>
 
-                  {/* Visual Allergen Micro-Chips Bar */}
-                  <div style={{ marginTop: '6px', display: 'flex', alignItems: 'center', gap: '4px', flexWrap: 'wrap' }}>
+                  {/* Clean Allergen Micro-Chips (Integrated Conflict Alert) */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '3px', flexWrap: 'wrap' }}>
                     {rawAllergens.length > 0 ? (
                       rawAllergens.map((alg) => {
                         const key = alg.toLowerCase().trim();
-                        const isChildSensitive = childAllergies.includes(key);
+                        const isConflict = childAllergies.includes(key);
                         const info = ALLERGEN_MAP[key] || { label: alg, icon: '⚠️', bg: '#f8fafc', border: '#e2e8f0', text: '#64748b' };
                         return (
                           <span
                             key={alg}
                             style={{
-                              fontSize: '0.68rem',
+                              fontSize: '0.64rem',
                               fontWeight: 800,
-                              color: isChildSensitive ? '#b91c1c' : info.text,
-                              background: isChildSensitive ? '#fef2f2' : info.bg,
-                              border: `1px solid ${isChildSensitive ? '#fca5a5' : info.border}`,
-                              padding: '2px 7px',
+                              color: isConflict ? '#b91c1c' : info.text,
+                              background: isConflict ? '#fef2f2' : info.bg,
+                              border: `1px solid ${isConflict ? '#fca5a5' : info.border}`,
+                              padding: '1px 5px',
                               borderRadius: 'var(--radius-full)',
                               display: 'inline-flex',
                               alignItems: 'center',
-                              gap: '3px'
+                              gap: '2px'
                             }}
-                            title={`Contains ${info.label}`}
                           >
-                            <span style={{ fontSize: '0.75rem' }}>{info.icon}</span>
+                            <span>{info.icon}</span>
                             <span>{info.label}</span>
-                            {isChildSensitive && <span style={{ fontSize: '0.65rem' }}>⚠️</span>}
+                            {isConflict && <span>⚠️</span>}
                           </span>
                         );
                       })
                     ) : (
                       <span
                         style={{
-                          fontSize: '0.66rem',
+                          fontSize: '0.62rem',
                           fontWeight: 800,
                           color: '#059669',
                           background: '#ecfdf5',
                           border: '1px solid #a7f3d0',
-                          padding: '1px 6px',
+                          padding: '1px 5px',
                           borderRadius: 'var(--radius-full)',
                           display: 'inline-flex',
                           alignItems: 'center',
-                          gap: '3px'
+                          gap: '2px'
                         }}
                       >
                         <span>🛡️</span>
-                        <span>Nut & Allergen Safe</span>
-                      </span>
-                    )}
-
-                    {conflicts && (
-                      <span style={{ fontSize: '0.68rem', fontWeight: 800, color: '#dc2626', background: '#fee2e2', padding: '2px 6px', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '3px' }}>
-                        ⚠️ Sensitivity for {childName}
+                        <span>Safe</span>
                       </span>
                     )}
                   </div>
                 </div>
 
-                {/* Right: Crisp Image + Floating Stepper */}
-                <div style={{ position: 'relative', width: '105px', flexShrink: 0, textAlign: 'center' }}>
+                {/* Right: Image + Stepper Button */}
+                <div style={{ position: 'relative', width: '92px', flexShrink: 0, textAlign: 'center' }}>
                   <div
                     style={{
-                      width: '105px',
-                      height: '105px',
+                      width: '92px',
+                      height: '92px',
                       borderRadius: 'var(--radius-md)',
                       overflow: 'hidden',
                       background: '#f1f5f9',
-                      boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-                      border: '1px solid #f1f5f9'
+                      boxShadow: '0 1px 4px rgba(0,0,0,0.06)'
                     }}
                   >
                     <img
@@ -455,10 +412,10 @@ export default function MenuCatalog({
                   <div
                     style={{
                       position: 'absolute',
-                      bottom: '-8px',
+                      bottom: '-7px',
                       left: '50%',
                       transform: 'translateX(-50%)',
-                      width: '88px'
+                      width: '80px'
                     }}
                   >
                     {qty === 0 ? (
@@ -470,19 +427,18 @@ export default function MenuCatalog({
                           color: conflicts ? '#dc2626' : '#16a34a',
                           border: `1.5px solid ${conflicts ? '#dc2626' : '#16a34a'}`,
                           borderRadius: 'var(--radius-full)',
-                          padding: '4px 0',
+                          padding: '3px 0',
                           fontWeight: 900,
-                          fontSize: '0.82rem',
+                          fontSize: '0.78rem',
                           cursor: 'pointer',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          gap: '3px',
-                          boxShadow: 'var(--shadow-btn-green)',
-                          transition: 'all 0.15s ease'
+                          gap: '2px',
+                          boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
                         }}
                       >
-                        <Plus size={14} />
+                        <Plus size={13} />
                         <span>ADD</span>
                       </button>
                     ) : (
@@ -491,27 +447,27 @@ export default function MenuCatalog({
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'space-between',
-                          background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+                          background: '#16a34a',
                           color: '#ffffff',
                           borderRadius: 'var(--radius-full)',
-                          padding: '3px 8px',
+                          padding: '3px 6px',
                           fontWeight: 900,
-                          fontSize: '0.82rem',
-                          boxShadow: 'var(--shadow-btn-green)'
+                          fontSize: '0.78rem',
+                          boxShadow: '0 2px 6px rgba(22,163,74,0.3)'
                         }}
                       >
                         <button
                           onClick={() => onRemoveFromCart(item.id)}
-                          style={{ background: 'transparent', border: 'none', color: '#ffffff', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '2px' }}
+                          style={{ background: 'transparent', border: 'none', color: '#ffffff', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '1px' }}
                         >
-                          <Minus size={13} />
+                          <Minus size={12} />
                         </button>
-                        <span style={{ fontSize: '0.82rem', fontWeight: 900 }}>{qty}</span>
+                        <span style={{ fontSize: '0.78rem', fontWeight: 900 }}>{qty}</span>
                         <button
                           onClick={() => onAddToCart(item)}
-                          style={{ background: 'transparent', border: 'none', color: '#ffffff', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '2px' }}
+                          style={{ background: 'transparent', border: 'none', color: '#ffffff', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '1px' }}
                         >
-                          <Plus size={13} />
+                          <Plus size={12} />
                         </button>
                       </div>
                     )}
@@ -526,32 +482,23 @@ export default function MenuCatalog({
       {/* Allergy Safety Confirmation Alert Modal */}
       {pendingAllergyItem && (
         <div className="modal-overlay" onClick={() => setPendingAllergyItem(null)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '400px', padding: '1.5rem', textAlign: 'center' }}>
-            <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#fee2e2', color: '#dc2626', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.85rem' }}>
-              <AlertTriangle size={26} />
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '380px', padding: '1.25rem', textAlign: 'center' }}>
+            <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: '#fee2e2', color: '#dc2626', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.65rem' }}>
+              <AlertTriangle size={24} />
             </div>
 
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 900, marginBottom: '0.35rem' }}>
-              Allergy Safety Check for {childName}
+            <h3 style={{ fontSize: '1rem', fontWeight: 900, marginBottom: '0.3rem' }}>
+              Allergy Check for {childName}
             </h3>
 
-            <p style={{ fontSize: '0.82rem', color: '#475569', lineHeight: 1.45, marginBottom: '1.25rem' }}>
-              <strong>{pendingAllergyItem.item.name}</strong> contains <strong>{pendingAllergyItem.conflicts.join(', ')}</strong>. You previously tagged {childName} with a sensitivity to these ingredients.
+            <p style={{ fontSize: '0.78rem', color: '#475569', lineHeight: 1.4, marginBottom: '1rem' }}>
+              <strong>{pendingAllergyItem.item.name}</strong> contains <strong>{pendingAllergyItem.conflicts.join(', ')}</strong>. You tagged {childName} with this allergy.
             </p>
 
-            <div style={{ display: 'flex', gap: '0.6rem' }}>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
               <button
                 onClick={() => setPendingAllergyItem(null)}
-                style={{
-                  flex: 1,
-                  padding: '0.75rem',
-                  borderRadius: 'var(--radius-md)',
-                  border: '1px solid #cbd5e1',
-                  background: '#ffffff',
-                  fontWeight: 800,
-                  fontSize: '0.85rem',
-                  cursor: 'pointer'
-                }}
+                style={{ flex: 1, padding: '0.65rem', borderRadius: 'var(--radius-md)', border: '1px solid #cbd5e1', background: '#ffffff', fontWeight: 800, fontSize: '0.8rem', cursor: 'pointer' }}
               >
                 Cancel
               </button>
@@ -561,17 +508,7 @@ export default function MenuCatalog({
                   onAddToCart(pendingAllergyItem.item);
                   setPendingAllergyItem(null);
                 }}
-                style={{
-                  flex: 1,
-                  padding: '0.75rem',
-                  borderRadius: 'var(--radius-md)',
-                  border: 'none',
-                  background: '#dc2626',
-                  color: '#ffffff',
-                  fontWeight: 800,
-                  fontSize: '0.85rem',
-                  cursor: 'pointer'
-                }}
+                style={{ flex: 1, padding: '0.65rem', borderRadius: 'var(--radius-md)', border: 'none', background: '#dc2626', color: '#ffffff', fontWeight: 800, fontSize: '0.8rem', cursor: 'pointer' }}
               >
                 Add Anyway
               </button>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShoppingBag, Clock, User, ChevronDown, Settings, LogOut, LogIn, School, X, Calendar } from 'lucide-react';
+import { ShoppingBag, Clock, User, ChevronDown, Settings, LogOut, School, X, Calendar, Sparkles } from 'lucide-react';
 
 export default function CompactHeader({
   activeSchool,
@@ -31,342 +31,223 @@ export default function CompactHeader({
           position: 'sticky',
           top: 0,
           zIndex: 100,
-          background: '#ffffff',
-          borderBottom: '1px solid var(--border-color)',
-          padding: '0.65rem 0.85rem',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.03)'
+          background: 'rgba(255, 255, 255, 0.95)',
+          backdropFilter: 'blur(10px)',
+          borderBottom: '1px solid rgba(226, 232, 240, 0.8)',
+          padding: '0.6rem 0.85rem',
+          boxShadow: '0 1px 4px rgba(0,0,0,0.03)'
         }}
       >
-        {/* ROW 1: School Logo/Dropdown (Left) & Actions (Right) */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.45rem' }}>
-          {/* Left: School Logo & Switcher */}
-          <button
-            onClick={() => setIsSchoolModalOpen(true)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '7px',
-              background: '#f8fafc',
-              border: '1px solid #e2e8f0',
-              borderRadius: 'var(--radius-full)',
-              padding: '4px 10px 4px 5px',
-              cursor: 'pointer',
-              textAlign: 'left'
-            }}
-          >
-            <div
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.4rem' }}>
+          {/* Left: School & Slot Picker (Integrated) */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <button
+              onClick={() => setIsSchoolModalOpen(true)}
               style={{
-                width: '26px',
-                height: '26px',
-                borderRadius: '50%',
-                background: 'var(--primary)',
-                color: 'white',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '0.85rem'
+                gap: '5px',
+                background: '#f8fafc',
+                border: '1px solid #e2e8f0',
+                borderRadius: 'var(--radius-full)',
+                padding: '4px 8px 4px 6px',
+                cursor: 'pointer'
               }}
             >
-              🏫
-            </div>
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
-                <span style={{ fontSize: '0.82rem', fontWeight: 900, color: 'var(--text-main)', maxWidth: '140px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {activeSchool.name.split(' ')[0]}
-                </span>
-                <ChevronDown size={13} color="var(--primary)" />
+              <div
+                style={{
+                  width: '24px',
+                  height: '24px',
+                  borderRadius: '50%',
+                  background: 'var(--primary)',
+                  color: 'white',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '0.75rem'
+                }}
+              >
+                🏫
               </div>
-              <div style={{ fontSize: '0.62rem', color: 'var(--text-muted)', fontWeight: 700, lineHeight: 1 }}>
-                {activeSchool.canteenName}
-              </div>
-            </div>
-          </button>
+              <span style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--text-main)', maxWidth: '100px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {activeSchool?.name?.split(' ')[0] || 'School'}
+              </span>
+              <ChevronDown size={12} color="#64748b" />
+            </button>
 
-          {/* Right: Orders, Cart, Settings/Auth */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-            {/* My Orders Button */}
+            {/* Delivery Slot Pill */}
+            <button
+              onClick={onOpenDateSlotSheet}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+                background: '#eff6ff',
+                border: '1px solid #bfdbfe',
+                borderRadius: 'var(--radius-full)',
+                padding: '4px 8px',
+                cursor: 'pointer',
+                color: '#1d4ed8',
+                fontSize: '0.74rem',
+                fontWeight: 800
+              }}
+            >
+              <Clock size={12} color="#2563eb" />
+              <span style={{ maxWidth: '110px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {dateLabel}, {selectedSlot?.name?.split('/')[0] || selectedSlot?.name || 'Break'}
+              </span>
+              <ChevronDown size={11} />
+            </button>
+          </div>
+
+          {/* Right: Orders & User Profile */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+            {/* Orders Pill */}
             <button
               onClick={onViewMyOrders}
               style={{
                 background: '#ffffff',
-                border: '1px solid var(--border-color)',
+                border: '1px solid #cbd5e1',
                 borderRadius: 'var(--radius-full)',
-                padding: '0.35rem 0.6rem',
-                fontSize: '0.75rem',
-                fontWeight: 700,
+                padding: '4px 8px',
+                fontSize: '0.74rem',
+                fontWeight: 800,
                 color: 'var(--text-main)',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '4px'
               }}
-              title="My Orders"
             >
-              <Clock size={14} color="var(--primary)" />
               <span>Orders</span>
               {activeOrderCount > 0 && (
-                <span style={{ background: '#10b981', color: '#ffffff', fontSize: '0.62rem', fontWeight: 900, padding: '1px 5px', borderRadius: '10px' }}>
+                <span style={{ background: '#10b981', color: 'white', borderRadius: '10px', padding: '0 5px', fontSize: '0.65rem', fontWeight: 900 }}>
                   {activeOrderCount}
                 </span>
               )}
             </button>
 
-            {/* Tray Button */}
-            <button
-              onClick={onOpenCart}
-              style={{
-                background: 'var(--primary)',
-                color: '#ffffff',
-                border: 'none',
-                borderRadius: 'var(--radius-full)',
-                padding: '0.4rem 0.75rem',
-                fontSize: '0.78rem',
-                fontWeight: 800,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '5px',
-                boxShadow: '0 2px 8px rgba(37,99,235,0.2)'
-              }}
-            >
-              <ShoppingBag size={14} />
-              <span>Tray</span>
-              {cartCount > 0 && (
-                <span style={{ background: '#ffffff', color: 'var(--primary)', borderRadius: '10px', padding: '1px 5px', fontSize: '0.65rem', fontWeight: 900 }}>
-                  {cartCount}
-                </span>
+            {/* Settings / Parent Menu */}
+            <div style={{ position: 'relative' }}>
+              <button
+                onClick={() => setIsSettingsOpen(!isSettingsOpen)}
+                style={{
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '50%',
+                  border: '1px solid #cbd5e1',
+                  background: '#f8fafc',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  color: 'var(--text-main)'
+                }}
+              >
+                <Settings size={15} />
+              </button>
+
+              {/* Dropdown Menu */}
+              {isSettingsOpen && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '38px',
+                    right: 0,
+                    width: '210px',
+                    background: '#ffffff',
+                    borderRadius: 'var(--radius-md)',
+                    boxShadow: 'var(--shadow-lg)',
+                    border: '1px solid var(--border-color)',
+                    padding: '0.5rem',
+                    zIndex: 200,
+                    animation: 'slideUp 0.15s ease'
+                  }}
+                >
+                  {parentSession && (
+                    <div style={{ padding: '0.4rem 0.5rem', borderBottom: '1px solid #f1f5f9', marginBottom: '0.4rem' }}>
+                      <div style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--text-main)' }}>
+                        {parentSession.parentName}
+                      </div>
+                      <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
+                        +91 {parentSession.phone}
+                      </div>
+                    </div>
+                  )}
+
+                  <button
+                    onClick={() => { setIsSettingsOpen(false); window.location.hash = '#/kitchen'; }}
+                    style={{ width: '100%', padding: '0.5rem', borderRadius: '6px', border: 'none', background: 'transparent', textAlign: 'left', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+                  >
+                    <span>👨‍🍳</span>
+                    <span>Kitchen Display (KDS)</span>
+                  </button>
+
+                  <button
+                    onClick={() => { setIsSettingsOpen(false); window.location.hash = '#/admin'; }}
+                    style={{ width: '100%', padding: '0.5rem', borderRadius: '6px', border: 'none', background: 'transparent', textAlign: 'left', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+                  >
+                    <span>🏫</span>
+                    <span>School Admin Portal</span>
+                  </button>
+
+                  <div style={{ borderTop: '1px solid #f1f5f9', marginTop: '0.35rem', paddingTop: '0.35rem' }}>
+                    <button
+                      onClick={() => { setIsSettingsOpen(false); onLogoutParent(); }}
+                      style={{ width: '100%', padding: '0.45rem 0.5rem', borderRadius: '6px', border: 'none', background: '#fee2e2', color: '#b91c1c', textAlign: 'left', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+                    >
+                      <LogOut size={13} />
+                      <span>Log Out</span>
+                    </button>
+                  </div>
+                </div>
               )}
-            </button>
-
-            {/* Settings Trigger */}
-            <button
-              onClick={() => setIsSettingsOpen(true)}
-              style={{
-                background: '#f8fafc',
-                border: '1px solid var(--border-color)',
-                borderRadius: '50%',
-                width: '30px',
-                height: '30px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer'
-              }}
-            >
-              <Settings size={15} color="var(--text-muted)" />
-            </button>
+            </div>
           </div>
-        </div>
-
-        {/* ROW 2: Compact Slot Pill (Full Width) */}
-        <div>
-          <button
-            onClick={onOpenDateSlotSheet}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              background: '#f8fafc',
-              border: '1px solid #e2e8f0',
-              borderRadius: 'var(--radius-full)',
-              padding: '4px 10px',
-              fontSize: '0.75rem',
-              fontWeight: 800,
-              color: 'var(--text-main)',
-              cursor: 'pointer',
-              width: '100%',
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis'
-            }}
-          >
-            <Calendar size={13} color="var(--primary)" />
-            <span style={{ color: 'var(--primary)', fontWeight: 900 }}>{dateLabel}</span>
-            <span style={{ color: '#94a3b8' }}>•</span>
-            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', color: 'var(--text-main)' }}>
-              {selectedSlot ? selectedSlot.name : 'Select Break Slot'}
-            </span>
-            <ChevronDown size={12} color="var(--text-muted)" style={{ marginLeft: 'auto' }} />
-          </button>
         </div>
       </header>
 
-      {/* School Switcher Modal */}
+      {/* Switch School Modal */}
       {isSchoolModalOpen && (
         <div className="modal-overlay" onClick={() => setIsSchoolModalOpen(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '420px', padding: '1.25rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-              <div>
-                <h3 style={{ fontSize: '1.05rem', fontWeight: 900 }}>Select School Food Court</h3>
-                <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Choose your campus canteen</p>
-              </div>
-              <button onClick={() => setIsSchoolModalOpen(false)} style={{ padding: '0.35rem', borderRadius: '50%', background: '#f1f5f9', border: 'none', cursor: 'pointer' }}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '380px', padding: '1.25rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <h3 style={{ fontSize: '1rem', fontWeight: 900 }}>Select School Campus</h3>
+              <button onClick={() => setIsSchoolModalOpen(false)} style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}>
                 <X size={18} />
               </button>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-              {schools.map((school) => {
-                const isSelected = activeSchool && activeSchool.id === school.id;
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              {schools.map((s) => {
+                const isSelected = activeSchool?.id === s.id;
                 return (
                   <div
-                    key={school.id}
-                    onClick={() => {
-                      onSelectSchool(school.id);
-                      setIsSchoolModalOpen(false);
-                    }}
+                    key={s.id}
+                    onClick={() => { onSelectSchool(s.id); setIsSchoolModalOpen(false); }}
                     style={{
-                      padding: '0.85rem 1rem',
+                      padding: '0.75rem',
                       borderRadius: 'var(--radius-md)',
                       border: isSelected ? '2px solid var(--primary)' : '1px solid #e2e8f0',
-                      background: isSelected ? '#eff6ff' : '#ffffff',
+                      background: isSelected ? 'var(--primary-light)' : '#ffffff',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
-                      justifyContent: 'space-between'
+                      gap: '0.6rem'
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                      <div
-                        style={{
-                          width: '38px',
-                          height: '38px',
-                          borderRadius: '10px',
-                          background: school.primaryColor || '#2563eb',
-                          color: 'white',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontWeight: 900,
-                          fontSize: '1.1rem'
-                        }}
-                      >
-                        🏫
+                    <span style={{ fontSize: '1.4rem' }}>🏫</span>
+                    <div>
+                      <div style={{ fontSize: '0.85rem', fontWeight: 800, color: isSelected ? 'var(--primary)' : 'var(--text-main)' }}>
+                        {s.name}
                       </div>
-                      <div>
-                        <div style={{ fontSize: '0.88rem', fontWeight: 900, color: 'var(--text-main)' }}>
-                          {school.name}
-                        </div>
-                        <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-                          {school.canteenName} • {school.address}
-                        </div>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                        {s.canteenName}
                       </div>
                     </div>
-
-                    {isSelected && (
-                      <span style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--primary)', background: '#dbeafe', padding: '2px 8px', borderRadius: 'var(--radius-full)' }}>
-                        Selected
-                      </span>
-                    )}
                   </div>
                 );
               })}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Settings Modal */}
-      {isSettingsOpen && (
-        <div className="modal-overlay" onClick={() => setIsSettingsOpen(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '400px', padding: '1.5rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 900 }}>Settings & Portals</h3>
-              <button onClick={() => setIsSettingsOpen(false)} style={{ padding: '0.35rem', borderRadius: '50%', background: '#f1f5f9', border: 'none', cursor: 'pointer' }}>
-                <X size={18} />
-              </button>
-            </div>
-
-            {parentSession ? (
-              <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 'var(--radius-md)', padding: '0.85rem', marginBottom: '1rem' }}>
-                <div style={{ fontSize: '0.88rem', fontWeight: 800 }}>{parentSession.parentName}</div>
-                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-                  +91 {parentSession.phone} • {parentSession.relation || 'Parent'}
-                </div>
-                <button
-                  onClick={() => {
-                    setIsSettingsOpen(false);
-                    onLogoutParent();
-                  }}
-                  style={{
-                    width: '100%',
-                    marginTop: '0.65rem',
-                    padding: '0.45rem',
-                    borderRadius: 'var(--radius-md)',
-                    border: '1px solid #fee2e2',
-                    background: '#fff5f5',
-                    color: '#dc2626',
-                    fontSize: '0.75rem',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '4px'
-                  }}
-                >
-                  <LogOut size={13} />
-                  <span>Log Out</span>
-                </button>
-              </div>
-            ) : (
-              <button
-                onClick={() => {
-                  setIsSettingsOpen(false);
-                  onOpenAuthModal();
-                }}
-                className="btn-primary"
-                style={{ width: '100%', marginBottom: '1rem', padding: '0.65rem', fontSize: '0.85rem' }}
-              >
-                <LogIn size={15} />
-                <span>Login Parent Account</span>
-              </button>
-            )}
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              <button
-                onClick={() => {
-                  setIsSettingsOpen(false);
-                  window.location.hash = '#/kitchen';
-                }}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '0.65rem 0.85rem',
-                  borderRadius: 'var(--radius-md)',
-                  border: '1px solid #e2e8f0',
-                  background: '#ffffff',
-                  fontSize: '0.8rem',
-                  fontWeight: 700,
-                  cursor: 'pointer'
-                }}
-              >
-                <span>👨‍🍳 Kitchen KDS Portal</span>
-                <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>Staff</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  setIsSettingsOpen(false);
-                  window.location.hash = '#/admin';
-                }}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '0.65rem 0.85rem',
-                  borderRadius: 'var(--radius-md)',
-                  border: '1px solid #e2e8f0',
-                  background: '#ffffff',
-                  fontSize: '0.8rem',
-                  fontWeight: 700,
-                  cursor: 'pointer'
-                }}
-              >
-                <span>🏫 School Admin & Roster</span>
-                <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>Admin</span>
-              </button>
             </div>
           </div>
         </div>
