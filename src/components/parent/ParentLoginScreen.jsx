@@ -329,7 +329,7 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
             }}
           >
             <span>🍱</span>
-            <span>Official Campus Canteen & Dining Portal</span>
+            <span>Campus Canteen & Daily Meals</span>
           </div>
         </div>
 

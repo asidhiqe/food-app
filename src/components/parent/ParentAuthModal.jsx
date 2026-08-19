@@ -131,7 +131,7 @@ export default function ParentAuthModal({
             />
             <div>
               <h2 style={{ fontSize: '1.12rem', fontWeight: 900, color: 'var(--text-main)' }}>Parent Verification</h2>
-              <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{activeSchool?.name || 'School Student Portal'}</p>
+              <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{activeSchool?.name || 'Brainwaves International School'}</p>
             </div>
           </div>
           <button onClick={handleClose} style={{ padding: '0.4rem', borderRadius: '50%', background: '#f1f5f9', border: 'none', cursor: 'pointer' }}>

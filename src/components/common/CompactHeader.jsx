@@ -177,7 +177,7 @@ export default function CompactHeader({
                     style={{ width: '100%', padding: '0.5rem', borderRadius: '6px', border: 'none', background: 'transparent', textAlign: 'left', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
                   >
                     <span>🏫</span>
-                    <span>School Admin Portal</span>
+                    <span>School & Canteen Admin</span>
                   </button>
 
                   <div style={{ borderTop: '1px solid #f1f5f9', marginTop: '0.35rem', paddingTop: '0.35rem' }}>
