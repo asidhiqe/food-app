@@ -79,27 +79,16 @@ export default function SchoolSettings({
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-          <button
-            onClick={() => { window.location.hash = '#/order'; }}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              padding: '5px 12px',
-              borderRadius: 'var(--radius-full)',
-              background: 'rgba(255,255,255,0.15)',
-              border: '1px solid rgba(255,255,255,0.25)',
-              color: '#ffffff',
-              fontSize: '0.76rem',
-              fontWeight: 800,
-              cursor: 'pointer',
-              backdropFilter: 'blur(8px)',
-              transition: 'all 0.15s ease'
-            }}
-          >
-            <ArrowLeft size={14} />
-            <span>Parent View</span>
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <img
+              src="./bis-hapur-responsive-logo.png"
+              alt="Logo"
+              style={{ width: '22px', height: '22px', borderRadius: '50%', objectFit: 'contain', background: '#ffffff', padding: '1px' }}
+            />
+            <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#f8fafc' }}>
+              {activeSchool?.name || 'Brainwaves International School'}
+            </span>
+          </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             {adminSession && (

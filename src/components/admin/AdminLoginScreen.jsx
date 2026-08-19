@@ -151,28 +151,6 @@ export default function AdminLoginScreen({ activeSchool, onLoginSuccess }) {
           animation: 'slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
         }}
       >
-        {/* Back to Parent App button */}
-        <button
-          onClick={() => { window.location.hash = '#/'; }}
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '6px',
-            background: 'rgba(255, 255, 255, 0.1)',
-            border: '1px solid rgba(255, 255, 255, 0.15)',
-            borderRadius: 'var(--radius-full)',
-            padding: '5px 12px',
-            color: '#e2e8f0',
-            fontSize: '0.75rem',
-            fontWeight: 800,
-            cursor: 'pointer',
-            marginBottom: '1.25rem'
-          }}
-        >
-          <ArrowLeft size={13} />
-          <span>Parent Dining View</span>
-        </button>
-
         {/* Brand Header */}
         <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
           <div style={{ display: 'inline-block', position: 'relative', marginBottom: '0.75rem' }}>
