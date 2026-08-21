@@ -18,32 +18,63 @@ const channel = typeof window !== 'undefined' && window.BroadcastChannel
   ? new BroadcastChannel('school_food_app_sync')
   : null;
 
+const SCHEMA_VERSION_KEY = 'sfa_schema_version_v2';
+const CURRENT_SCHEMA_VERSION = 'v2.1_kapoor_3kids';
+
 export const StorageService = {
   // --- Initialization ---
   init() {
-    if (!localStorage.getItem(KEYS.SCHOOLS)) {
+    const savedVersion = localStorage.getItem(SCHEMA_VERSION_KEY);
+    const needsMigration = savedVersion !== CURRENT_SCHEMA_VERSION;
+
+    if (needsMigration) {
       localStorage.setItem(KEYS.SCHOOLS, JSON.stringify(INITIAL_SCHOOLS));
-    }
-    if (!localStorage.getItem(KEYS.ACTIVE_SCHOOL)) {
       localStorage.setItem(KEYS.ACTIVE_SCHOOL, 'brainwaves');
-    }
 
-    INITIAL_SCHOOLS.forEach((school) => {
-      const stuKey = KEYS.STUDENTS_PREFIX + school.id;
-      if (!localStorage.getItem(stuKey)) {
+      INITIAL_SCHOOLS.forEach((school) => {
+        const stuKey = KEYS.STUDENTS_PREFIX + school.id;
         localStorage.setItem(stuKey, JSON.stringify(INITIAL_STUDENTS[school.id] || []));
-      }
 
-      const menuKey = KEYS.MENUS_PREFIX + school.id;
-      if (!localStorage.getItem(menuKey)) {
+        const menuKey = KEYS.MENUS_PREFIX + school.id;
         localStorage.setItem(menuKey, JSON.stringify(INITIAL_MENUS[school.id] || []));
+      });
+
+      // Clear previous cached session if it was holding old child
+      const currentSession = localStorage.getItem(KEYS.PARENT_SESSION);
+      if (currentSession) {
+        const parsed = JSON.parse(currentSession);
+        if (parsed.phone === '9811223344') {
+          localStorage.removeItem(KEYS.PARENT_SESSION);
+          localStorage.removeItem(KEYS.ACTIVE_CHILD);
+        }
       }
 
-      const ordersKey = KEYS.ORDERS_PREFIX + school.id;
-      if (!localStorage.getItem(ordersKey)) {
-        localStorage.setItem(ordersKey, JSON.stringify(INITIAL_ORDERS[school.id] || []));
+      localStorage.setItem(SCHEMA_VERSION_KEY, CURRENT_SCHEMA_VERSION);
+    } else {
+      if (!localStorage.getItem(KEYS.SCHOOLS)) {
+        localStorage.setItem(KEYS.SCHOOLS, JSON.stringify(INITIAL_SCHOOLS));
       }
-    });
+      if (!localStorage.getItem(KEYS.ACTIVE_SCHOOL)) {
+        localStorage.setItem(KEYS.ACTIVE_SCHOOL, 'brainwaves');
+      }
+
+      INITIAL_SCHOOLS.forEach((school) => {
+        const stuKey = KEYS.STUDENTS_PREFIX + school.id;
+        if (!localStorage.getItem(stuKey)) {
+          localStorage.setItem(stuKey, JSON.stringify(INITIAL_STUDENTS[school.id] || []));
+        }
+
+        const menuKey = KEYS.MENUS_PREFIX + school.id;
+        if (!localStorage.getItem(menuKey)) {
+          localStorage.setItem(menuKey, JSON.stringify(INITIAL_MENUS[school.id] || []));
+        }
+
+        const ordersKey = KEYS.ORDERS_PREFIX + school.id;
+        if (!localStorage.getItem(ordersKey)) {
+          localStorage.setItem(ordersKey, JSON.stringify(INITIAL_ORDERS[school.id] || []));
+        }
+      });
+    }
   },
 
   // --- Real-time sync listener ---

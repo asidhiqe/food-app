@@ -40,23 +40,31 @@ export default function ChildAvatarBar({
         </span>
       </div>
 
-      {/* Interactive Child Identity Cards (Without duplicate floating active pill) */}
+      {/* Interactive Child Identity Cards */}
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: childrenList.length === 1 ? '1fr' : `repeat(${childrenList.length}, 1fr)`,
+          gridTemplateColumns: childrenList.length === 1
+            ? '1fr'
+            : childrenList.length === 2
+              ? '1fr 1fr'
+              : 'repeat(auto-fit, minmax(130px, 1fr))',
           gap: '0.6rem'
         }}
       >
         {childrenList.map((child) => {
           const isSelected = activeChild && activeChild.id === child.id;
-          const childCart = cartsByChild[child.id] || [];
+          const childCart = (cartsByChild && cartsByChild[child.id]) || [];
           const itemsCount = childCart.reduce((sum, i) => sum + i.quantity, 0);
           const totalAmount = childCart.reduce((sum, i) => sum + i.price * i.quantity, 0);
 
-          const isGirl = child.studentName.toLowerCase().includes('ananya') || child.studentName.toLowerCase().includes('riya');
+          const isGirl = child.gender === 'girl' ||
+            child.studentName.toLowerCase().includes('ananya') ||
+            child.studentName.toLowerCase().includes('riya') ||
+            child.studentName.toLowerCase().includes('meera') ||
+            child.studentName.toLowerCase().includes('zoya');
           const theme = isGirl ? CHILD_THEMES.girl : CHILD_THEMES.boy;
-          const avatarEmoji = isGirl ? '👧' : '👦';
+          const avatarEmoji = child.avatar || (isGirl ? '👧' : '👦');
           const cleanClass = child.class.replace(/Grade\s*/i, '').trim();
           const allergies = child.allergies || [];
 
