@@ -141,21 +141,60 @@ export default function KitchenLoginScreen({ activeSchool, onLoginSuccess }) {
       )}
 
       {/* Responsive Shell: 1 Column on Mobile, 2 Columns on Tablet & Desktop */}
-      <div
-        style={{
-          width: '100%',
-          maxWidth: '960px',
-          position: 'relative',
-          zIndex: 10,
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-          gap: '2.5rem',
-          alignItems: 'center',
-          animation: 'slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
-        }}
-      >
-        {/* LEFT COLUMN: School Kitchen Brand & Station Capabilities */}
-        <div style={{ color: '#ffffff' }}>
+      <div className="login-split-layout">
+        {/* MOBILE ONLY COMPACT BRAND HEADER */}
+        <div className="login-hero-mobile">
+          <div
+            style={{
+              width: '46px',
+              height: '46px',
+              borderRadius: '14px',
+              background: '#ffffff',
+              padding: '4px',
+              boxShadow: '0 6px 16px rgba(0,0,0,0.3)',
+              marginBottom: '0.4rem'
+            }}
+          >
+            <img
+              src="./bis-hapur-responsive-logo.png"
+              alt="School Crest"
+              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+            />
+          </div>
+          <h1
+            style={{
+              fontSize: '1.25rem',
+              fontWeight: 900,
+              color: '#ffffff',
+              lineHeight: 1.2,
+              marginBottom: '0.25rem',
+              textShadow: '0 2px 8px rgba(0,0,0,0.3)'
+            }}
+          >
+            {activeSchool?.name || 'Brainwaves International School'}
+          </h1>
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '4px',
+              background: 'rgba(234, 88, 12, 0.2)',
+              border: '1px solid rgba(234, 88, 12, 0.4)',
+              backdropFilter: 'blur(8px)',
+              padding: '3px 10px',
+              borderRadius: 'var(--radius-full)',
+              color: '#fdba74',
+              fontSize: '0.72rem',
+              fontWeight: 800
+            }}
+          >
+            <span>👨‍🍳</span>
+            <span>Kitchen Display & Dispatch (KDS)</span>
+          </div>
+        </div>
+
+        {/* DESKTOP ONLY COLUMN: School Kitchen Brand & Station Capabilities */}
+        <div className="login-hero-desktop" style={{ color: '#ffffff' }}>
           <div style={{ display: 'inline-block', position: 'relative', marginBottom: '1rem' }}>
             <div
               style={{
@@ -223,15 +262,15 @@ export default function KitchenLoginScreen({ activeSchool, onLoginSuccess }) {
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(255,255,255,0.07)', padding: '0.75rem 1rem', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.1)' }}>
               <span style={{ fontSize: '1.4rem' }}>🏷️</span>
               <div>
-                <div style={{ fontSize: '0.86rem', fontWeight: 900 }}>Thermal Sticker & Allergen Printing</div>
-                <div style={{ fontSize: '0.72rem', color: '#94a3b8' }}>Instant 50x30mm thermal box label generator</div>
+                <div style={{ fontSize: '0.86rem', fontWeight: 900 }}>Thermal Desk Sticker Dispatch</div>
+                <div style={{ fontSize: '0.72rem', color: '#94a3b8' }}>Allergies & classroom student labels</div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* RIGHT COLUMN: PIN Login Card */}
-        <div style={{ width: '100%', maxWidth: '420px', justifySelf: 'center' }}>
+        {/* RIGHT COLUMN: KDS Station Login Card */}
+        <div style={{ width: '100%', maxWidth: '440px', justifySelf: 'center' }}>
           <div
             style={{
               background: 'rgba(255, 255, 255, 0.96)',

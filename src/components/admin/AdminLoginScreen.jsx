@@ -141,21 +141,60 @@ export default function AdminLoginScreen({ activeSchool, onLoginSuccess }) {
       )}
 
       {/* Responsive Shell: 1 Column on Mobile, 2 Columns on Tablet & Desktop */}
-      <div
-        style={{
-          width: '100%',
-          maxWidth: '960px',
-          position: 'relative',
-          zIndex: 10,
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-          gap: '2.5rem',
-          alignItems: 'center',
-          animation: 'slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
-        }}
-      >
-        {/* LEFT COLUMN: School Admin Brand & Management Capabilities */}
-        <div style={{ color: '#ffffff' }}>
+      <div className="login-split-layout">
+        {/* MOBILE ONLY COMPACT BRAND HEADER */}
+        <div className="login-hero-mobile">
+          <div
+            style={{
+              width: '46px',
+              height: '46px',
+              borderRadius: '14px',
+              background: '#ffffff',
+              padding: '4px',
+              boxShadow: '0 6px 16px rgba(0,0,0,0.3)',
+              marginBottom: '0.4rem'
+            }}
+          >
+            <img
+              src="./bis-hapur-responsive-logo.png"
+              alt="School Crest"
+              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+            />
+          </div>
+          <h1
+            style={{
+              fontSize: '1.25rem',
+              fontWeight: 900,
+              color: '#ffffff',
+              lineHeight: 1.2,
+              marginBottom: '0.25rem',
+              textShadow: '0 2px 8px rgba(0,0,0,0.3)'
+            }}
+          >
+            {activeSchool?.name || 'Brainwaves International School'}
+          </h1>
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '4px',
+              background: 'rgba(124, 58, 237, 0.2)',
+              border: '1px solid rgba(124, 58, 237, 0.4)',
+              backdropFilter: 'blur(8px)',
+              padding: '3px 10px',
+              borderRadius: 'var(--radius-full)',
+              color: '#c4b5fd',
+              fontSize: '0.72rem',
+              fontWeight: 800
+            }}
+          >
+            <span>🏫</span>
+            <span>School & Canteen Administration</span>
+          </div>
+        </div>
+
+        {/* DESKTOP ONLY COLUMN: School Admin Brand & Management Capabilities */}
+        <div className="login-hero-desktop" style={{ color: '#ffffff' }}>
           <div style={{ display: 'inline-block', position: 'relative', marginBottom: '1rem' }}>
             <div
               style={{
@@ -230,8 +269,8 @@ export default function AdminLoginScreen({ activeSchool, onLoginSuccess }) {
           </div>
         </div>
 
-        {/* RIGHT COLUMN: Admin Passcode Login Card */}
-        <div style={{ width: '100%', maxWidth: '420px', justifySelf: 'center' }}>
+        {/* RIGHT COLUMN: Admin PIN Login Card */}
+        <div style={{ width: '100%', maxWidth: '440px', justifySelf: 'center' }}>
           <div
             style={{
               background: 'rgba(255, 255, 255, 0.96)',

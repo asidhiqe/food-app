@@ -53,21 +53,20 @@ export default function FloatingActionHub({
         }}
       >
         {/* Left: Info */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div
             style={{
-              width: '34px',
-              height: '34px',
+              width: '36px',
+              height: '36px',
               borderRadius: '50%',
               background: hasMultipleKids ? '#16a34a' : 'var(--primary)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '1rem',
               color: '#ffffff'
             }}
           >
-            {hasMultipleKids ? '🍱' : '🍱'}
+            {hasMultipleKids ? <Users size={18} /> : <ShoppingBag size={18} />}
           </div>
           <div>
             <div style={{ fontSize: '0.85rem', fontWeight: 900, lineHeight: 1.2 }}>

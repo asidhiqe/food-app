@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import CompactHeader from './components/common/CompactHeader';
+import PWAInstallBanner from './components/common/PWAInstallBanner';
 import DateSlotSheet from './components/parent/DateSlotSheet';
 import ParentLoginScreen from './components/parent/ParentLoginScreen';
 import ParentAuthModal from './components/parent/ParentAuthModal';
@@ -11,6 +12,7 @@ import CartDrawer from './components/parent/CartDrawer';
 import FloatingActionHub from './components/parent/FloatingActionHub';
 import StudentIDModal from './components/parent/StudentIDModal';
 import PaymentModal from './components/parent/PaymentModal';
+import WalletTopUpModal from './components/parent/WalletTopUpModal';
 import OrderTracker from './components/parent/OrderTracker';
 import KitchenDashboard from './components/vendor/KitchenDashboard';
 import KitchenLoginScreen from './components/vendor/KitchenLoginScreen';
@@ -57,6 +59,8 @@ export default function App() {
   const [isStudentModalOpen, setIsStudentModalOpen] = useState(false);
   const [verifiedStudent, setVerifiedStudent] = useState(null);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
+  const [walletBalance, setWalletBalance] = useState(1500);
   const [isTrackingOpen, setIsTrackingOpen] = useState(false);
   const [notificationToast, setNotificationToast] = useState(null);
 
@@ -125,6 +129,9 @@ export default function App() {
       const session = StorageService.getParentSession();
       setParentSession(session);
 
+      const currentPhone = session?.phone || 'default';
+      setWalletBalance(StorageService.getParentWalletBalance(currentPhone));
+
       if (session && session.phone) {
         const foundKids = StorageService.findStudentsByParentPhone(currentSchool.id, session.phone);
         setChildrenList(foundKids);
@@ -174,7 +181,8 @@ export default function App() {
     setActiveChild(child);
     setVerifiedStudent(child);
     StorageService.setActiveChildId(child.id);
-    setNotificationToast(`Packing lunch for ${child.studentName.split(' ')[0]}`);
+    const childFirstName = child?.studentName ? child.studentName.split(' ')[0] : 'Child';
+    setNotificationToast(`Packing lunch for ${childFirstName}`);
     setTimeout(() => setNotificationToast(null), 2500);
   };
 
@@ -202,10 +210,19 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'instant' });
   };
 
-  // Save Child Health Profile
-  const handleSaveHealthProfile = (childId, healthData) => {
-    StorageService.updateStudentHealthProfile(activeSchool.id, childId, healthData);
+  // Save Child Profile Photo & Health Preferences
+  const handleSaveHealthProfile = (childId, profileData) => {
+    const updated = StorageService.updateStudentProfile(activeSchool?.id, childId, profileData);
+    if (updated) {
+      if (activeChild && activeChild.id === childId) {
+        setActiveChild(updated);
+      }
+      setChildrenList((prev) => prev.map((k) => (k.id === childId ? updated : k)));
+    }
     loadData();
+    const updatedFirstName = updated?.studentName ? updated.studentName.split(' ')[0] : 'child';
+    setNotificationToast(`Profile & preferences updated for ${updatedFirstName}!`);
+    setTimeout(() => setNotificationToast(null), 3000);
   };
 
   // Cart Operations
@@ -243,13 +260,32 @@ export default function App() {
   };
 
   // 1-Tap Copy Meal to Sibling
-  const handleCopyMealToSibling = (targetSibling) => {
+  const handleCopyMealToSibling = (targetSiblingOrId) => {
     if (!currentCart || currentCart.length === 0) return;
+
+    let targetChild = null;
+    let targetId = '';
+
+    if (typeof targetSiblingOrId === 'object' && targetSiblingOrId !== null) {
+      targetChild = targetSiblingOrId;
+      targetId = targetSiblingOrId.id;
+    } else {
+      targetId = String(targetSiblingOrId || '');
+      targetChild = (childrenList || []).find((c) => c.id === targetId) || null;
+    }
+
+    if (!targetId) return;
+
     setCartsByChild((prev) => ({
       ...prev,
-      [targetSibling.id]: [...currentCart.map((item) => ({ ...item }))]
+      [targetId]: [...currentCart.map((item) => ({ ...item }))]
     }));
-    setNotificationToast(`Copied lunch to ${targetSibling.studentName.split(' ')[0]}'s box!`);
+
+    const targetFirstName = targetChild?.studentName
+      ? targetChild.studentName.split(' ')[0]
+      : 'Sibling';
+
+    setNotificationToast(`Copied lunch to ${targetFirstName}'s box!`);
     setTimeout(() => setNotificationToast(null), 3500);
   };
 
@@ -303,65 +339,70 @@ export default function App() {
   const handlePaymentSuccess = (paymentResult, mode = 'single', familyData = []) => {
     setIsPaymentModalOpen(false);
 
-    if (mode === 'all' && familyData.length > 0) {
+    if (mode === 'all' && Array.isArray(familyData) && familyData.length > 0) {
       // Create separate tokenized orders for all children in 1 payment
       const updatedCarts = { ...cartsByChild };
 
       familyData.forEach((item) => {
         const student = item.student;
-        const kidCart = item.cart;
-        const kidTotal = item.total;
+        const kidCart = item.cart || [];
+        const kidTotal = item.total || 0;
 
-        StorageService.createOrder(activeSchool.id, {
-          studentId: student.id,
-          studentName: student.studentName,
-          classSection: `${student.class} - ${student.section}`,
-          orderedByParentName: parentSession ? parentSession.parentName : student.fatherName || 'Parent',
-          orderedByParentPhone: parentSession ? parentSession.phone : student.fatherPhone || student.parentPhone || '',
-          parentRelation: parentSession ? parentSession.relation : 'Parent',
-          requiredDate: selectedDate,
-          mealPeriodId: selectedSlot ? selectedSlot.id : 'standard',
-          mealPeriodName: selectedSlot ? selectedSlot.name : 'Standard Break',
-          allergies: student.allergies || [],
-          dietary: student.dietary || 'Veg',
-          healthNotes: student.healthNotes || '',
-          items: kidCart.map((i) => ({
-            id: i.id,
-            name: i.name,
-            price: i.price,
-            quantity: i.quantity,
-            subtotal: i.price * i.quantity
-          })),
-          totalAmount: kidTotal,
-          paymentId: `${paymentResult.transactionId}_${student.id}`
-        });
+        if (student && student.id) {
+          StorageService.createOrder(activeSchool?.id, {
+            studentId: student.id,
+            studentName: student.studentName,
+            classSection: `${student.class || ''} - ${student.section || ''}`,
+            orderedByParentName: parentSession ? parentSession.parentName : student.fatherName || 'Parent',
+            orderedByParentPhone: parentSession ? parentSession.phone : student.fatherPhone || student.parentPhone || '',
+            parentRelation: parentSession ? parentSession.relation : 'Parent',
+            requiredDate: selectedDate || 'Today',
+            mealPeriodId: selectedSlot ? selectedSlot.id : 'standard',
+            mealPeriodName: selectedSlot ? selectedSlot.name : 'Standard Break',
+            allergies: student.allergies || [],
+            dietary: student.dietary || 'Veg',
+            healthNotes: student.healthNotes || '',
+            items: kidCart.map((i) => ({
+              id: i.id,
+              name: i.name,
+              price: i.price,
+              quantity: i.quantity,
+              subtotal: i.price * i.quantity
+            })),
+            totalAmount: kidTotal,
+            paymentId: `${paymentResult?.transactionId || Date.now()}_${student.id}`
+          });
 
-        delete updatedCarts[student.id];
+          delete updatedCarts[student.id];
+        }
       });
 
       setCartsByChild(updatedCarts);
       loadData();
       setIsTrackingOpen(true);
-      setNotificationToast(`🎉 Combined Payment of ${activeSchool.currency} ${paymentResult.amount} Successful! Dispatched lunch boxes for ${familyData.length} kids!`);
+      setNotificationToast(`🎉 Combined Payment of ${activeSchool?.currency || '₹'} ${paymentResult?.amount || ''} Successful! Dispatched lunch boxes for ${familyData.length} kids!`);
       setTimeout(() => setNotificationToast(null), 5000);
       return;
     }
 
     // Single Child Order Creation
-    const newOrder = StorageService.createOrder(activeSchool.id, {
-      studentId: verifiedStudent.id,
-      studentName: verifiedStudent.studentName,
-      classSection: `${verifiedStudent.class} - ${verifiedStudent.section}`,
-      orderedByParentName: parentSession ? parentSession.parentName : verifiedStudent.fatherName || 'Parent',
-      orderedByParentPhone: parentSession ? parentSession.phone : verifiedStudent.fatherPhone || verifiedStudent.parentPhone || '',
+    const currentStudent = verifiedStudent || activeChild;
+    if (!currentStudent) return;
+
+    const newOrder = StorageService.createOrder(activeSchool?.id, {
+      studentId: currentStudent.id,
+      studentName: currentStudent.studentName,
+      classSection: `${currentStudent.class || ''} - ${currentStudent.section || ''}`,
+      orderedByParentName: parentSession ? parentSession.parentName : currentStudent.fatherName || 'Parent',
+      orderedByParentPhone: parentSession ? parentSession.phone : currentStudent.fatherPhone || currentStudent.parentPhone || '',
       parentRelation: parentSession ? parentSession.relation : 'Parent',
-      requiredDate: selectedDate,
+      requiredDate: selectedDate || 'Today',
       mealPeriodId: selectedSlot ? selectedSlot.id : 'standard',
       mealPeriodName: selectedSlot ? selectedSlot.name : 'Standard Break',
-      allergies: verifiedStudent.allergies || [],
-      dietary: verifiedStudent.dietary || 'Veg',
-      healthNotes: verifiedStudent.healthNotes || '',
-      items: currentCart.map((i) => ({
+      allergies: currentStudent.allergies || [],
+      dietary: currentStudent.dietary || 'Veg',
+      healthNotes: currentStudent.healthNotes || '',
+      items: (currentCart || []).map((i) => ({
         id: i.id,
         name: i.name,
         price: i.price,
@@ -369,14 +410,15 @@ export default function App() {
         subtotal: i.price * i.quantity
       })),
       totalAmount: currentChildTotal,
-      paymentId: paymentResult.transactionId
+      paymentId: paymentResult?.transactionId || `tx_${Date.now()}`
     });
 
     // Clear only this child's cart
     setCartsByChild((prev) => ({ ...prev, [activeCartKey]: [] }));
     loadData();
     setIsTrackingOpen(true);
-    setNotificationToast(`🎉 Lunch Box #${newOrder.tokenNumber} Ordered & Paid for ${verifiedStudent.studentName.split(' ')[0]}!`);
+    const studentFirstName = currentStudent?.studentName ? currentStudent.studentName.split(' ')[0] : 'Student';
+    setNotificationToast(`🎉 Lunch Box #${newOrder.tokenNumber} Ordered & Paid for ${studentFirstName}!`);
     setTimeout(() => setNotificationToast(null), 4000);
   };
 
@@ -455,6 +497,8 @@ export default function App() {
             selectedDate={selectedDate}
             selectedSlot={selectedSlot}
             onOpenDateSlotSheet={() => setIsDateSlotSheetOpen(true)}
+            walletBalance={walletBalance}
+            onOpenWalletModal={() => setIsWalletModalOpen(true)}
           />
 
           <main className="main-content">
@@ -609,6 +653,20 @@ export default function App() {
         activeSchool={activeSchool}
         parentSession={parentSession}
         onPaymentSuccess={handlePaymentSuccess}
+        onOpenWalletTopUp={() => setIsWalletModalOpen(true)}
+      />
+
+      {/* Campus Lunch Wallet Modal */}
+      <WalletTopUpModal
+        isOpen={isWalletModalOpen}
+        onClose={() => setIsWalletModalOpen(false)}
+        walletBalance={walletBalance}
+        onWalletUpdated={(newBal) => {
+          setWalletBalance(newBal);
+          loadData();
+        }}
+        currency={activeSchool.currency}
+        parentPhone={parentSession?.phone || 'default'}
       />
 
       {/* Parent OTP Auth Modal (Fallback) */}
@@ -619,6 +677,9 @@ export default function App() {
         activeSchool={activeSchool}
         onLoginSuccess={handleLoginSuccess}
       />
+
+      {/* Progressive Web App (PWA) Install & Notification Prompt */}
+      <PWAInstallBanner />
     </div>
   );
 }

@@ -1,26 +1,26 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Plus, Minus, Flame, Filter, Leaf, AlertTriangle, Check, X, Sparkles } from 'lucide-react';
+import { Search, Plus, Minus, Flame, Filter, Leaf, AlertTriangle, Check, X, Sparkles, Utensils, UtensilsCrossed, Milk, Wheat, ShieldCheck, ShoppingBag, Coffee, Cookie, Salad } from 'lucide-react';
 
 const CATEGORY_TILE_STYLES = {
-  'all': { icon: '✨', label: 'All', bg: '#f1f5f9', activeBg: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)', text: '#0f172a', activeText: '#ffffff' },
-  'Snacks & Rolls': { icon: '🌯', label: 'Rolls & Wraps', bg: '#fff7ed', activeBg: 'linear-gradient(135deg, #ea580c 0%, #c2410c 100%)', text: '#9a3412', activeText: '#ffffff' },
-  'Lunch Thali': { icon: '🍱', label: 'Lunch Meals', bg: '#f0fdf4', activeBg: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)', text: '#166534', activeText: '#ffffff' },
-  'Lunch Meals': { icon: '🍱', label: 'Lunch Meals', bg: '#f0fdf4', activeBg: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)', text: '#166534', activeText: '#ffffff' },
-  'Sandwiches & Burgers': { icon: '🥪', label: 'Sandwiches', bg: '#fff1f2', activeBg: 'linear-gradient(135deg, #e11d48 0%, #be123c 100%)', text: '#9f1239', activeText: '#ffffff' },
-  'Pasta & Noodles': { icon: '🍝', label: 'Pasta & Noodles', bg: '#faf5ff', activeBg: 'linear-gradient(135deg, #9333ea 0%, #7e22ce 100%)', text: '#6b21a8', activeText: '#ffffff' },
-  'Healthy & Salads': { icon: '🥗', label: 'Fresh Salads', bg: '#ecfdf5', activeBg: 'linear-gradient(135deg, #059669 0%, #047857 100%)', text: '#065f46', activeText: '#ffffff' },
-  'Beverages & Juices': { icon: '🧃', label: 'Juices & Milk', bg: '#eff6ff', activeBg: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)', text: '#1e40af', activeText: '#ffffff' },
-  'Bakery & Sweets': { icon: '🧁', label: 'Bakery', bg: '#fdf2f8', activeBg: 'linear-gradient(135deg, #db2777 0%, #be185d 100%)', text: '#9d174d', activeText: '#ffffff' }
+  'all': { icon: Sparkles, label: 'All', bg: '#f1f5f9', activeBg: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)', text: '#0f172a', activeText: '#ffffff' },
+  'Snacks & Rolls': { icon: UtensilsCrossed, label: 'Rolls & Wraps', bg: '#fff7ed', activeBg: 'linear-gradient(135deg, #ea580c 0%, #c2410c 100%)', text: '#9a3412', activeText: '#ffffff' },
+  'Lunch Thali': { icon: Utensils, label: 'Lunch Meals', bg: '#f0fdf4', activeBg: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)', text: '#166534', activeText: '#ffffff' },
+  'Lunch Meals': { icon: Utensils, label: 'Lunch Meals', bg: '#f0fdf4', activeBg: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)', text: '#166534', activeText: '#ffffff' },
+  'Sandwiches & Burgers': { icon: ShoppingBag, label: 'Sandwiches', bg: '#fff1f2', activeBg: 'linear-gradient(135deg, #e11d48 0%, #be123c 100%)', text: '#9f1239', activeText: '#ffffff' },
+  'Pasta & Noodles': { icon: Flame, label: 'Pasta & Noodles', bg: '#faf5ff', activeBg: 'linear-gradient(135deg, #9333ea 0%, #7e22ce 100%)', text: '#6b21a8', activeText: '#ffffff' },
+  'Healthy & Salads': { icon: Leaf, label: 'Fresh Salads', bg: '#ecfdf5', activeBg: 'linear-gradient(135deg, #059669 0%, #047857 100%)', text: '#065f46', activeText: '#ffffff' },
+  'Beverages & Juices': { icon: Coffee, label: 'Juices & Milk', bg: '#eff6ff', activeBg: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)', text: '#1e40af', activeText: '#ffffff' },
+  'Bakery & Sweets': { icon: Cookie, label: 'Bakery', bg: '#fdf2f8', activeBg: 'linear-gradient(135deg, #db2777 0%, #be185d 100%)', text: '#9d174d', activeText: '#ffffff' }
 };
 
 const ALLERGEN_MAP = {
-  'dairy': { label: 'Dairy', icon: '🥛', bg: '#eff6ff', border: '#bfdbfe', text: '#1e40af' },
-  'gluten': { label: 'Gluten', icon: '🌾', bg: '#fefce8', border: '#fef08a', text: '#854d0e' },
-  'wheat': { label: 'Wheat', icon: '🌾', bg: '#fefce8', border: '#fef08a', text: '#854d0e' },
-  'nuts': { label: 'Nuts', icon: '🥜', bg: '#fff7ed', border: '#ffedd5', text: '#9a3412' },
-  'peanuts': { label: 'Peanuts', icon: '🥜', bg: '#fff7ed', border: '#ffedd5', text: '#9a3412' },
-  'eggs': { label: 'Eggs', icon: '🥚', bg: '#fdf4ff', border: '#fae8ff', text: '#86198f' },
-  'soy': { label: 'Soy', icon: '🫘', bg: '#ecfdf5', border: '#d1fae5', text: '#065f46' }
+  'dairy': { label: 'Dairy', icon: Milk, bg: '#eff6ff', border: '#bfdbfe', text: '#1e40af' },
+  'gluten': { label: 'Gluten', icon: Wheat, bg: '#fefce8', border: '#fef08a', text: '#854d0e' },
+  'wheat': { label: 'Wheat', icon: Wheat, bg: '#fefce8', border: '#fef08a', text: '#854d0e' },
+  'nuts': { label: 'Nuts', icon: AlertTriangle, bg: '#fff7ed', border: '#ffedd5', text: '#9a3412' },
+  'peanuts': { label: 'Peanuts', icon: AlertTriangle, bg: '#fff7ed', border: '#ffedd5', text: '#9a3412' },
+  'eggs': { label: 'Eggs', icon: ShieldCheck, bg: '#fdf4ff', border: '#fae8ff', text: '#86198f' },
+  'soy': { label: 'Soy', icon: Leaf, bg: '#ecfdf5', border: '#d1fae5', text: '#065f46' }
 };
 
 const FALLBACK_IMAGES = {
@@ -51,7 +51,6 @@ export default function MenuCatalog({
   const childName = activeChild ? activeChild.studentName.split(' ')[0] : 'Child';
   const childAllergies = (activeChild?.allergies || []).map((a) => a.toLowerCase().trim());
 
-  // Check if an item conflicts with active child's allergies
   const checkItemConflict = (item) => {
     if (childAllergies.length === 0) return null;
     const itemAllergens = (Array.isArray(item.allergens) ? item.allergens : (item.allergens ? [item.allergens] : []))
@@ -61,7 +60,6 @@ export default function MenuCatalog({
     return conflicting.length > 0 ? conflicting : null;
   };
 
-  // Extract unique categories
   const availableCategories = useMemo(() => {
     const cats = new Set();
     menuItems.forEach((item) => {
@@ -73,7 +71,6 @@ export default function MenuCatalog({
     ];
   }, [menuItems]);
 
-  // Filter Menu Items
   const filteredItems = useMemo(() => {
     return menuItems.filter((item) => {
       const matchesSearch =
@@ -93,7 +90,6 @@ export default function MenuCatalog({
     return found ? found.quantity : 0;
   };
 
-  // Safe Add Interceptor
   const handleAddClick = (item) => {
     const conflicts = checkItemConflict(item);
     if (conflicts && getItemQuantity(item.id) === 0) {
@@ -104,40 +100,30 @@ export default function MenuCatalog({
   };
 
   return (
-    <div>
-      {/* 1. Appetizing Category Carousel (Sticky on Scroll with zero clipping) */}
-      <div
-        style={{
-          position: 'sticky',
-          top: '84px',
-          zIndex: 80,
-          background: 'rgba(255, 255, 255, 0.98)',
-          backdropFilter: 'blur(12px)',
-          margin: '0 -0.5rem 0.75rem -0.5rem',
-          padding: '0.55rem 0.5rem 0.45rem 0.5rem',
-          borderBottom: '1px solid rgba(226, 232, 240, 0.8)',
-          boxShadow: '0 2px 6px rgba(0,0,0,0.02)'
-        }}
-      >
+    <div style={{ paddingBottom: '1.5rem' }}>
+      {/* 1. Category Quick Filter Carousel */}
+      <div style={{ marginBottom: '0.75rem' }}>
         <div
           style={{
             display: 'flex',
-            gap: '0.55rem',
+            gap: '0.4rem',
             overflowX: 'auto',
-            paddingBottom: '2px',
-            scrollbarWidth: 'none'
+            paddingBottom: '4px',
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none'
           }}
         >
           {availableCategories.map((catKey) => {
             const isSelected = selectedCategory === catKey;
             const style = CATEGORY_TILE_STYLES[catKey] || {
-              icon: '🍽️',
+              icon: Utensils,
               label: catKey,
               bg: '#f8fafc',
               activeBg: 'var(--primary)',
               text: 'var(--text-main)',
               activeText: '#ffffff'
             };
+            const IconComponent = style.icon;
 
             return (
               <div
@@ -147,7 +133,7 @@ export default function MenuCatalog({
                   display: 'flex',
                   alignItems: 'center',
                   gap: '6px',
-                  padding: '5px 12px',
+                  padding: '6px 12px',
                   borderRadius: '12px',
                   background: isSelected ? style.activeBg : style.bg,
                   color: isSelected ? style.activeText : style.text,
@@ -158,7 +144,7 @@ export default function MenuCatalog({
                   transform: isSelected ? 'scale(1.02)' : 'none'
                 }}
               >
-                <span style={{ fontSize: '1.05rem' }}>{style.icon}</span>
+                <IconComponent size={14} />
                 <span style={{ fontSize: '0.76rem', fontWeight: 800 }}>{style.label}</span>
               </div>
             );
@@ -175,7 +161,6 @@ export default function MenuCatalog({
           marginBottom: '0.85rem'
         }}
       >
-        {/* Search Input */}
         <div style={{ position: 'relative', flex: 1 }}>
           <Search
             size={14}
@@ -200,14 +185,13 @@ export default function MenuCatalog({
           />
         </div>
 
-        {/* Safe Filter */}
         {childAllergies.length > 0 && (
           <button
             onClick={() => setIsSafeOnly(!isSafeOnly)}
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '3px',
+              gap: '4px',
               padding: '0.45rem 0.65rem',
               borderRadius: 'var(--radius-md)',
               border: isSafeOnly ? '1.5px solid #059669' : '1px solid #cbd5e1',
@@ -219,12 +203,11 @@ export default function MenuCatalog({
               flexShrink: 0
             }}
           >
-            <span>🛡️</span>
+            <ShieldCheck size={13} />
             <span>Safe Only</span>
           </button>
         )}
 
-        {/* Veg-Only Filter */}
         <button
           onClick={() => setIsVegOnly(!isVegOnly)}
           style={{
@@ -267,14 +250,15 @@ export default function MenuCatalog({
           <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Try resetting the search or category filters</p>
         </div>
       ) : (
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-            gap: '0.85rem',
-            paddingBottom: '1.25rem'
-          }}
-        >
+        <>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+              gap: '0.85rem',
+              paddingBottom: '1.25rem'
+            }}
+          >
           {filteredItems.map((item) => {
             const qty = getItemQuantity(item.id);
             const foodImg = item.image || item.imageUrl || FALLBACK_IMAGES[item.category] || FALLBACK_IMAGES['Snacks & Rolls'];
@@ -293,7 +277,8 @@ export default function MenuCatalog({
                   gap: '0.85rem',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  boxShadow: '0 1px 4px rgba(0,0,0,0.04)'
+                  boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+                  alignSelf: 'start'
                 }}
               >
                 {/* Left: Info */}
@@ -370,6 +355,7 @@ export default function MenuCatalog({
                         const key = alg.toLowerCase().trim();
                         const isConflict = childAllergies.includes(key);
                         const info = ALLERGEN_MAP[key] || { label: alg, icon: '⚠️', bg: '#f8fafc', border: '#e2e8f0', text: '#64748b' };
+                        const IconComponent = info.icon || AlertTriangle;
                         return (
                           <span
                             key={alg}
@@ -383,12 +369,12 @@ export default function MenuCatalog({
                               borderRadius: 'var(--radius-full)',
                               display: 'inline-flex',
                               alignItems: 'center',
-                              gap: '2px'
+                              gap: '3px'
                             }}
                           >
-                            <span>{info.icon}</span>
+                            <IconComponent size={10} />
                             <span>{info.label}</span>
-                            {isConflict && <span>⚠️</span>}
+                            {isConflict && <AlertTriangle size={9} color="#b91c1c" />}
                           </span>
                         );
                       })
@@ -404,10 +390,10 @@ export default function MenuCatalog({
                           borderRadius: 'var(--radius-full)',
                           display: 'inline-flex',
                           alignItems: 'center',
-                          gap: '2px'
+                          gap: '3px'
                         }}
                       >
-                        <span>🛡️</span>
+                        <ShieldCheck size={10} />
                         <span>Safe</span>
                       </span>
                     )}
@@ -475,30 +461,19 @@ export default function MenuCatalog({
                         <span>ADD</span>
                       </button>
                     ) : (
-                      <div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          background: '#16a34a',
-                          color: '#ffffff',
-                          borderRadius: 'var(--radius-full)',
-                          padding: '3px 6px',
-                          fontWeight: 900,
-                          fontSize: '0.78rem',
-                          boxShadow: '0 2px 6px rgba(22,163,74,0.3)'
-                        }}
-                      >
+                      <div className="app-stepper" style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.12)', background: '#ffffff' }}>
                         <button
                           onClick={() => onRemoveFromCart(item.id)}
-                          style={{ background: 'transparent', border: 'none', color: '#ffffff', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '1px' }}
+                          className="app-stepper-btn"
+                          title="Remove item"
                         >
                           <Minus size={12} />
                         </button>
-                        <span style={{ fontSize: '0.78rem', fontWeight: 900 }}>{qty}</span>
+                        <span className="app-stepper-qty">{qty}</span>
                         <button
                           onClick={() => onAddToCart(item)}
-                          style={{ background: 'transparent', border: 'none', color: '#ffffff', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '1px' }}
+                          className="app-stepper-btn app-stepper-btn-add"
+                          title="Add more"
                         >
                           <Plus size={12} />
                         </button>
@@ -509,79 +484,81 @@ export default function MenuCatalog({
               </div>
             );
           })}
+        </div>
 
-          {/* 4. Charming End-of-Menu Illustration & School Kitchen Promise Card */}
+        {/* 4. Charming End-of-Menu Illustration & School Kitchen Promise Card (Outside Grid) */}
+        <div
+          style={{
+            textAlign: 'center',
+            padding: '1.75rem 1.25rem 1.25rem',
+            margin: '1.25rem auto 1.5rem',
+            maxWidth: '520px',
+            background: 'linear-gradient(180deg, #f8fafc 0%, #eff6ff 100%)',
+            borderRadius: 'var(--radius-xl)',
+            border: '1px dashed #cbd5e1'
+          }}
+        >
+          {/* Visual Icon Art */}
           <div
             style={{
-              textAlign: 'center',
-              padding: '2rem 1.25rem 1.5rem',
-              marginTop: '0.5rem',
-              background: 'linear-gradient(180deg, #f8fafc 0%, #eff6ff 100%)',
-              borderRadius: 'var(--radius-xl)',
-              border: '1px dashed #cbd5e1'
+              width: '54px',
+              height: '54px',
+              borderRadius: '16px',
+              background: 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'var(--primary)',
+              boxShadow: '0 4px 12px rgba(37,99,235,0.15)',
+              marginBottom: '0.65rem'
             }}
           >
-            {/* Visual Icon Art */}
-            <div
-              style={{
-                width: '64px',
-                height: '64px',
-                borderRadius: '20px',
-                background: 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '2rem',
-                boxShadow: '0 4px 12px rgba(37,99,235,0.15)',
-                marginBottom: '0.75rem'
-              }}
-            >
-              🥗
-            </div>
-
-            <h4 style={{ fontSize: '1rem', fontWeight: 900, color: 'var(--text-main)', marginBottom: '0.35rem' }}>
-              You've reached the end of today's menu!
-            </h4>
-
-            <p style={{ fontSize: '0.76rem', color: '#64748b', lineHeight: 1.45, maxWidth: '280px', margin: '0 auto 1.15rem' }}>
-              All meals are prepared fresh every morning in our ISO-certified school kitchen with 100% nut & allergen safety checks.
-            </p>
-
-            {/* Quality Badges */}
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '0.45rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
-              <span style={{ fontSize: '0.68rem', fontWeight: 800, color: '#15803d', background: '#dcfce7', padding: '3px 8px', borderRadius: 'var(--radius-full)', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
-                <span>🌱</span>
-                <span>Farm Fresh Veggies</span>
-              </span>
-              <span style={{ fontSize: '0.68rem', fontWeight: 800, color: '#1e40af', background: '#dbeafe', padding: '3px 8px', borderRadius: 'var(--radius-full)', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
-                <span>🧼</span>
-                <span>FSSAI Hygiene Grade A</span>
-              </span>
-              <span style={{ fontSize: '0.68rem', fontWeight: 800, color: '#9a3412', background: '#ffedd5', padding: '3px 8px', borderRadius: 'var(--radius-full)', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
-                <span>❤️</span>
-                <span>Cooked with Love</span>
-              </span>
-            </div>
-
-            {/* Back to top helper button */}
-            <button
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              style={{
-                background: '#ffffff',
-                border: '1px solid #cbd5e1',
-                borderRadius: 'var(--radius-full)',
-                padding: '5px 14px',
-                fontSize: '0.74rem',
-                fontWeight: 800,
-                color: 'var(--text-main)',
-                cursor: 'pointer',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
-              }}
-            >
-              ↑ Back to Top
-            </button>
+            <Utensils size={26} />
           </div>
+
+          <h4 style={{ fontSize: '0.95rem', fontWeight: 900, color: 'var(--text-main)', marginBottom: '0.3rem' }}>
+            You've reached the end of today's menu!
+          </h4>
+
+          <p style={{ fontSize: '0.74rem', color: '#64748b', lineHeight: 1.4, maxWidth: '320px', margin: '0 auto 1rem' }}>
+            All meals are prepared fresh every morning in our school kitchen with strict allergen safety checks.
+          </p>
+
+          {/* Quality Badges */}
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '0.45rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
+            <span style={{ fontSize: '0.68rem', fontWeight: 800, color: '#15803d', background: '#dcfce7', padding: '3px 8px', borderRadius: 'var(--radius-full)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+              <Leaf size={11} />
+              <span>Farm Fresh Veggies</span>
+            </span>
+            <span style={{ fontSize: '0.68rem', fontWeight: 800, color: '#1e40af', background: '#dbeafe', padding: '3px 8px', borderRadius: 'var(--radius-full)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+              <ShieldCheck size={11} />
+              <span>FSSAI Hygiene Grade A</span>
+            </span>
+            <span style={{ fontSize: '0.68rem', fontWeight: 800, color: '#9a3412', background: '#ffedd5', padding: '3px 8px', borderRadius: 'var(--radius-full)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+              <Sparkles size={11} />
+              <span>Cooked Fresh Daily</span>
+            </span>
+          </div>
+
+          {/* Back to top helper button */}
+          <button
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            style={{
+              background: '#ffffff',
+              border: '1px solid #cbd5e1',
+              borderRadius: 'var(--radius-full)',
+              padding: '4px 12px',
+              fontSize: '0.72rem',
+              fontWeight: 800,
+              color: 'var(--text-main)',
+              cursor: 'pointer',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
+            }}
+          >
+            ↑ Back to Top
+          </button>
         </div>
+      </>
       )}
 
       {/* Allergy Safety Confirmation Alert Modal */}

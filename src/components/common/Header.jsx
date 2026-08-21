@@ -279,7 +279,7 @@ export default function Header({
                   <span>Switch School</span>
                 </div>
                 <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-                  {activeSchool.name.split(' ')[0]}...
+                  {activeSchool?.name ? activeSchool.name.split(' ')[0] : 'School'}...
                 </span>
               </button>
 

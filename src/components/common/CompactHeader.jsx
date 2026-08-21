@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShoppingBag, Clock, User, ChevronDown, Settings, LogOut, School, X, Calendar, Sparkles } from 'lucide-react';
+import { ShoppingBag, Clock, User, ChevronDown, Settings, LogOut, School, X, Calendar, Sparkles, Wallet } from 'lucide-react';
 
 export default function CompactHeader({
   activeSchool,
@@ -15,7 +15,9 @@ export default function CompactHeader({
   onLogoutParent,
   selectedDate,
   selectedSlot,
-  onOpenDateSlotSheet
+  onOpenDateSlotSheet,
+  walletBalance = 1500,
+  onOpenWalletModal
 }) {
   const [isSchoolModalOpen, setIsSchoolModalOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -49,7 +51,8 @@ export default function CompactHeader({
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '0.65rem 0.95rem',
-            borderBottom: '1px solid #f1f5f9'
+            borderBottom: '1px solid #f1f5f9',
+            gap: '8px'
           }}
         >
           {/* Left: School Logo / Campus Switcher */}
@@ -63,7 +66,9 @@ export default function CompactHeader({
               border: '1px solid #e2e8f0',
               borderRadius: 'var(--radius-full)',
               padding: '3px 10px 3px 4px',
-              cursor: 'pointer'
+              cursor: 'pointer',
+              flexShrink: 0,
+              whiteSpace: 'nowrap'
             }}
           >
             <img
@@ -76,21 +81,49 @@ export default function CompactHeader({
                 objectFit: 'contain',
                 background: '#ffffff',
                 border: '1px solid #e2e8f0',
-                padding: '1px'
+                padding: '1px',
+                flexShrink: 0
               }}
             />
-            <div style={{ textAlign: 'left' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
-                <span style={{ fontSize: '0.82rem', fontWeight: 900, color: 'var(--text-main)', letterSpacing: '-0.01em' }}>
+            <div style={{ textAlign: 'left', whiteSpace: 'nowrap' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '3px', whiteSpace: 'nowrap' }}>
+                <span style={{ fontSize: '0.8rem', fontWeight: 900, color: 'var(--text-main)', letterSpacing: '-0.01em', whiteSpace: 'nowrap' }}>
                   {activeSchool?.name?.includes('Brainwaves') ? "Brainwaves Int'l" : activeSchool?.name}
                 </span>
-                <ChevronDown size={12} color="#64748b" />
+                <ChevronDown size={12} color="#64748b" style={{ flexShrink: 0 }} />
               </div>
             </div>
           </button>
 
-          {/* Right: Orders & User Menu */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          {/* Right: Wallet, Orders & User Menu */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+            {/* Campus Lunch Wallet Pill */}
+            {onOpenWalletModal && (
+              <button
+                onClick={onOpenWalletModal}
+                style={{
+                  background: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
+                  border: '1px solid #bfdbfe',
+                  borderRadius: 'var(--radius-full)',
+                  padding: '4px 10px',
+                  fontSize: '0.74rem',
+                  fontWeight: 800,
+                  color: '#1e40af',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  boxShadow: '0 1px 3px rgba(37,99,235,0.06)',
+                  flexShrink: 0,
+                  whiteSpace: 'nowrap'
+                }}
+                title="Campus Lunch Wallet - Click to manage & top-up"
+              >
+                <Wallet size={13} color="#2563eb" style={{ flexShrink: 0 }} />
+                <span style={{ whiteSpace: 'nowrap' }}>₹ {walletBalance.toLocaleString('en-IN')}</span>
+              </button>
+            )}
+
             {/* Orders Button */}
             <button
               onClick={onViewMyOrders}
@@ -105,12 +138,14 @@ export default function CompactHeader({
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '5px'
+                gap: '5px',
+                flexShrink: 0,
+                whiteSpace: 'nowrap'
               }}
             >
               <span>Orders</span>
               {activeOrderCount > 0 && (
-                <span style={{ background: '#10b981', color: 'white', borderRadius: '10px', padding: '1px 6px', fontSize: '0.65rem', fontWeight: 900 }}>
+                <span style={{ background: '#10b981', color: 'white', borderRadius: '10px', padding: '1px 6px', fontSize: '0.65rem', fontWeight: 900, flexShrink: 0 }}>
                   {activeOrderCount}
                 </span>
               )}
@@ -178,6 +213,19 @@ export default function CompactHeader({
                   >
                     <span>🏫</span>
                     <span>School & Canteen Admin</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setIsSettingsOpen(false);
+                      // Clear dismiss flag and reload to trigger PWA install banner
+                      localStorage.removeItem('sfa_pwa_banner_dismissed');
+                      window.location.reload();
+                    }}
+                    style={{ width: '100%', padding: '0.5rem', borderRadius: '6px', border: 'none', background: 'transparent', textAlign: 'left', fontSize: '0.78rem', fontWeight: 700, color: 'var(--primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+                  >
+                    <span>📲</span>
+                    <span>Install App on Device</span>
                   </button>
 
                   <div style={{ borderTop: '1px solid #f1f5f9', marginTop: '0.35rem', paddingTop: '0.35rem' }}>

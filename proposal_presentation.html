@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Smart School Food Court - Strategic Partnership Proposal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    @page {
+      size: A4;
+      margin: 10mm 12mm 10mm 12mm;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: #0f172a;
+      background: #ffffff;
+      line-height: 1.45;
+      font-size: 10pt;
+    }
+    .page-break {
+      page-break-before: always;
+      break-before: page;
+    }
+    .avoid-break {
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+
+    /* Executive Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e2e8f0;
+      margin-bottom: 12px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 9px;
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 18px;
+      box-shadow: 0 4px 10px rgba(37,99,235,0.25);
+    }
+    .brand-text h1 {
+      font-size: 14pt;
+      font-weight: 900;
+      color: #0f172a;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+    }
+    .brand-text p {
+      font-size: 8pt;
+      color: #64748b;
+      font-weight: 600;
+    }
+    .badge-confidential {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1e40af;
+      padding: 3px 8px;
+      border-radius: 9999px;
+      font-size: 7pt;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    /* Title Block */
+    .doc-hero {
+      background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);
+      border: 1.5px solid #dbeafe;
+      border-radius: 10px;
+      padding: 12px 16px;
+      margin-bottom: 14px;
+    }
+    .doc-hero h2 {
+      font-size: 13pt;
+      font-weight: 900;
+      color: #1e3a8a;
+      margin-bottom: 3px;
+      letter-spacing: -0.01em;
+    }
+    .doc-hero p {
+      font-size: 8.5pt;
+      color: #334155;
+      line-height: 1.4;
+    }
+
+    /* Section Styles */
+    .section-title {
+      font-size: 10.5pt;
+      font-weight: 900;
+      color: #0f172a;
+      margin: 12px 0 8px 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      border-bottom: 1.5px solid #cbd5e1;
+      padding-bottom: 3px;
+    }
+
+    /* Grid & Cards */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+    .card-highlight {
+      border: 1.5px solid #bfdbfe;
+      background: #f8fafc;
+    }
+    .card h4 {
+      font-size: 9pt;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 3px;
+    }
+    .card p, .card li {
+      font-size: 8pt;
+      color: #475569;
+      line-height: 1.35;
+    }
+    .card ul {
+      padding-left: 14px;
+      margin-top: 3px;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 8px 0 10px 0;
+      font-size: 8pt;
+    }
+    th {
+      background: #f1f5f9;
+      color: #1e293b;
+      font-weight: 800;
+      text-align: left;
+      padding: 6px 8px;
+      border: 1px solid #cbd5e1;
+      text-transform: uppercase;
+      font-size: 7pt;
+      letter-spacing: 0.03em;
+    }
+    td {
+      padding: 5px 8px;
+      border: 1px solid #e2e8f0;
+      color: #334155;
+      vertical-align: middle;
+    }
+    tr:nth-child(even) td {
+      background: #f8fafc;
+    }
+    .price-tag {
+      font-weight: 900;
+      color: #16a34a;
+      font-size: 9pt;
+    }
+
+    /* Highlights & Badges */
+    .badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 7pt;
+      font-weight: 800;
+    }
+    .badge-green { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
+    .badge-blue { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+    .badge-amber { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+
+    /* Footer */
+    .footer {
+      margin-top: 14px;
+      padding-top: 8px;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      font-size: 7pt;
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PAGE 1 -->
+  <div class="header">
+    <div class="brand">
+      <div class="brand-icon">🍱</div>
+      <div class="brand-text">
+        <h1>Smart School Food Court Platform</h1>
+        <p>Next-Gen Cashless Pre-Ordering, Allergy Shield & Classroom Delivery</p>
+      </div>
+    </div>
+    <div class="badge-confidential">
+      Strategic Partnership Proposal
+    </div>
+  </div>
+
+  <div class="doc-hero">
+    <h2>Empowering Healthier, Cashless & Frictionless School Breaks</h2>
+    <p>A unified digital ecosystem connecting <strong>Parents, Students, Canteen Vendors, and School Administration</strong> to eliminate 15-minute recess queues, prevent life-threatening allergy cross-contacts, eliminate 35%+ canteen food waste, and deliver fresh wholesome meals directly to student classroom desks.</p>
+  </div>
+
+  <div class="section-title">1. Current School Canteen Challenges vs. Smart Food App</div>
+  <div class="grid-2">
+    <div class="card" style="border-left: 3px solid #ef4444;">
+      <h4 style="color: #dc2626;">❌ Current Canteen Bottlenecks</h4>
+      <ul>
+        <li><strong>Chaotic Recess Queues:</strong> Students lose 10–12 mins of their 15-min break in crowds.</li>
+        <li><strong>Cash Loss & Hygiene Risks:</strong> Cash mishandling and counter disputes among young kids.</li>
+        <li><strong>Zero Allergy Visibility:</strong> Canteen staff unaware of medical nut, dairy, or gluten sensitivities.</li>
+        <li><strong>30–40% Food Wastage:</strong> Kitchens cook on guesswork, causing high waste or stockouts.</li>
+      </ul>
+    </div>
+    <div class="card" style="border-left: 3px solid #16a34a; background: #f0fdf4;">
+      <h4 style="color: #15803d;">✅ Smart Food App Transformation</h4>
+      <ul>
+        <li><strong>Classroom Desk Delivery:</strong> Pre-ordered hot meals delivered to desks before the bell.</li>
+        <li><strong>100% Cashless Campus:</strong> 1-Tap Campus Lunch Wallet & instant UPI payments.</li>
+        <li><strong>Active Allergy Shield:</strong> Hard stops on allergen conflicts + bold warnings on stickers.</li>
+        <li><strong>Pre-Order Demand Forecasting:</strong> Kitchens cook exact pre-ordered batches by cutoff.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section-title">2. Multi-Persona Value Proposition Matrix</div>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 20%;">Stakeholder</th>
+        <th style="width: 45%;">Core Platform Solutions</th>
+        <th style="width: 35%;">Strategic Impact & ROI</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>👨‍👩‍👧‍👦 Parents</strong></td>
+        <td>1-Tap Multi-Sibling lunch tray copying, Live Meal Nutrition (Calories & Protein), Campus Lunch Wallet with 1-Tap Pay, 5-stage kitchen-to-desk order tracker.</td>
+        <td><span class="badge badge-green">100% Peace of Mind</span><br>Zero morning lunch packing rush; complete nutrition visibility.</td>
+      </tr>
+      <tr>
+        <td><strong>🎒 Students</strong></td>
+        <td>Zero recess queueing; personalized thermal token sticker on fresh meal box placed on their classroom desk.</td>
+        <td><span class="badge badge-blue">Restful Breaks</span><br>More time to eat calmly, hydrate, socialize, and focus in class.</td>
+      </tr>
+      <tr>
+        <td><strong>👩‍🍳 Canteen Vendor</strong></td>
+        <td>Live Kitchen Display System (KDS), automated batch cooking tallies by 9:30 AM cutoff, 1-click 80mm thermal sticker printing.</td>
+        <td><span class="badge badge-green">35%+ Waste Cut</span><br>Operating profit margins improve by 20–25%; zero cash handling.</td>
+      </tr>
+      <tr>
+        <td><strong>🏫 School Leadership</strong></td>
+        <td>Enterprise Admin Portal, FSSAI hygiene audit trails, campus-wide cashless compliance, and predictable revenue share.</td>
+        <td><span class="badge badge-amber">New Revenue Stream</span><br>₹2.5L – ₹5L/yr ancillary revenue + modern brand differentiator.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- PAGE BREAK FOR PAGE 2 -->
+  <div class="page-break"></div>
+
+  <div class="header">
+    <div class="brand">
+      <div class="brand-icon">🍱</div>
+      <div class="brand-text">
+        <h1>Commercial Framework & Pricing Tiers</h1>
+        <p>De-Risked Enterprise Investment & Predictable Revenue Model</p>
+      </div>
+    </div>
+    <div class="badge-confidential">Commercial Terms</div>
+  </div>
+
+  <div class="section-title">3. De-Risked 3-Pillar Commercial Model</div>
+
+  <div class="card card-highlight avoid-break" style="margin-bottom: 12px;">
+    <h4 style="color: #1e3a8a; font-size: 10pt;">📦 Pillar 1: Mandatory Implementation, Setup & Hardware Kit (One-Time Upfront)</h4>
+    <p style="margin-bottom: 6px;">Guarantees turn-key deployment, student roster migration, and dedicated on-site kitchen hardware setup.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Package Tier</th>
+          <th>Student Campus Scope</th>
+          <th>Deliverables & Hardware Included</th>
+          <th>One-Time Fee</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Starter Setup</strong></td>
+          <td><strong>Up to 500 Students</strong></td>
+          <td>SIS Student CSV Roster Migration, Break Slot Config, <strong>1x 10" Kitchen Tablet</strong>, <strong>1x 80mm Bluetooth Thermal Printer</strong>, <strong>15x Sticker Rolls (3,000 meals)</strong>, Staff Training, Parent Marketing Kit.</td>
+          <td><span class="price-tag">₹ 45,000</span></td>
+        </tr>
+        <tr>
+          <td><strong>Growth Setup</strong></td>
+          <td><strong>500 – 1,200 Students</strong></td>
+          <td>Heavy-Duty Kitchen Tablet, <strong>25x Thermal Sticker Rolls (5,000 meals)</strong>, Priority Staff Training & Menu Photography.</td>
+          <td><span class="price-tag">₹ 65,000</span></td>
+        </tr>
+        <tr>
+          <td><strong>Enterprise Setup</strong></td>
+          <td><strong>1,200+ Students (Multi-Wing)</strong></td>
+          <td><strong>2x Kitchen Tablets + 2x Thermal Printers + 50 Sticker Rolls</strong> for Dual Kitchen Counters, SSO, Dedicated Launch Engineer.</td>
+          <td><span class="price-tag">₹ 95,000</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card card-highlight avoid-break" style="margin-bottom: 12px;">
+    <h4 style="color: #1e3a8a; font-size: 10pt;">🏢 Pillar 2: Annual Enterprise SaaS License (Predictable Software Licensing)</h4>
+    <table>
+      <thead>
+        <tr>
+          <th>Tier</th>
+          <th>Campus Student Band</th>
+          <th>Annual License</th>
+          <th>Monthly Equivalent</th>
+          <th>Scope Included</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Starter Campus</strong></td>
+          <td><strong>Up to 500 Students</strong></td>
+          <td><span class="price-tag">₹ 1,20,000 / yr</span></td>
+          <td>₹ 10,000 / mo</td>
+          <td>Full Parent Portal, Admin Dashboard, Kitchen KDS, Sibling Management, Allergen Shield, Campus Wallet.</td>
+        </tr>
+        <tr>
+          <td><strong>Growth Campus</strong></td>
+          <td><strong>500 – 1,200 Students</strong></td>
+          <td><span class="price-tag">₹ 1,95,000 / yr</span></td>
+          <td>₹ 16,250 / mo</td>
+          <td>Everything in Starter + Co-Parent Sync, Multi-Slot Breaks, Custom Nutrition Badging, Priority Support.</td>
+        </tr>
+        <tr>
+          <td><strong>Enterprise Campus</strong></td>
+          <td><strong>1,200 – 2,500+ Students</strong></td>
+          <td><span class="price-tag">₹ 2,85,000 / yr</span></td>
+          <td>₹ 23,750 / mo</td>
+          <td>Everything in Growth + Multi-Wing Routing, Dedicated Account Manager, Custom ERP Webhook Sync, 99.9% SLA.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-title">4. Financial Projections & School Revenue Share (1,000-Student Campus)</div>
+  <table class="avoid-break">
+    <thead>
+      <tr>
+        <th>Adoption Level</th>
+        <th>Daily Orders</th>
+        <th>Avg Order Value</th>
+        <th>Monthly GMV (22 Days)</th>
+        <th>Annual GMV (10 Mo)</th>
+        <th>School Rev Share (3%)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Conservative (30%)</strong></td>
+        <td>300 meals/day</td>
+        <td>₹ 65</td>
+        <td>₹ 4,29,000</td>
+        <td>₹ 42.9 Lakhs</td>
+        <td><strong>₹ 1.29 Lakhs / yr</strong></td>
+      </tr>
+      <tr>
+        <td><strong>Target (50%)</strong></td>
+        <td>500 meals/day</td>
+        <td>₹ 75</td>
+        <td>₹ 8,25,000</td>
+        <td>₹ 82.5 Lakhs</td>
+        <td><strong>₹ 2.47 Lakhs / yr</strong></td>
+      </tr>
+      <tr>
+        <td><strong>High Engagement (70%)</strong></td>
+        <td>700 meals/day</td>
+        <td>₹ 80</td>
+        <td>₹ 12,32,000</td>
+        <td>₹ 1.23 Crores</td>
+        <td><strong>₹ 3.69 Lakhs / yr</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- PAGE BREAK FOR PAGE 3 -->
+  <div class="page-break"></div>
+
+  <div class="header">
+    <div class="brand">
+      <div class="brand-icon">🍱</div>
+      <div class="brand-text">
+        <h1>Governance, Implementation & Next Steps</h1>
+        <p>Security Compliance, 3-Phase Rollout & Partnership Execution</p>
+      </div>
+    </div>
+    <div class="badge-confidential">Implementation Plan</div>
+  </div>
+
+  <div class="section-title">5. Data Privacy, Governance & Brand Integration</div>
+  <div class="grid-3 avoid-break">
+    <div class="card">
+      <h4 style="color: #2563eb;">🔒 Student Data Privacy</h4>
+      <p>Strictly compliant with Indian DPDP Act. Student allergy and health data encrypted in transit & at rest. Zero third-party ads or data monetization.</p>
+    </div>
+    <div class="card">
+      <h4 style="color: #16a34a;">🏫 School Co-Branding</h4>
+      <p>Custom school crest, logo, color matching, and custom campus vanity URL (e.g. <code>food.schoolname.edu.in</code>) reinforcing institutional prestige.</p>
+    </div>
+    <div class="card">
+      <h4 style="color: #d97706;">⚡ Web-First Architecture</h4>
+      <p>Progressive Web App (PWA) opens in 1 tap from WhatsApp/SMS links with zero mandatory 100MB app downloads. 95%+ parent adoption in 48 hours.</p>
+    </div>
+  </div>
+
+  <div class="section-title">6. Risk-Protected Milestone Payment Schedule</div>
+  <div class="grid-3 avoid-break" style="margin-bottom: 20px;">
+    <div class="card" style="text-align: center; border-top: 3px solid #2563eb;">
+      <div style="font-size: 16pt; font-weight: 900; color: #2563eb;">50%</div>
+      <div style="font-weight: 800; font-size: 8.5pt; margin-top: 2px;">Milestone 1: Agreement Signing</div>
+      <p style="font-size: 7.5pt; margin-top: 4px;">Initiates SIS roster import, menu digitization, and hardware dispatch.</p>
+    </div>
+    <div class="card" style="text-align: center; border-top: 3px solid #f59e0b;">
+      <div style="font-size: 16pt; font-weight: 900; color: #f59e0b;">30%</div>
+      <div style="font-weight: 800; font-size: 8.5pt; margin-top: 2px;">Milestone 2: Hardware Delivery</div>
+      <p style="font-size: 7.5pt; margin-top: 4px;">Upon Kitchen Tablet & Thermal Printer setup and staff training.</p>
+    </div>
+    <div class="card" style="text-align: center; border-top: 3px solid #16a34a;">
+      <div style="font-size: 16pt; font-weight: 900; color: #16a34a;">20%</div>
+      <div style="font-weight: 800; font-size: 8.5pt; margin-top: 2px;">Milestone 3: Go-Live Day</div>
+      <p style="font-size: 7.5pt; margin-top: 4px;">Campus-wide live launch with parent broadcast circulars.</p>
+    </div>
+  </div>
+
+  <div class="section-title">7. 3-Phase Implementation Roadmap</div>
+  <div class="card avoid-break" style="background: #f8fafc; margin-bottom: 20px;">
+    <div style="display: flex; justify-content: space-between; gap: 10px; font-size: 8.5pt;">
+      <div style="flex: 1; padding: 6px; border-right: 1px solid #e2e8f0;">
+        <strong style="color: #2563eb;">Phase 1: Setup (Days 1–7)</strong>
+        <p style="font-size: 7.5pt; margin-top: 3px;">Contract signing, SIS student roster import, break slot configuration, menu & allergen tagging.</p>
+      </div>
+      <div style="flex: 1; padding: 6px; border-right: 1px solid #e2e8f0;">
+        <strong style="color: #f59e0b;">Phase 2: Trial (Days 8–14)</strong>
+        <p style="font-size: 7.5pt; margin-top: 3px;">Hardware delivery, staff KDS training, pilot trial with Grade 4 & 5 classes (50–100 test meals).</p>
+      </div>
+      <div style="flex: 1; padding: 6px;">
+        <strong style="color: #16a34a;">Phase 3: Launch (Days 15+)</strong>
+        <p style="font-size: 7.5pt; margin-top: 3px;">WhatsApp/Email parent circular broadcast, active Campus Wallet & classroom desk delivery live.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card avoid-break" style="border: 1.5px solid #cbd5e1; padding: 14px 18px; margin-top: 10px;">
+    <h4 style="font-size: 10pt; color: #0f172a; margin-bottom: 8px;">Partnership Acceptance & Authorization</h4>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 14px;">
+      <div>
+        <div style="font-size: 8pt; color: #64748b; margin-bottom: 28px;">For School Administration / Trust:</div>
+        <div style="border-top: 1px solid #94a3b8; padding-top: 4px; font-size: 8.5pt; font-weight: 800;">Authorized Signatory & Seal</div>
+        <div style="font-size: 7.5pt; color: #64748b;">Date: ________________________</div>
+      </div>
+      <div>
+        <div style="font-size: 8pt; color: #64748b; margin-bottom: 28px;">For Smart Food Platform Partner:</div>
+        <div style="border-top: 1px solid #94a3b8; padding-top: 4px; font-size: 8.5pt; font-weight: 800;">Authorized Signatory</div>
+        <div style="font-size: 7.5pt; color: #64748b;">Date: ________________________</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>Smart School Food Court & Nutrition Platform • Confidential Commercial Document</span>
+    <span>Prepared for School Board Discussions • Page 3 of 3</span>
+  </div>
+
+</body>
+</html>

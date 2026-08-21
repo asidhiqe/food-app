@@ -1,5 +1,5 @@
-import React from 'react';
-import { ArrowLeft, CheckCircle2, Clock, ChefHat, Package, Send, Check, ShieldCheck, MapPin, Sparkles, Flame } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { ArrowLeft, CheckCircle2, Clock, ChefHat, Package, Send, Check, ShieldCheck, MapPin, Sparkles, Flame, User } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 
 const ORDER_STAGES = [
@@ -38,14 +38,22 @@ const ORDER_STAGES = [
   {
     key: 'DELIVERED',
     label: 'Delivered to Classroom',
-    subtext: 'Handed over directly to student in class.',
-    icon: Sparkles,
+    subtext: 'Meal served hot on child’s classroom desk.',
+    icon: ShieldCheck,
     color: '#16a34a',
     bg: '#dcfce7'
   }
 ];
 
 export default function OrderTracker({ orders, onBackToMenu, currency, activeSchool }) {
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && onBackToMenu) onBackToMenu();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onBackToMenu]);
+
   const getStageIndex = (status) => {
     switch (status) {
       case 'NEW': return 0;
@@ -141,16 +149,17 @@ export default function OrderTracker({ orders, onBackToMenu, currency, activeSch
                 >
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <span style={{ fontSize: '1rem', fontWeight: 900, color: 'var(--text-main)' }}>
-                        👦 {order.studentName}
+                      <span style={{ fontSize: '1rem', fontWeight: 900, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                        <User size={16} color="var(--primary)" />
+                        <span>{order.studentName}</span>
                       </span>
-                      <span style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '2px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 800 }}>
-                        Grade {cleanClass}
+                      <span style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '2px 8px', borderRadius: '4px', fontSize: '0.72rem', fontWeight: 800 }}>
+                        Class {cleanClass}
                       </span>
                     </div>
 
                     <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 600, marginTop: '2px' }}>
-                      Token #{order.tokenNumber} • {order.mealPeriodName} • {order.requiredDate}
+                      Token #{order.tokenNumber} • {order.mealPeriodName?.split('/')[0]?.trim() || 'Break'} • {order.requiredDate}
                     </div>
                   </div>
 

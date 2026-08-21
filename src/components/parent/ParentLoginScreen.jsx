@@ -133,7 +133,8 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
       StorageService.setParentSession(session);
 
       // Delightful Welcome Transition
-      setLoadingText(`Welcome back, ${parentName.split(' ')[0]}! Unlocking lunch profiles...`);
+      const cleanParentFirst = (parentName || 'Parent').split(' ')[0];
+      setLoadingText(`Welcome back, ${cleanParentFirst}! Unlocking lunch profiles...`);
 
       setTimeout(() => {
         setIsLoading(false);
@@ -251,21 +252,60 @@ export default function ParentLoginScreen({ activeSchool, onLoginSuccess }) {
       )}
 
       {/* Responsive Shell: 1 Column on Phone, 2 Column Hero on Tablet & Desktop */}
-      <div
-        style={{
-          width: '100%',
-          maxWidth: '1020px',
-          position: 'relative',
-          zIndex: 10,
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
-          gap: '2.5rem',
-          alignItems: 'center',
-          animation: 'slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
-        }}
-      >
-        {/* LEFT COLUMN: School Brand Hero & Value Pillars */}
-        <div style={{ color: '#ffffff' }}>
+      <div className="login-split-layout">
+        {/* MOBILE ONLY COMPACT BRAND HEADER */}
+        <div className="login-hero-mobile">
+          <div
+            style={{
+              width: '46px',
+              height: '46px',
+              borderRadius: '14px',
+              background: '#ffffff',
+              padding: '4px',
+              boxShadow: '0 6px 16px rgba(0,0,0,0.3)',
+              marginBottom: '0.4rem'
+            }}
+          >
+            <img
+              src="./bis-hapur-responsive-logo.png"
+              alt="School Emblem"
+              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+            />
+          </div>
+          <h1
+            style={{
+              fontSize: '1.25rem',
+              fontWeight: 900,
+              color: '#ffffff',
+              lineHeight: 1.2,
+              marginBottom: '0.25rem',
+              textShadow: '0 2px 8px rgba(0,0,0,0.3)'
+            }}
+          >
+            {activeSchool?.name || 'Brainwaves International School'}
+          </h1>
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '4px',
+              background: 'rgba(255, 255, 255, 0.12)',
+              backdropFilter: 'blur(8px)',
+              padding: '3px 10px',
+              borderRadius: 'var(--radius-full)',
+              color: '#93c5fd',
+              fontSize: '0.72rem',
+              fontWeight: 800,
+              border: '1px solid rgba(255, 255, 255, 0.15)'
+            }}
+          >
+            <span>🍱</span>
+            <span>Campus Canteen & Daily Meals</span>
+          </div>
+        </div>
+
+        {/* DESKTOP ONLY COLUMN: School Brand Hero & Value Pillars */}
+        <div className="login-hero-desktop" style={{ color: '#ffffff' }}>
           {/* Official School Crest Emblem with Luminous Aura */}
           <div style={{ display: 'inline-block', position: 'relative', marginBottom: '1rem' }}>
             <div

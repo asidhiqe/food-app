@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { X, Lock, QrCode, CreditCard, Building2, CheckCircle2, ShieldAlert, Loader2, Sparkles, Users, User } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, Lock, QrCode, CreditCard, Building2, CheckCircle2, ShieldAlert, Loader2, Sparkles, Users, User, AlertCircle, ShoppingBag, Wallet, Zap, ShieldCheck } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { PaymentService } from '../../services/paymentService';
+import { StorageService } from '../../services/storageService';
 
 export default function PaymentModal({
   isOpen,
@@ -11,44 +12,82 @@ export default function PaymentModal({
   familyCheckoutData = [], // [{ student, cart, total }]
   selectedDate,
   selectedSlot,
-  cart,
-  cartTotal,
-  currency,
+  cart = [],
+  cartTotal = 0,
+  currency = '₹',
   activeSchool,
   parentSession,
-  onPaymentSuccess
+  onPaymentSuccess,
+  onOpenWalletTopUp
 }) {
-  const [selectedMethod, setSelectedMethod] = useState('upi');
+  const parentPhone = parentSession?.phone || 'default';
+  const walletBalance = StorageService.getParentWalletBalance(parentPhone);
+
+  const validFamilyData = Array.isArray(familyCheckoutData) ? familyCheckoutData : [];
+  const isCombined = checkoutMode === 'all' && validFamilyData.length > 0;
+  const effectiveTotal = isCombined
+    ? validFamilyData.reduce((sum, k) => sum + (Number(k.total) || 0), 0)
+    : (Number(cartTotal) || 0);
+
+  const hasSufficientWallet = walletBalance >= effectiveTotal;
+  const [selectedMethod, setSelectedMethod] = useState(hasSufficientWallet ? 'wallet' : 'upi');
   const [isProcessing, setIsProcessing] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
 
+  // Keyboard Escape listener
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && !isProcessing) onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, isProcessing, onClose]);
+
   if (!isOpen) return null;
 
-  const isCombined = checkoutMode === 'all' && familyCheckoutData.length > 1;
-  const effectiveTotal = isCombined
-    ? familyCheckoutData.reduce((sum, k) => sum + k.total, 0)
-    : cartTotal;
-
-  const upiPayPayload = `upi://pay?pa=canteen.${activeSchool.id}@bank&pn=${encodeURIComponent(activeSchool.canteenName)}&am=${effectiveTotal}&cu=INR&tn=Family_Lunch_Order_${Date.now()}`;
+  const schoolId = activeSchool?.id || 'school';
+  const canteenName = activeSchool?.canteenName || 'Campus Canteen';
+  const upiPayPayload = `upi://pay?pa=canteen.${schoolId}@bank&pn=${encodeURIComponent(canteenName)}&am=${effectiveTotal}&cu=INR&tn=Family_Lunch_Order_${Date.now()}`;
 
   const handlePayNow = async () => {
     setIsProcessing(true);
     setErrorMsg(null);
     try {
-      const result = await PaymentService.processPayment({
-        amount: effectiveTotal,
-        currency,
-        studentName: isCombined
-          ? `${familyCheckoutData.length} Students (${familyCheckoutData.map(k => k.student.studentName.split(' ')[0]).join(', ')})`
-          : verifiedStudent?.studentName || 'Student',
-        orderSummary: isCombined
-          ? `Combined Lunch for ${familyCheckoutData.length} kids (${familyCheckoutData.map(k => k.student.studentName.split(' ')[0]).join(', ')})`
-          : `${cart.length} item(s) for ${verifiedStudent?.studentName}`,
-        method: selectedMethod
-      });
+      const summaryText = isCombined
+        ? `Combined Lunch for ${validFamilyData.length} kids (${validFamilyData.map(k => k.student?.studentName?.split(' ')[0] || 'Child').join(', ')})`
+        : `${(cart || []).length} item(s) for ${verifiedStudent?.studentName || 'Student'}`;
+
+      const studentNameText = isCombined
+        ? `${validFamilyData.length} Students (${validFamilyData.map(k => k.student?.studentName?.split(' ')[0] || 'Child').join(', ')})`
+        : verifiedStudent?.studentName || 'Student';
+
+      let result;
+      if (selectedMethod === 'wallet') {
+        const deductRes = StorageService.deductParentWallet(parentPhone, effectiveTotal, summaryText);
+        if (!deductRes.success) {
+          throw new Error('Insufficient wallet balance. Please top up your wallet.');
+        }
+        result = {
+          success: true,
+          transactionId: `WAL_${Date.now()}`,
+          method: 'Campus Lunch Wallet',
+          amount: effectiveTotal,
+          studentName: studentNameText,
+          timestamp: new Date().toISOString()
+        };
+      } else {
+        result = await PaymentService.processPayment({
+          amount: effectiveTotal,
+          currency,
+          studentName: studentNameText,
+          orderSummary: summaryText,
+          method: selectedMethod
+        });
+      }
 
       setIsProcessing(false);
-      onPaymentSuccess(result, isCombined ? 'all' : 'single', familyCheckoutData);
+      onPaymentSuccess(result, isCombined ? 'all' : 'single', validFamilyData);
     } catch (err) {
       setIsProcessing(false);
       setErrorMsg(err.message || 'Payment failed. Please retry.');
@@ -69,11 +108,11 @@ export default function PaymentModal({
               <Lock size={20} color="#059669" />
             </div>
             <div>
-              <h2 style={{ fontSize: '1.15rem', fontWeight: 800 }}>
-                {isCombined ? '💳 Combined Family Payment' : '💳 Online Payment'}
+              <h2 style={{ fontSize: '1.12rem', fontWeight: 900 }}>
+                {isCombined ? 'Family Lunch Checkout' : 'Online Payment'}
               </h2>
               <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-                {isCombined ? `1-Tap Checkout for ${familyCheckoutData.length} Lunch Boxes` : 'Authorized Campus Gateway'}
+                Authorized Campus Gateway
               </p>
             </div>
           </div>
@@ -83,16 +122,15 @@ export default function PaymentModal({
         </div>
 
         {/* Order Summary Strip */}
-        <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 'var(--radius-md)', padding: '0.85rem 1rem', marginBottom: '1rem' }}>
+        <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '14px', padding: '0.85rem 1rem', marginBottom: '1rem' }}>
           {isCombined ? (
-            /* Multi-Child Family Breakdown */
-            <div>
-              <div style={{ fontSize: '0.74rem', color: 'var(--primary)', fontWeight: 900, marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <Users size={14} />
-                <span>FAMILY LUNCH BOXES ({familyCheckoutData.length} STUDENTS)</span>
+            /* Multi-Child Breakdown */
+            <div style={{ marginBottom: '0.65rem' }}>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 800, marginBottom: '0.45rem' }}>
+                STUDENTS ({validFamilyData.length})
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem', marginBottom: '0.6rem' }}>
-                {familyCheckoutData.map((k, i) => (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                {validFamilyData.map((k, i) => (
                   <div
                     key={i}
                     style={{
@@ -106,13 +144,18 @@ export default function PaymentModal({
                       fontSize: '0.78rem'
                     }}
                   >
-                    <div>
-                      <span style={{ fontWeight: 800 }}>🍱 {k.student.studentName}</span>
-                      <span style={{ color: 'var(--text-muted)', marginLeft: '4px', fontSize: '0.7rem' }}>
-                        ({k.student.class}-{k.student.section})
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0 }}>
+                      {k.student?.photo ? (
+                        <img src={k.student.photo} alt="" style={{ width: '18px', height: '18px', borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
+                      ) : (
+                        <User size={13} color="var(--primary)" style={{ flexShrink: 0 }} />
+                      )}
+                      <span style={{ fontWeight: 800, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{k.student?.studentName || 'Student'}</span>
+                      <span style={{ color: 'var(--text-muted)', fontSize: '0.7rem', flexShrink: 0 }}>
+                        ({k.student?.class || ''}-{k.student?.section || ''})
                       </span>
                     </div>
-                    <span style={{ fontWeight: 900, color: 'var(--text-main)' }}>
+                    <span style={{ fontWeight: 900, color: 'var(--text-main)', flexShrink: 0, marginLeft: '8px' }}>
                       {currency} {k.total}
                     </span>
                   </div>
@@ -120,58 +163,97 @@ export default function PaymentModal({
               </div>
             </div>
           ) : (
-            /* Single Student Summary */
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
-              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 700 }}>STUDENT:</span>
-              <span style={{ fontSize: '0.85rem', fontWeight: 800 }}>{verifiedStudent?.studentName} ({verifiedStudent?.class}-{verifiedStudent?.section})</span>
-            </div>
-          )}
-
-          {parentSession && (
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
-              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 700 }}>ORDERED BY:</span>
-              <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--primary)' }}>
-                {parentSession.parentName} ({parentSession.relation || 'Parent'})
+            /* Single Student Clean Badge */
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.6rem', paddingBottom: '0.6rem', borderBottom: '1px solid #e2e8f0' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+                {verifiedStudent?.photo ? (
+                  <img src={verifiedStudent.photo} alt="" style={{ width: '28px', height: '28px', borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
+                ) : (
+                  <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'var(--primary-light)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <User size={15} />
+                  </div>
+                )}
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {verifiedStudent?.studentName || 'Student'}
+                  </div>
+                  <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                    Class {verifiedStudent?.class || ''}-{verifiedStudent?.section || ''}
+                  </div>
+                </div>
+              </div>
+              <span style={{ background: '#eff6ff', color: 'var(--primary)', padding: '2px 8px', borderRadius: '6px', fontSize: '0.7rem', fontWeight: 800, flexShrink: 0 }}>
+                ID: {verifiedStudent?.id || ''}
               </span>
             </div>
           )}
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
-            <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 700 }}>SLOT & DATE:</span>
-            <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-main)' }}>{selectedDate} • {selectedSlot?.name}</span>
+          {/* Clean Delivery Slot Strip (Single Line) */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.76rem', marginBottom: '0.45rem' }}>
+            <span style={{ color: 'var(--text-muted)', fontWeight: 700 }}>Delivering:</span>
+            <strong style={{ color: 'var(--text-main)', whiteSpace: 'nowrap' }}>
+              {selectedDate || 'Today'} • {selectedSlot?.name?.split('/')[0]?.trim() || 'Break'}
+            </strong>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '0.5rem', borderTop: '1px solid #e2e8f0' }}>
-            <span style={{ fontSize: '0.9rem', fontWeight: 800 }}>
-              {isCombined ? `Combined Total (${familyCheckoutData.length} Kids):` : 'Total Amount:'}
-            </span>
+          {/* Total */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '0.45rem', borderTop: '1px dashed #cbd5e1' }}>
+            <span style={{ fontSize: '0.88rem', fontWeight: 800 }}>Total to Pay:</span>
             <span style={{ fontSize: '1.25rem', fontWeight: 900, color: '#059669' }}>{currency} {effectiveTotal}</span>
           </div>
         </div>
 
-        {/* Mandatory Payment Notice */}
-        <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 'var(--radius-md)', padding: '0.65rem 0.85rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <Lock size={15} color="var(--primary)" />
-          <span style={{ fontSize: '0.72rem', color: '#1e40af', fontWeight: 700 }}>
+        {/* Notice (Clean Single Line) */}
+        <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 'var(--radius-md)', padding: '0.55rem 0.8rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+          <Lock size={13} color="var(--primary)" style={{ flexShrink: 0 }} />
+          <span style={{ fontSize: '0.72rem', color: '#1e40af', fontWeight: 600 }}>
             {isCombined
-              ? 'Separate tokenized meal boxes will be dispatched to each child\'s classroom desk!'
-              : 'Mandatory Payment: Canteen kitchen prepares meals only after online payment verification.'}
+              ? 'Tokenized lunch boxes delivered directly to classrooms.'
+              : 'Kitchen prepares meals after payment confirmation.'}
           </span>
         </div>
 
-        {/* Payment Methods */}
-        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.25rem' }}>
+        {/* Payment Methods (Ranked by Business & UX Priority) */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr', gap: '0.5rem', marginBottom: '1.25rem' }}>
+          {/* 1. Campus Wallet (Primary / Highest Business Value) */}
+          <button
+            onClick={() => setSelectedMethod('wallet')}
+            style={{
+              padding: '0.75rem 0.5rem',
+              borderRadius: 'var(--radius-md)',
+              border: selectedMethod === 'wallet' ? '2px solid #16a34a' : '1px solid var(--border-color)',
+              background: selectedMethod === 'wallet' ? '#f0fdf4' : 'white',
+              color: selectedMethod === 'wallet' ? '#15803d' : 'var(--text-main)',
+              fontWeight: 800,
+              fontSize: '0.78rem',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '4px',
+              cursor: 'pointer',
+              boxShadow: selectedMethod === 'wallet' ? '0 2px 8px rgba(22,163,74,0.15)' : 'none'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <Wallet size={16} color={selectedMethod === 'wallet' ? '#16a34a' : 'var(--primary)'} />
+              <span>Campus Wallet</span>
+            </div>
+            <span style={{ fontSize: '0.66rem', color: '#15803d', fontWeight: 800, background: '#dcfce7', padding: '1px 6px', borderRadius: '4px' }}>
+              1-Tap Pay
+            </span>
+          </button>
+
+          {/* 2. Instant UPI (Highest Consumer Volume in India) */}
           <button
             onClick={() => setSelectedMethod('upi')}
             style={{
-              flex: 1,
-              padding: '0.65rem 0.5rem',
+              padding: '0.75rem 0.5rem',
               borderRadius: 'var(--radius-md)',
               border: selectedMethod === 'upi' ? '2px solid var(--primary)' : '1px solid var(--border-color)',
               background: selectedMethod === 'upi' ? 'var(--primary-light)' : 'white',
               color: selectedMethod === 'upi' ? 'var(--primary)' : 'var(--text-main)',
-              fontWeight: 700,
-              fontSize: '0.8rem',
+              fontWeight: 800,
+              fontSize: '0.78rem',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -179,21 +261,26 @@ export default function PaymentModal({
               cursor: 'pointer'
             }}
           >
-            <QrCode size={18} />
-            <span>Instant UPI QR</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <QrCode size={16} />
+              <span>UPI QR / App</span>
+            </div>
+            <span style={{ fontSize: '0.66rem', color: '#64748b', fontWeight: 600 }}>
+              GPay / PhonePe
+            </span>
           </button>
 
+          {/* 3. Debit / Credit Card */}
           <button
             onClick={() => setSelectedMethod('card')}
             style={{
-              flex: 1,
-              padding: '0.65rem 0.5rem',
+              padding: '0.75rem 0.5rem',
               borderRadius: 'var(--radius-md)',
               border: selectedMethod === 'card' ? '2px solid var(--primary)' : '1px solid var(--border-color)',
               background: selectedMethod === 'card' ? 'var(--primary-light)' : 'white',
               color: selectedMethod === 'card' ? 'var(--primary)' : 'var(--text-main)',
-              fontWeight: 700,
-              fontSize: '0.8rem',
+              fontWeight: 800,
+              fontSize: '0.78rem',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -201,32 +288,93 @@ export default function PaymentModal({
               cursor: 'pointer'
             }}
           >
-            <CreditCard size={18} />
-            <span>Debit / Credit</span>
-          </button>
-
-          <button
-            onClick={() => setSelectedMethod('netbanking')}
-            style={{
-              flex: 1,
-              padding: '0.65rem 0.5rem',
-              borderRadius: 'var(--radius-md)',
-              border: selectedMethod === 'netbanking' ? '2px solid var(--primary)' : '1px solid var(--border-color)',
-              background: selectedMethod === 'netbanking' ? 'var(--primary-light)' : 'white',
-              color: selectedMethod === 'netbanking' ? 'var(--primary)' : 'var(--text-main)',
-              fontWeight: 700,
-              fontSize: '0.8rem',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '4px',
-              cursor: 'pointer'
-            }}
-          >
-            <Building2 size={18} />
-            <span>Net Banking</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <CreditCard size={16} />
+              <span>Card</span>
+            </div>
+            <span style={{ fontSize: '0.66rem', color: '#64748b', fontWeight: 600 }}>
+              Visa / RuPay
+            </span>
           </button>
         </div>
+
+        {/* Selected Method View */}
+        {selectedMethod === 'wallet' && (
+          <div style={{ marginBottom: '1.25rem' }}>
+            {hasSufficientWallet ? (
+              <div
+                style={{
+                  background: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)',
+                  border: '1.5px solid #86efac',
+                  borderRadius: 'var(--radius-md)',
+                  padding: '1rem',
+                  color: '#14532d'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#15803d', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <Zap size={14} color="#16a34a" />
+                    <span>Campus Meal Wallet Active</span>
+                  </span>
+                  <span style={{ fontSize: '0.92rem', fontWeight: 900, color: '#14532d' }}>
+                    Bal: {currency} {walletBalance.toLocaleString('en-IN')}
+                  </span>
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.74rem', color: '#166534', padding: '4px 0', borderTop: '1px dashed #bbf7d0' }}>
+                  <span>Deducting for this order:</span>
+                  <strong>- {currency} {effectiveTotal}</strong>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.74rem', color: '#166534', paddingTop: '2px' }}>
+                  <span>Remaining balance:</span>
+                  <strong>{currency} {(walletBalance - effectiveTotal).toLocaleString('en-IN')}</strong>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.68rem', color: '#15803d', marginTop: '0.65rem', fontWeight: 700 }}>
+                  <ShieldCheck size={12} />
+                  <span>Instant 1-tap confirmation (Zero gateway loading or OTP delay)</span>
+                </div>
+              </div>
+            ) : (
+              <div
+                style={{
+                  background: '#fffbeb',
+                  border: '1.5px solid #fde68a',
+                  borderRadius: 'var(--radius-md)',
+                  padding: '1rem',
+                  textAlign: 'center'
+                }}
+              >
+                <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#92400e', marginBottom: '4px' }}>
+                  Low Wallet Balance ({currency} {walletBalance})
+                </div>
+                <div style={{ fontSize: '0.72rem', color: '#78350f', marginBottom: '0.75rem' }}>
+                  This order requires {currency} {effectiveTotal}. Top up or pay via UPI QR below.
+                </div>
+                {onOpenWalletTopUp && (
+                  <button
+                    onClick={() => {
+                      onClose();
+                      onOpenWalletTopUp();
+                    }}
+                    style={{
+                      background: 'var(--primary)',
+                      color: '#ffffff',
+                      border: 'none',
+                      padding: '5px 14px',
+                      borderRadius: 'var(--radius-full)',
+                      fontSize: '0.74rem',
+                      fontWeight: 800,
+                      cursor: 'pointer'
+                    }}
+                  >
+                    + Top-Up Wallet Now
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Selected Method View */}
         {selectedMethod === 'upi' && (
@@ -238,8 +386,35 @@ export default function PaymentModal({
               Scan with GPay, PhonePe, Paytm, or BHIM
             </div>
             <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-              VPA: <strong>canteen.{activeSchool.id}@bank</strong>
+              VPA: <strong>canteen.{schoolId}@bank</strong>
             </div>
+
+            {/* Wallet Top-Up Upsell */}
+            {onOpenWalletTopUp && (
+              <div
+                onClick={() => {
+                  onClose();
+                  onOpenWalletTopUp();
+                }}
+                style={{
+                  marginTop: '0.85rem',
+                  padding: '6px 10px',
+                  background: '#eff6ff',
+                  border: '1px dashed #bfdbfe',
+                  borderRadius: 'var(--radius-md)',
+                  fontSize: '0.7rem',
+                  color: '#1e40af',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '4px'
+                }}
+              >
+                <Sparkles size={12} color="#2563eb" />
+                <span>Top up Wallet with UPI for ₹50 bonus & 1-tap checkout next time</span>
+              </div>
+            )}
           </div>
         )}
 
@@ -269,20 +444,6 @@ export default function PaymentModal({
           </div>
         )}
 
-        {selectedMethod === 'netbanking' && (
-          <div style={{ marginBottom: '1.25rem' }}>
-            <select
-              style={{ width: '100%', padding: '0.65rem 0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', fontSize: '0.85rem' }}
-            >
-              <option>HDFC Bank</option>
-              <option>State Bank of India (SBI)</option>
-              <option>ICICI Bank</option>
-              <option>Axis Bank</option>
-              <option>Kotak Mahindra Bank</option>
-            </select>
-          </div>
-        )}
-
         {errorMsg && (
           <div style={{ color: '#dc2626', fontSize: '0.78rem', marginBottom: '1rem', textAlign: 'center', background: '#fef2f2', padding: '0.5rem', borderRadius: 'var(--radius-md)' }}>
             ⚠️ {errorMsg}
@@ -306,7 +467,7 @@ export default function PaymentModal({
               <CheckCircle2 size={18} />
               <span>
                 {isCombined
-                  ? `Pay ${currency} ${effectiveTotal} for All ${familyCheckoutData.length} Kids`
+                  ? `Pay ${currency} ${effectiveTotal} for All ${validFamilyData.length} Kids`
                   : `Pay ${currency} ${effectiveTotal} Now`}
               </span>
             </>

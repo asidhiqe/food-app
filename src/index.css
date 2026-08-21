@@ -36,7 +36,7 @@
   --radius-xl: 22px;
   --radius-full: 9999px;
   
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 * {
@@ -44,6 +44,30 @@
   margin: 0;
   padding: 0;
   -webkit-tap-highlight-color: transparent;
+}
+
+/* Accessibility: High-Visibility Focus Ring for Keyboard Navigation */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Screen Reader Only Utility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }
 
 body {
@@ -99,6 +123,47 @@ body {
   }
 }
 
+/* Responsive Login Pages (Compact on Mobile, Split 2-Col on Desktop) */
+.login-split-layout {
+  width: 100%;
+  max-width: 1020px;
+  position: relative;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  align-items: center;
+  margin: 0 auto;
+}
+
+.login-hero-desktop {
+  display: none;
+}
+
+.login-hero-mobile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin-bottom: 0.25rem;
+}
+
+@media (min-width: 768px) {
+  .login-split-layout {
+    grid-template-columns: 1.1fr 1fr;
+    gap: 2.5rem;
+  }
+
+  .login-hero-desktop {
+    display: block;
+  }
+
+  .login-hero-mobile {
+    display: none;
+  }
+}
+
 .main-content {
   flex: 1;
   padding: 0.85rem 1rem 5.5rem 1rem;
@@ -144,46 +209,54 @@ body {
   transform: scale(0.97);
 }
 
-/* Stepper Quantity Control */
-.quantity-control {
-  display: flex;
+/* Standard Design System Stepper */
+.app-stepper {
+  display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
   background: #f1f5f9;
   border-radius: var(--radius-full);
   padding: 2px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
-.qty-btn {
-  background: #ffffff;
-  border: 1px solid #cbd5e1;
-  width: 26px;
-  height: 26px;
+.app-stepper-btn {
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: var(--text-main);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: var(--text-main);
-  font-weight: 800;
+  padding: 0;
   transition: all 0.15s ease;
 }
 
-.qty-btn:active {
-  transform: scale(0.88);
+.app-stepper-btn:active {
+  transform: scale(0.9);
 }
 
-.qty-btn:hover {
-  background: var(--primary-light);
-  color: var(--primary);
+.app-stepper-btn-add {
+  background: var(--primary);
   border-color: var(--primary);
+  color: #ffffff;
 }
 
-.qty-count {
-  font-weight: 800;
-  font-size: 0.85rem;
-  min-width: 20px;
+.app-stepper-btn-add:hover {
+  background: #1d4ed8;
+}
+
+.app-stepper-qty {
+  padding: 0 8px;
+  font-size: 0.82rem;
+  font-weight: 900;
+  color: var(--text-main);
+  min-width: 18px;
   text-align: center;
+  user-select: none;
 }
 
 /* Modal Overlay */

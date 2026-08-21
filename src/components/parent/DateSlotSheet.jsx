@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { X, Calendar, Clock, CheckCircle2, AlertCircle } from 'lucide-react';
 
 export default function DateSlotSheet({
@@ -10,6 +10,16 @@ export default function DateSlotSheet({
   selectedSlot,
   setSelectedSlot
 }) {
+  // Keyboard Escape listener
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   // Generate next 5 school days

@@ -6,7 +6,7 @@ export const INITIAL_STUDENTS = {
     {
       id: 'BW-301',
       studentName: 'Aarav Kapoor',
-      class: 'Grade 4',
+      class: '4',
       section: 'A',
       rollNo: 12,
       fatherName: 'Dr. Sanjay Kapoor',
@@ -14,17 +14,16 @@ export const INITIAL_STUDENTS = {
       motherName: 'Dr. Priya Kapoor',
       motherPhone: '9811223345',
       parentEmail: 'kapoor.family@example.com',
-      avatar: '👦',
+      photo: './my-kids/aarav.jpg',
       gender: 'boy',
       allergies: ['Peanuts'],
       dietary: 'Veg',
-      healthNotes: 'Peanut Sensitive • FSSAI Verified',
-      deskLocation: 'Room 4A - Desk 12'
+      healthNotes: 'Peanut Sensitive • FSSAI Verified'
     },
     {
       id: 'BW-302',
       studentName: 'Ananya Kapoor',
-      class: 'Grade 8',
+      class: '8',
       section: 'B',
       rollNo: 24,
       fatherName: 'Dr. Sanjay Kapoor',
@@ -32,17 +31,16 @@ export const INITIAL_STUDENTS = {
       motherName: 'Dr. Priya Kapoor',
       motherPhone: '9811223345',
       parentEmail: 'kapoor.family@example.com',
-      avatar: '👧',
+      photo: './my-kids/ananya.jpg',
       gender: 'girl',
       allergies: ['Lactose/Dairy'],
       dietary: 'Veg',
-      healthNotes: 'Lactose Conscious',
-      deskLocation: 'Room 8B - Desk 5'
+      healthNotes: 'Lactose Conscious'
     },
     {
       id: 'BW-303',
       studentName: 'Kabir Kapoor',
-      class: 'Grade 1',
+      class: '1',
       section: 'C',
       rollNo: 7,
       fatherName: 'Dr. Sanjay Kapoor',
@@ -50,12 +48,11 @@ export const INITIAL_STUDENTS = {
       motherName: 'Dr. Priya Kapoor',
       motherPhone: '9811223345',
       parentEmail: 'kapoor.family@example.com',
-      avatar: '👦',
+      photo: './my-kids/kabir.jpg',
       gender: 'boy',
       allergies: [],
       dietary: 'Veg',
-      healthNotes: 'Allergen Safe • Fresh Fruits Preferred',
-      deskLocation: 'Room 1C - Front Row'
+      healthNotes: 'Allergen Safe • Fresh Fruits Preferred'
     },
 
     // Sharma Family (2 siblings)

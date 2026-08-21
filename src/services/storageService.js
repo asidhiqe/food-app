@@ -18,8 +18,8 @@ const channel = typeof window !== 'undefined' && window.BroadcastChannel
   ? new BroadcastChannel('school_food_app_sync')
   : null;
 
-const SCHEMA_VERSION_KEY = 'sfa_schema_version_v2';
-const CURRENT_SCHEMA_VERSION = 'v2.1_kapoor_3kids';
+const SCHEMA_VERSION_KEY = 'sfa_schema_version_v3';
+const CURRENT_SCHEMA_VERSION = 'v3.0_real_kids_photos';
 
 export const StorageService = {
   // --- Initialization ---
@@ -260,17 +260,23 @@ export const StorageService = {
   },
 
   updateStudentHealthProfile(schoolId, studentId, healthData) {
+    return this.updateStudentProfile(schoolId, studentId, healthData);
+  },
+
+  updateStudentProfile(schoolId, studentId, profileData) {
     const students = this.getStudents(schoolId);
     const index = students.findIndex((s) => s.id === studentId);
     if (index !== -1) {
       students[index] = {
         ...students[index],
-        allergies: healthData.allergies || [],
-        dietary: healthData.dietary || 'Veg',
-        healthNotes: healthData.healthNotes || ''
+        ...profileData,
+        allergies: profileData.allergies !== undefined ? profileData.allergies : students[index].allergies || [],
+        dietary: profileData.dietary !== undefined ? profileData.dietary : students[index].dietary || 'Veg',
+        healthNotes: profileData.healthNotes !== undefined ? profileData.healthNotes : students[index].healthNotes || '',
+        photo: profileData.photo !== undefined ? profileData.photo : students[index].photo
       };
       localStorage.setItem(KEYS.STUDENTS_PREFIX + schoolId, JSON.stringify(students));
-      this.notify('STUDENT_HEALTH_UPDATED', { studentId, healthData });
+      this.notify('STUDENT_PROFILE_UPDATED', { studentId, updatedStudent: students[index] });
       return students[index];
     }
     return null;
@@ -404,7 +410,7 @@ export const StorageService = {
     const tokenNumber = `${Math.floor(1000 + Math.random() * 9000)}`;
 
     const newOrder = {
-      id: `ord_${Date.now()}`,
+      id: `ord_${Date.now()}_${orderData.studentId || Math.floor(Math.random() * 10000)}`,
       orderNumber,
       tokenNumber,
       schoolId,
@@ -443,5 +449,92 @@ export const StorageService = {
     });
     localStorage.setItem(KEYS.ORDERS_PREFIX + schoolId, JSON.stringify(orders));
     this.notify('STICKERS_PRINTED', { schoolId, orderIds });
+  },
+
+  // --- Parent Campus Lunch Wallet Methods ---
+  getParentWalletBalance(phone = 'default') {
+    const key = `sfa_wallet_bal_${phone}`;
+    const saved = localStorage.getItem(key);
+    if (saved !== null) {
+      return Number(saved) || 0;
+    }
+    const defaultBal = 1500;
+    localStorage.setItem(key, String(defaultBal));
+    return defaultBal;
+  },
+
+  getWalletTransactions(phone = 'default') {
+    const key = `sfa_wallet_tx_${phone}`;
+    const saved = localStorage.getItem(key);
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        return [];
+      }
+    }
+    const initialTx = [
+      {
+        id: 'tx_init_1',
+        type: 'TOPUP',
+        amount: 1500,
+        title: 'Initial Campus Wallet Credit',
+        date: new Date(Date.now() - 86400000 * 2).toISOString(),
+        paymentMethod: 'UPI'
+      }
+    ];
+    localStorage.setItem(key, JSON.stringify(initialTx));
+    return initialTx;
+  },
+
+  topUpParentWallet(phone = 'default', amount, bonus = 0, paymentMethod = 'UPI') {
+    const current = this.getParentWalletBalance(phone);
+    const totalToAdd = Number(amount) + Number(bonus);
+    const newBal = current + totalToAdd;
+    const balKey = `sfa_wallet_bal_${phone}`;
+    localStorage.setItem(balKey, String(newBal));
+
+    const txKey = `sfa_wallet_tx_${phone}`;
+    const transactions = this.getWalletTransactions(phone);
+    const newTx = {
+      id: `tx_${Date.now()}`,
+      type: 'TOPUP',
+      amount: totalToAdd,
+      baseAmount: Number(amount),
+      bonus: Number(bonus),
+      title: bonus > 0 ? `Wallet Top-Up (+₹${bonus} Bonus)` : 'Wallet Top-Up',
+      date: new Date().toISOString(),
+      paymentMethod
+    };
+    transactions.unshift(newTx);
+    localStorage.setItem(txKey, JSON.stringify(transactions));
+    this.notify('WALLET_UPDATED', { phone, newBalance: newBal });
+    return newBal;
+  },
+
+  deductParentWallet(phone = 'default', amount, orderSummary = 'School Meal Order') {
+    const current = this.getParentWalletBalance(phone);
+    const numAmount = Number(amount);
+    if (current < numAmount) {
+      return { success: false, error: 'Insufficient balance', balance: current };
+    }
+    const newBal = current - numAmount;
+    const balKey = `sfa_wallet_bal_${phone}`;
+    localStorage.setItem(balKey, String(newBal));
+
+    const txKey = `sfa_wallet_tx_${phone}`;
+    const transactions = this.getWalletTransactions(phone);
+    const newTx = {
+      id: `tx_${Date.now()}`,
+      type: 'DEBIT',
+      amount: numAmount,
+      title: orderSummary,
+      date: new Date().toISOString(),
+      paymentMethod: 'Campus Wallet'
+    };
+    transactions.unshift(newTx);
+    localStorage.setItem(txKey, JSON.stringify(transactions));
+    this.notify('WALLET_UPDATED', { phone, newBalance: newBal });
+    return { success: true, balance: newBal };
   }
 };
