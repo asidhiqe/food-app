@@ -1,9 +1,9 @@
 {
   "short_name": "FoodCourt",
   "name": "Brainwaves Food Court - School Canteen",
-  "id": "/food-app/",
-  "start_url": "/food-app/",
-  "scope": "/food-app/",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
   "background_color": "#ffffff",
