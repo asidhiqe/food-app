@@ -326,13 +326,25 @@ export default function MenuCatalog({
                     </span>
                   </div>
 
-                  {/* Title & Price */}
+                  {/* Title & Price + Nutrition */}
                   <div style={{ fontSize: '0.92rem', fontWeight: 900, color: '#0f172a', lineHeight: 1.25 }}>
                     {item.name}
                   </div>
 
-                  <div style={{ fontSize: '0.88rem', fontWeight: 900, color: '#1e293b', marginTop: '1px' }}>
-                    {currency} {item.price}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
+                    <span style={{ fontSize: '0.88rem', fontWeight: 900, color: '#1e293b' }}>
+                      {currency} {item.price}
+                    </span>
+
+                    {/* Nutrition Micro-Badges */}
+                    <span style={{ fontSize: '0.64rem', fontWeight: 800, background: '#fef3c7', color: '#b45309', padding: '1px 5px', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '2px' }}>
+                      <Flame size={10} /> {item.calories || 340} kcal
+                    </span>
+                    {item.protein && (
+                      <span style={{ fontSize: '0.64rem', fontWeight: 800, background: '#dcfce7', color: '#15803d', padding: '1px 5px', borderRadius: '4px' }}>
+                        {item.protein}g protein
+                      </span>
+                    )}
                   </div>
 
                   {/* Short Description */}

@@ -1,8 +1,64 @@
-// Multi-tenant initial mock database with Sibling relationships & dual-parent contacts
+// Multi-tenant initial mock database with Sibling relationships, 3-kid demo families & nutritional macros
 
 export const INITIAL_STUDENTS = {
   brainwaves: [
-    // Sharma Family (2 siblings in Brainwaves)
+    // Kapoor Family (3 siblings in Brainwaves International School)
+    {
+      id: 'BW-301',
+      studentName: 'Aarav Kapoor',
+      class: 'Grade 4',
+      section: 'A',
+      rollNo: 12,
+      fatherName: 'Dr. Sanjay Kapoor',
+      fatherPhone: '9811223344',
+      motherName: 'Dr. Priya Kapoor',
+      motherPhone: '9811223345',
+      parentEmail: 'kapoor.family@example.com',
+      avatar: '👦',
+      gender: 'boy',
+      allergies: ['Peanuts'],
+      dietary: 'Veg',
+      healthNotes: 'Peanut Sensitive • FSSAI Verified',
+      deskLocation: 'Room 4A - Desk 12'
+    },
+    {
+      id: 'BW-302',
+      studentName: 'Ananya Kapoor',
+      class: 'Grade 8',
+      section: 'B',
+      rollNo: 24,
+      fatherName: 'Dr. Sanjay Kapoor',
+      fatherPhone: '9811223344',
+      motherName: 'Dr. Priya Kapoor',
+      motherPhone: '9811223345',
+      parentEmail: 'kapoor.family@example.com',
+      avatar: '👧',
+      gender: 'girl',
+      allergies: ['Lactose/Dairy'],
+      dietary: 'Veg',
+      healthNotes: 'Lactose Conscious',
+      deskLocation: 'Room 8B - Desk 5'
+    },
+    {
+      id: 'BW-303',
+      studentName: 'Kabir Kapoor',
+      class: 'Grade 1',
+      section: 'C',
+      rollNo: 7,
+      fatherName: 'Dr. Sanjay Kapoor',
+      fatherPhone: '9811223344',
+      motherName: 'Dr. Priya Kapoor',
+      motherPhone: '9811223345',
+      parentEmail: 'kapoor.family@example.com',
+      avatar: '👦',
+      gender: 'boy',
+      allergies: [],
+      dietary: 'Veg',
+      healthNotes: 'Allergen Safe • Fresh Fruits Preferred',
+      deskLocation: 'Room 1C - Front Row'
+    },
+
+    // Sharma Family (2 siblings)
     {
       id: 'BW-101',
       studentName: 'Aarav Sharma',
@@ -11,13 +67,15 @@ export const INITIAL_STUDENTS = {
       rollNo: 14,
       fatherName: 'Rajesh Sharma',
       fatherPhone: '9876543210',
-      motherName: 'Priya Sharma',
+      motherName: 'Pooja Sharma',
       motherPhone: '9876543211',
       parentEmail: 'sharma.family@example.com',
       avatar: '👦',
-      allergies: ['Dairy', 'Nuts'],
+      gender: 'boy',
+      allergies: ['Dairy', 'Peanuts'],
       dietary: 'Veg',
-      healthNotes: 'Nut Sensitive & Lactose Conscious'
+      healthNotes: 'Nut Sensitive & Lactose Conscious',
+      deskLocation: 'Room 4B - Desk 14'
     },
     {
       id: 'BW-102',
@@ -27,14 +85,17 @@ export const INITIAL_STUDENTS = {
       rollNo: 22,
       fatherName: 'Rajesh Sharma',
       fatherPhone: '9876543210',
-      motherName: 'Priya Sharma',
+      motherName: 'Pooja Sharma',
       motherPhone: '9876543211',
       parentEmail: 'sharma.family@example.com',
       avatar: '👧',
+      gender: 'girl',
       allergies: [],
       dietary: 'Veg',
-      healthNotes: 'Allergen Safe'
+      healthNotes: 'Allergen Safe',
+      deskLocation: 'Room 8A - Desk 22'
     },
+
     // Verma Family (2 siblings)
     {
       id: 'BW-201',
@@ -47,7 +108,11 @@ export const INITIAL_STUDENTS = {
       motherName: 'Neha Verma',
       motherPhone: '9123456781',
       parentEmail: 'verma.vikram@example.com',
-      avatar: '👧'
+      avatar: '👧',
+      gender: 'girl',
+      allergies: [],
+      dietary: 'Veg',
+      deskLocation: 'Room 2C - Desk 8'
     },
     {
       id: 'BW-202',
@@ -60,8 +125,13 @@ export const INITIAL_STUDENTS = {
       motherName: 'Neha Verma',
       motherPhone: '9123456781',
       parentEmail: 'verma.vikram@example.com',
-      avatar: '👦'
+      avatar: '👦',
+      gender: 'boy',
+      allergies: [],
+      dietary: 'Veg',
+      deskLocation: 'Room 6B - Desk 19'
     },
+
     // Single child families
     {
       id: 'BW-2026-1042',
@@ -74,20 +144,11 @@ export const INITIAL_STUDENTS = {
       motherName: 'Sunita Gupta',
       motherPhone: '9988776656',
       parentEmail: 'amit.gupta@example.com',
-      avatar: '👦'
-    },
-    {
-      id: 'BW-105',
-      studentName: 'Meera Iyer',
-      class: 'Grade 7',
-      section: 'C',
-      rollNo: 11,
-      fatherName: 'Suresh Iyer',
-      fatherPhone: '9811223344',
-      motherName: 'Deepa Iyer',
-      motherPhone: '9811223345',
-      parentEmail: 'suresh.iyer@example.com',
-      avatar: '👧'
+      avatar: '👦',
+      gender: 'boy',
+      allergies: [],
+      dietary: 'Veg',
+      deskLocation: 'Room 5A - Desk 29'
     }
   ],
   st_xaviers: [
@@ -100,7 +161,9 @@ export const INITIAL_STUDENTS = {
       fatherPhone: '9845012345',
       motherName: 'Maria Fernandez',
       motherPhone: '9845012346',
-      avatar: '👦'
+      avatar: '👦',
+      gender: 'boy',
+      allergies: []
     },
     {
       id: 'SX-502',
@@ -111,7 +174,9 @@ export const INITIAL_STUDENTS = {
       fatherPhone: '9845012345',
       motherName: 'Maria Fernandez',
       motherPhone: '9845012346',
-      avatar: '👧'
+      avatar: '👧',
+      gender: 'girl',
+      allergies: []
     }
   ],
   greenwood: [
@@ -124,7 +189,9 @@ export const INITIAL_STUDENTS = {
       fatherPhone: '9711223344',
       motherName: 'Farida Khan',
       motherPhone: '9711223345',
-      avatar: '👧'
+      avatar: '👧',
+      gender: 'girl',
+      allergies: []
     }
   ]
 };
@@ -138,6 +205,11 @@ export const INITIAL_MENUS = {
       category: 'Snacks & Rolls',
       price: 85,
       isVeg: true,
+      calories: 340,
+      protein: 14,
+      carbs: 38,
+      fats: 12,
+      fiber: 5,
       allergens: ['Dairy', 'Gluten'],
       availablePeriods: ['morning_snack', 'lunch_break', 'evening_snack'],
       image: 'https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=600&auto=format&fit=crop&q=80',
@@ -150,6 +222,11 @@ export const INITIAL_MENUS = {
       category: 'Lunch Thali',
       price: 120,
       isVeg: true,
+      calories: 480,
+      protein: 18,
+      carbs: 62,
+      fats: 16,
+      fiber: 6,
       allergens: ['Dairy'],
       availablePeriods: ['lunch_break'],
       image: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=600&auto=format&fit=crop&q=80',
@@ -162,6 +239,11 @@ export const INITIAL_MENUS = {
       category: 'Sandwiches & Burgers',
       price: 75,
       isVeg: true,
+      calories: 290,
+      protein: 11,
+      carbs: 34,
+      fats: 10,
+      fiber: 4,
       allergens: ['Dairy', 'Gluten'],
       availablePeriods: ['morning_snack', 'evening_snack'],
       image: 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&auto=format&fit=crop&q=80',
@@ -174,6 +256,11 @@ export const INITIAL_MENUS = {
       category: 'Pasta & Noodles',
       price: 110,
       isVeg: true,
+      calories: 390,
+      protein: 13,
+      carbs: 56,
+      fats: 12,
+      fiber: 5,
       allergens: ['Gluten', 'Dairy'],
       availablePeriods: ['lunch_break'],
       image: 'https://images.unsplash.com/photo-1621996346565-e3d5d62817d2?w=600&auto=format&fit=crop&q=80',
@@ -186,7 +273,12 @@ export const INITIAL_MENUS = {
       category: 'Healthy & Salads',
       price: 65,
       isVeg: true,
-      allergens: ['Nuts'],
+      calories: 180,
+      protein: 4,
+      carbs: 38,
+      fats: 2,
+      fiber: 7,
+      allergens: ['Peanuts'],
       availablePeriods: ['morning_snack', 'lunch_break', 'evening_snack'],
       image: 'https://images.unsplash.com/photo-1519996529931-28324d5a630e?w=600&auto=format&fit=crop&q=80',
       isAvailable: true
@@ -198,6 +290,11 @@ export const INITIAL_MENUS = {
       category: 'Beverages & Juices',
       price: 45,
       isVeg: true,
+      calories: 120,
+      protein: 1,
+      carbs: 29,
+      fats: 0,
+      fiber: 2,
       allergens: [],
       availablePeriods: ['morning_snack', 'lunch_break', 'evening_snack'],
       image: 'https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=600&auto=format&fit=crop&q=80',
@@ -210,6 +307,11 @@ export const INITIAL_MENUS = {
       category: 'Snacks & Rolls',
       price: 60,
       isVeg: true,
+      calories: 260,
+      protein: 6,
+      carbs: 32,
+      fats: 11,
+      fiber: 3,
       allergens: ['Gluten'],
       availablePeriods: ['morning_snack', 'evening_snack'],
       image: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=600&auto=format&fit=crop&q=80',
@@ -222,6 +324,11 @@ export const INITIAL_MENUS = {
       category: 'Bakery & Sweets',
       price: 50,
       isVeg: true,
+      calories: 310,
+      protein: 5,
+      carbs: 44,
+      fats: 14,
+      fiber: 2,
       allergens: ['Dairy', 'Gluten'],
       availablePeriods: ['morning_snack', 'evening_snack'],
       image: 'https://images.unsplash.com/photo-1607958996333-41aef7caefaa?w=600&auto=format&fit=crop&q=80',
@@ -236,6 +343,11 @@ export const INITIAL_MENUS = {
       category: 'South Indian',
       price: 50,
       isVeg: true,
+      calories: 220,
+      protein: 8,
+      carbs: 42,
+      fats: 3,
+      fiber: 4,
       allergens: [],
       availablePeriods: ['morning_break'],
       image: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=600&auto=format&fit=crop&q=80',
@@ -248,6 +360,11 @@ export const INITIAL_MENUS = {
       category: 'Lunch Meals',
       price: 90,
       isVeg: true,
+      calories: 440,
+      protein: 12,
+      carbs: 72,
+      fats: 8,
+      fiber: 6,
       allergens: ['Dairy'],
       availablePeriods: ['lunch_break'],
       image: 'https://images.unsplash.com/photo-1610057099443-fde8c4d50f91?w=600&auto=format&fit=crop&q=80',
@@ -258,13 +375,18 @@ export const INITIAL_MENUS = {
     {
       id: 'gw_1',
       name: 'Mediterranean Falafel Wrap',
-      description: 'Crispy herb falafels, hummus, pickled cucumbers and tahini.',
-      category: 'Wraps',
-      price: 110,
+      description: 'Chickpea falafel nuggets wrapped with hummus, tahini, lettuce & pickles.',
+      category: 'Wraps & Bowls',
+      price: 95,
       isVeg: true,
+      calories: 360,
+      protein: 12,
+      carbs: 48,
+      fats: 12,
+      fiber: 8,
       allergens: ['Gluten', 'Sesame'],
       availablePeriods: ['lunch_break'],
-      image: 'https://images.unsplash.com/photo-1529006557810-274b9b2fc783?w=600&auto=format&fit=crop&q=80',
+      image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=600&auto=format&fit=crop&q=80',
       isAvailable: true
     }
   ]
@@ -273,10 +395,8 @@ export const INITIAL_MENUS = {
 export const INITIAL_ORDERS = {
   brainwaves: [
     {
-      id: 'ord_1001',
-      orderNumber: 'ORD-BW-8801',
-      tokenNumber: '1042',
-      schoolId: 'brainwaves',
+      id: 'ord_bw_001',
+      tokenNumber: 101,
       studentId: 'BW-101',
       studentName: 'Aarav Sharma',
       classSection: 'Grade 4 - B',
@@ -284,19 +404,44 @@ export const INITIAL_ORDERS = {
       orderedByParentPhone: '9876543210',
       parentRelation: 'Father',
       requiredDate: new Date().toISOString().split('T')[0],
-      mealPeriodId: 'lunch_break',
-      mealPeriodName: 'Lunch Break (12:45 PM)',
+      mealPeriodId: 'slot-2',
+      mealPeriodName: 'Lunch Break',
+      allergies: ['Dairy', 'Peanuts'],
+      dietary: 'Veg',
+      healthNotes: 'Nut Sensitive & Lactose Conscious',
+      status: 'PREPARING',
+      orderedAt: new Date(Date.now() - 25 * 60 * 1000).toISOString(),
       items: [
-        { id: 'item_2', name: 'Paneer Butter Masala Meal Box', price: 120, quantity: 1, subtotal: 120 },
+        { id: 'item_1', name: 'Paneer Tikka Kathi Roll', price: 85, quantity: 1, subtotal: 85 },
         { id: 'item_6', name: 'Cold Pressed Mango Alphonso Nectar', price: 45, quantity: 1, subtotal: 45 }
       ],
-      totalAmount: 165,
-      paymentId: 'PAY_UPI_9928124',
-      paymentStatus: 'PAID',
-      paymentMethod: 'UPI',
-      deliveryStatus: 'ACCEPTED', // 'NEW' | 'ACCEPTED' | 'PREPARING' | 'PACKED' | 'DELIVERED'
-      stickerPrinted: true,
-      createdAt: new Date(Date.now() - 45 * 60 * 1000).toISOString()
+      totalAmount: 130,
+      paymentId: 'pay_demo_98711'
+    },
+    {
+      id: 'ord_bw_002',
+      tokenNumber: 102,
+      studentId: 'BW-102',
+      studentName: 'Ananya Sharma',
+      classSection: 'Grade 8 - A',
+      orderedByParentName: 'Rajesh Sharma',
+      orderedByParentPhone: '9876543210',
+      parentRelation: 'Father',
+      requiredDate: new Date().toISOString().split('T')[0],
+      mealPeriodId: 'slot-2',
+      mealPeriodName: 'Lunch Break',
+      allergies: [],
+      dietary: 'Veg',
+      healthNotes: 'Allergen Safe',
+      status: 'PACKED',
+      orderedAt: new Date(Date.now() - 40 * 60 * 1000).toISOString(),
+      items: [
+        { id: 'item_2', name: 'Paneer Butter Masala Meal Box', price: 120, quantity: 1, subtotal: 120 }
+      ],
+      totalAmount: 120,
+      paymentId: 'pay_demo_98712'
     }
-  ]
+  ],
+  st_xaviers: [],
+  greenwood: []
 };

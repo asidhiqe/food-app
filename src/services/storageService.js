@@ -277,6 +277,77 @@ export const StorageService = {
     return JSON.parse(localStorage.getItem(KEYS.MENUS_PREFIX + target) || '[]');
   },
 
+  addMenuItem(schoolId, itemData) {
+    const target = schoolId || this.getActiveSchoolId();
+    const menu = this.getMenu(target);
+    const newItem = {
+      id: itemData.id || `item_${Date.now()}`,
+      name: itemData.name.trim(),
+      description: itemData.description || '',
+      category: itemData.category || 'Lunch Thali',
+      price: parseFloat(itemData.price) || 50,
+      isVeg: itemData.isVeg !== undefined ? itemData.isVeg : true,
+      calories: parseInt(itemData.calories, 10) || 300,
+      protein: parseInt(itemData.protein, 10) || 10,
+      carbs: parseInt(itemData.carbs, 10) || 40,
+      fats: parseInt(itemData.fats, 10) || 8,
+      fiber: parseInt(itemData.fiber, 10) || 4,
+      allergens: itemData.allergens || [],
+      availablePeriods: itemData.availablePeriods || ['lunch_break', 'morning_snack'],
+      image: itemData.image || 'https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=600&auto=format&fit=crop&q=80',
+      isAvailable: itemData.isAvailable !== undefined ? itemData.isAvailable : true
+    };
+
+    menu.push(newItem);
+    localStorage.setItem(KEYS.MENUS_PREFIX + target, JSON.stringify(menu));
+    this.notify('MENU_UPDATED', { schoolId: target, item: newItem });
+    return newItem;
+  },
+
+  updateMenuItem(schoolId, itemId, updatedData) {
+    const target = schoolId || this.getActiveSchoolId();
+    const menu = this.getMenu(target);
+    const index = menu.findIndex((m) => m.id === itemId);
+    if (index !== -1) {
+      menu[index] = {
+        ...menu[index],
+        ...updatedData,
+        price: parseFloat(updatedData.price !== undefined ? updatedData.price : menu[index].price),
+        calories: parseInt(updatedData.calories !== undefined ? updatedData.calories : menu[index].calories, 10),
+        protein: parseInt(updatedData.protein !== undefined ? updatedData.protein : menu[index].protein, 10),
+        carbs: parseInt(updatedData.carbs !== undefined ? updatedData.carbs : menu[index].carbs, 10),
+        fats: parseInt(updatedData.fats !== undefined ? updatedData.fats : menu[index].fats, 10),
+        fiber: parseInt(updatedData.fiber !== undefined ? updatedData.fiber : menu[index].fiber, 10)
+      };
+      localStorage.setItem(KEYS.MENUS_PREFIX + target, JSON.stringify(menu));
+      this.notify('MENU_UPDATED', { schoolId: target, item: menu[index] });
+      return menu[index];
+    }
+    return null;
+  },
+
+  deleteMenuItem(schoolId, itemId) {
+    const target = schoolId || this.getActiveSchoolId();
+    const menu = this.getMenu(target);
+    const filtered = menu.filter((m) => m.id !== itemId);
+    localStorage.setItem(KEYS.MENUS_PREFIX + target, JSON.stringify(filtered));
+    this.notify('MENU_UPDATED', { schoolId: target, deletedId: itemId });
+    return filtered;
+  },
+
+  toggleMenuItemAvailability(schoolId, itemId) {
+    const target = schoolId || this.getActiveSchoolId();
+    const menu = this.getMenu(target);
+    const index = menu.findIndex((m) => m.id === itemId);
+    if (index !== -1) {
+      menu[index].isAvailable = !menu[index].isAvailable;
+      localStorage.setItem(KEYS.MENUS_PREFIX + target, JSON.stringify(menu));
+      this.notify('MENU_UPDATED', { schoolId: target, item: menu[index] });
+      return menu[index];
+    }
+    return null;
+  },
+
   // --- Orders & Co-Parent Conflict Check ---
   getOrders(schoolId) {
     this.init();

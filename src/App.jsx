@@ -258,9 +258,34 @@ export default function App() {
     ? StorageService.findActiveOrderForSlot(activeSchool?.id, activeChild.id, selectedDate, selectedSlot.id)
     : null;
 
+  const [checkoutMode, setCheckoutMode] = useState('single'); // 'single' | 'all'
+
+  // Family Checkout Data computation
+  const familyCheckoutData = (childrenList || [])
+    .filter((kid) => (cartsByChild[kid.id] || []).length > 0)
+    .map((kid) => {
+      const kidCart = cartsByChild[kid.id] || [];
+      const kidTotal = kidCart.reduce((sum, i) => sum + i.price * i.quantity, 0);
+      return {
+        student: kid,
+        cart: kidCart,
+        total: kidTotal
+      };
+    });
+
   // Checkout Flow
-  const handleProceedToStudent = () => {
+  const handleProceedToStudent = (mode = 'single') => {
     setIsCartOpen(false);
+    setCheckoutMode(mode);
+
+    if (mode === 'all') {
+      if (familyCheckoutData.length > 0) {
+        setVerifiedStudent(familyCheckoutData[0].student);
+        setIsPaymentModalOpen(true);
+        return;
+      }
+    }
+
     if (activeChild) {
       setVerifiedStudent(activeChild);
       setIsPaymentModalOpen(true);
@@ -275,16 +300,60 @@ export default function App() {
     setIsPaymentModalOpen(true);
   };
 
-  const handlePaymentSuccess = (paymentResult) => {
+  const handlePaymentSuccess = (paymentResult, mode = 'single', familyData = []) => {
     setIsPaymentModalOpen(false);
 
-    // Create Order with allergies included for kitchen label
+    if (mode === 'all' && familyData.length > 0) {
+      // Create separate tokenized orders for all children in 1 payment
+      const updatedCarts = { ...cartsByChild };
+
+      familyData.forEach((item) => {
+        const student = item.student;
+        const kidCart = item.cart;
+        const kidTotal = item.total;
+
+        StorageService.createOrder(activeSchool.id, {
+          studentId: student.id,
+          studentName: student.studentName,
+          classSection: `${student.class} - ${student.section}`,
+          orderedByParentName: parentSession ? parentSession.parentName : student.fatherName || 'Parent',
+          orderedByParentPhone: parentSession ? parentSession.phone : student.fatherPhone || student.parentPhone || '',
+          parentRelation: parentSession ? parentSession.relation : 'Parent',
+          requiredDate: selectedDate,
+          mealPeriodId: selectedSlot ? selectedSlot.id : 'standard',
+          mealPeriodName: selectedSlot ? selectedSlot.name : 'Standard Break',
+          allergies: student.allergies || [],
+          dietary: student.dietary || 'Veg',
+          healthNotes: student.healthNotes || '',
+          items: kidCart.map((i) => ({
+            id: i.id,
+            name: i.name,
+            price: i.price,
+            quantity: i.quantity,
+            subtotal: i.price * i.quantity
+          })),
+          totalAmount: kidTotal,
+          paymentId: `${paymentResult.transactionId}_${student.id}`
+        });
+
+        delete updatedCarts[student.id];
+      });
+
+      setCartsByChild(updatedCarts);
+      loadData();
+      setIsTrackingOpen(true);
+      setNotificationToast(`🎉 Combined Payment of ${activeSchool.currency} ${paymentResult.amount} Successful! Dispatched lunch boxes for ${familyData.length} kids!`);
+      setTimeout(() => setNotificationToast(null), 5000);
+      return;
+    }
+
+    // Single Child Order Creation
     const newOrder = StorageService.createOrder(activeSchool.id, {
       studentId: verifiedStudent.id,
       studentName: verifiedStudent.studentName,
       classSection: `${verifiedStudent.class} - ${verifiedStudent.section}`,
       orderedByParentName: parentSession ? parentSession.parentName : verifiedStudent.fatherName || 'Parent',
-      orderedByParentPhone: parentSession ? parentSession.phone : verifiedStudent.parentPhone || '',
+      orderedByParentPhone: parentSession ? parentSession.phone : verifiedStudent.fatherPhone || verifiedStudent.parentPhone || '',
       parentRelation: parentSession ? parentSession.relation : 'Parent',
       requiredDate: selectedDate,
       mealPeriodId: selectedSlot ? selectedSlot.id : 'standard',
@@ -525,11 +594,13 @@ export default function App() {
         currency={activeSchool.currency}
       />
 
-      {/* Mandatory Payment Modal */}
+      {/* Mandatory Payment Modal (Supports Combined Multi-Child & Single-Child Payments) */}
       <PaymentModal
         isOpen={isPaymentModalOpen}
         onClose={() => setIsPaymentModalOpen(false)}
         verifiedStudent={verifiedStudent}
+        checkoutMode={checkoutMode}
+        familyCheckoutData={familyCheckoutData}
         selectedDate={selectedDate}
         selectedSlot={selectedSlot}
         cart={currentCart}

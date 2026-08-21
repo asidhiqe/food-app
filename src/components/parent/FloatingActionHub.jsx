@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShoppingBag, ArrowRight, Sparkles } from 'lucide-react';
+import { ShoppingBag, ArrowRight, Sparkles, Users } from 'lucide-react';
 
 export default function FloatingActionHub({
   cartCount,
@@ -17,6 +17,13 @@ export default function FloatingActionHub({
 
   const activeName = activeChild ? activeChild.studentName.split(' ')[0] : 'Child';
 
+  const kidsWithItems = (childrenList || []).filter((kid) => {
+    const kidCart = (cartsByChild && cartsByChild[kid.id]) || [];
+    return kidCart.length > 0;
+  });
+
+  const hasMultipleKids = kidsWithItems.length > 1;
+
   return (
     <div
       style={{
@@ -24,7 +31,7 @@ export default function FloatingActionHub({
         bottom: '16px',
         left: '16px',
         right: '16px',
-        maxWidth: '448px',
+        maxWidth: '460px',
         margin: '0 auto',
         zIndex: 90,
         animation: 'slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1)'
@@ -49,24 +56,27 @@ export default function FloatingActionHub({
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <div
             style={{
-              width: '32px',
-              height: '32px',
+              width: '34px',
+              height: '34px',
               borderRadius: '50%',
-              background: 'var(--primary)',
+              background: hasMultipleKids ? '#16a34a' : 'var(--primary)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '1rem'
+              fontSize: '1rem',
+              color: '#ffffff'
             }}
           >
-            🍱
+            {hasMultipleKids ? '🍱' : '🍱'}
           </div>
           <div>
             <div style={{ fontSize: '0.85rem', fontWeight: 900, lineHeight: 1.2 }}>
-              {cartCount} item{cartCount > 1 ? 's' : ''} added • {currency} {cartTotal}
+              {cartCount} item{cartCount > 1 ? 's' : ''} • {currency} {cartTotal}
             </div>
             <div style={{ fontSize: '0.68rem', color: '#94a3b8' }}>
-              Packing for {activeName}
+              {hasMultipleKids
+                ? `Ready for ${kidsWithItems.length} kids (${kidsWithItems.map(k => k.studentName.split(' ')[0]).join(', ')})`
+                : `Packing for ${activeName}`}
             </div>
           </div>
         </div>
@@ -77,16 +87,15 @@ export default function FloatingActionHub({
             display: 'flex',
             alignItems: 'center',
             gap: '4px',
-            background: 'var(--primary)',
+            background: hasMultipleKids ? '#16a34a' : 'var(--primary)',
             color: '#ffffff',
-            padding: '5px 12px',
+            padding: '6px 14px',
             borderRadius: 'var(--radius-full)',
             fontSize: '0.78rem',
             fontWeight: 800
           }}
         >
-          <span>View Tray</span>
-          <ArrowRight size={14} />
+          <span>{hasMultipleKids ? 'Pay All →' : 'View Tray →'}</span>
         </div>
       </div>
     </div>

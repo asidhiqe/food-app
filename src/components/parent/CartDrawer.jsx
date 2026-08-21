@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Trash2, Plus, Minus, ArrowRight, ShieldCheck, User, Users, Copy, Sparkles, AlertTriangle } from 'lucide-react';
+import { X, Trash2, Plus, Minus, ArrowRight, ShieldCheck, User, Users, Copy, Sparkles, AlertTriangle, CheckCircle2 } from 'lucide-react';
 
 export default function CartDrawer({
   isOpen,
@@ -26,6 +26,23 @@ export default function CartDrawer({
   const cleanName = activeChild ? activeChild.studentName.split(' ')[0] : 'Your Child';
   const cleanClass = activeChild ? activeChild.class.replace(/Grade\s*/i, '').trim() : '';
 
+  // Calculate Family Multi-Child Totals
+  const kidsWithItems = (childrenList || []).filter((kid) => {
+    const kidCart = (cartsByChild && cartsByChild[kid.id]) || [];
+    return kidCart.length > 0;
+  });
+
+  const totalFamilyAmount = (childrenList || []).reduce((sum, kid) => {
+    const kidCart = (cartsByChild && cartsByChild[kid.id]) || [];
+    return sum + kidCart.reduce((kSum, item) => kSum + item.price * item.quantity, 0);
+  }, 0);
+
+  const totalFamilyCount = (childrenList || []).reduce((sum, kid) => {
+    const kidCart = (cartsByChild && cartsByChild[kid.id]) || [];
+    return sum + kidCart.reduce((kSum, item) => kSum + item.quantity, 0);
+  }, 0);
+
+  const hasMultipleKidsWithItems = kidsWithItems.length > 1;
   const siblings = (childrenList || []).filter((c) => !activeChild || c.id !== activeChild.id);
 
   return (
@@ -34,7 +51,7 @@ export default function CartDrawer({
         className="modal-content"
         onClick={(e) => e.stopPropagation()}
         style={{
-          maxWidth: '480px',
+          maxWidth: '500px',
           height: '92vh',
           display: 'flex',
           flexDirection: 'column',
@@ -90,7 +107,7 @@ export default function CartDrawer({
                     padding: '4px 6px'
                   }}
                 >
-                  Clear
+                  Clear Box
                 </button>
               )}
               <button
@@ -135,7 +152,7 @@ export default function CartDrawer({
                       flexShrink: 0
                     }}
                   >
-                    <span>👦 {kid.studentName.split(' ')[0]}'s Box</span>
+                    <span>{kid.gender === 'girl' ? '👧' : '👦'} {kid.studentName.split(' ')[0]}'s Box</span>
                     {kidItemsCount > 0 && (
                       <span
                         style={{
@@ -179,16 +196,17 @@ export default function CartDrawer({
                   borderRadius: 'var(--radius-md)',
                   padding: '0.65rem 0.85rem',
                   display: 'flex',
+                  alignItems: 'center',
                   justifyContent: 'space-between',
-                  alignItems: 'center'
+                  fontSize: '0.78rem'
                 }}
               >
                 <div>
-                  <div style={{ fontSize: '0.68rem', fontWeight: 800, color: 'var(--text-muted)' }}>DELIVERY SLOT</div>
-                  <div style={{ fontSize: '0.82rem', fontWeight: 800 }}>{selectedSlot?.name} ({selectedDate})</div>
+                  <span style={{ color: 'var(--text-muted)' }}>Delivering on: </span>
+                  <strong style={{ color: 'var(--text-main)' }}>{selectedDate}</strong>
                 </div>
-                <div style={{ fontSize: '0.7rem', background: '#dbeafe', color: '#1e40af', padding: '2px 6px', borderRadius: '4px', fontWeight: 700 }}>
-                  Desk Delivery (Grade {cleanClass}-{activeChild?.section})
+                <div style={{ background: '#eff6ff', color: 'var(--primary)', padding: '2px 8px', borderRadius: '4px', fontWeight: 800, fontSize: '0.72rem' }}>
+                  {selectedSlot?.name || 'Standard Break'}
                 </div>
               </div>
 
@@ -201,55 +219,38 @@ export default function CartDrawer({
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
-                      padding: '0.6rem 0',
-                      borderBottom: '1px solid #f1f5f9'
+                      padding: '0.65rem 0.85rem',
+                      background: '#ffffff',
+                      border: '1px solid var(--border-color)',
+                      borderRadius: 'var(--radius-md)',
+                      boxShadow: 'var(--shadow-sm)'
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: 1 }}>
-                      <div
-                        style={{
-                          width: '12px',
-                          height: '12px',
-                          border: `1.5px solid ${item.isVeg ? '#16a34a' : '#dc2626'}`,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          borderRadius: '2px',
-                          flexShrink: 0
-                        }}
-                      >
-                        <div
-                          style={{
-                            width: '5px',
-                            height: '5px',
-                            borderRadius: '50%',
-                            background: item.isVeg ? '#16a34a' : '#dc2626'
-                          }}
-                        />
-                      </div>
-
-                      <div>
-                        <div style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-main)' }}>
+                    <div style={{ flex: 1, minWidth: 0, paddingRight: '0.5rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <span style={{ fontSize: '0.65rem' }}>{item.isVeg ? '🟢' : '🔴'}</span>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-main)' }}>
                           {item.name}
-                        </div>
-                        <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)' }}>
-                          {currency} {item.price} each
-                        </div>
+                        </span>
+                      </div>
+                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '2px' }}>
+                        {currency} {item.price} each
                       </div>
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                      <div className="quantity-control">
-                        <button className="qty-btn" onClick={() => onRemoveFromCart(item.id)}>
-                          <Minus size={12} />
+                    {/* Stepper */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <div className="stepper-box">
+                        <button onClick={() => onRemoveFromCart(item.id)} className="stepper-btn">
+                          <Minus size={13} />
                         </button>
-                        <span className="qty-count">{item.quantity}</span>
-                        <button className="qty-btn" onClick={() => onAddToCart(item)}>
-                          <Plus size={12} />
+                        <span className="stepper-qty">{item.quantity}</span>
+                        <button onClick={() => onAddToCart(item)} className="stepper-btn">
+                          <Plus size={13} />
                         </button>
                       </div>
 
-                      <div style={{ minWidth: '54px', textAlign: 'right', fontWeight: 800, fontSize: '0.85rem' }}>
+                      <div style={{ width: '55px', textAlign: 'right', fontSize: '0.88rem', fontWeight: 900 }}>
                         {currency} {item.price * item.quantity}
                       </div>
                     </div>
@@ -257,45 +258,27 @@ export default function CartDrawer({
                 ))}
               </div>
 
-              {/* Sibling Duplicate Meal Helper */}
-              {siblings.length > 0 && (
-                <div
-                  style={{
-                    background: 'linear-gradient(135deg, #fdf4ff 0%, #fae8ff 100%)',
-                    border: '1px solid #f0abfc',
-                    borderRadius: 'var(--radius-md)',
-                    padding: '0.75rem 0.85rem'
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '0.3rem' }}>
-                    <Sparkles size={14} color="#c026d3" />
-                    <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#86198f' }}>
-                      Pack this same meal for sibling?
-                    </span>
+              {/* Sibling 1-Tap Copy Action */}
+              {siblings && siblings.length > 0 && (
+                <div style={{ background: '#f0fdf4', border: '1px dashed #86efac', borderRadius: 'var(--radius-md)', padding: '0.75rem 0.85rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.75rem', fontWeight: 800, color: '#166534', marginBottom: '0.35rem' }}>
+                    <Sparkles size={13} />
+                    <span>Quick Pack for Siblings:</span>
                   </div>
-
                   {siblings.map((sib) => (
-                    <div
-                      key={sib.id}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        marginTop: '0.3rem'
-                      }}
-                    >
-                      <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#701a75' }}>
-                        👧 {sib.studentName} (Grade {sib.class.replace(/Grade\s*/i, '').trim()}-{sib.section})
+                    <div key={sib.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '4px' }}>
+                      <span style={{ fontSize: '0.72rem', color: '#15803d' }}>
+                        Copy {cleanName}'s box for <strong>{sib.studentName.split(' ')[0]}</strong>
                       </span>
                       <button
-                        onClick={() => onCopyMealToSibling(sib)}
+                        onClick={() => onCopyMealToSibling(sib.id)}
                         style={{
-                          background: '#86198f',
+                          background: '#16a34a',
                           color: '#ffffff',
                           border: 'none',
-                          borderRadius: 'var(--radius-full)',
                           padding: '3px 8px',
-                          fontSize: '0.7rem',
+                          borderRadius: 'var(--radius-full)',
+                          fontSize: '0.68rem',
                           fontWeight: 800,
                           cursor: 'pointer',
                           display: 'flex',
@@ -308,6 +291,56 @@ export default function CartDrawer({
                       </button>
                     </div>
                   ))}
+                </div>
+              )}
+
+              {/* Multi-Child Family Lunch Box Overview */}
+              {hasMultipleKidsWithItems && (
+                <div style={{ background: '#eff6ff', border: '1.5px solid #bfdbfe', borderRadius: 'var(--radius-md)', padding: '0.85rem', marginTop: '0.4rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                    <div style={{ fontSize: '0.78rem', fontWeight: 900, color: '#1e40af', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <Users size={14} />
+                      <span>FAMILY TRAY SUMMARY ({kidsWithItems.length} KIDS)</span>
+                    </div>
+                    <span style={{ fontSize: '0.78rem', fontWeight: 900, color: '#1e40af' }}>
+                      {currency} {totalFamilyAmount} Total
+                    </span>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                    {kidsWithItems.map((kid) => {
+                      const kidCart = (cartsByChild && cartsByChild[kid.id]) || [];
+                      const kidTotal = kidCart.reduce((sum, i) => sum + i.price * i.quantity, 0);
+                      const isCurrent = activeChild && activeChild.id === kid.id;
+
+                      return (
+                        <div
+                          key={kid.id}
+                          onClick={() => onSelectChild(kid)}
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            background: isCurrent ? '#ffffff' : 'rgba(255,255,255,0.7)',
+                            border: isCurrent ? '1.5px solid var(--primary)' : '1px solid #dbeafe',
+                            padding: '0.45rem 0.65rem',
+                            borderRadius: '8px',
+                            cursor: 'pointer',
+                            fontSize: '0.75rem'
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <span>{kid.gender === 'girl' ? '👧' : '👦'}</span>
+                            <span style={{ fontWeight: isCurrent ? 900 : 700 }}>{kid.studentName}</span>
+                            <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>({kidCart.length} dishes)</span>
+                          </div>
+                          <span style={{ fontWeight: 800, color: 'var(--text-main)' }}>
+                            {currency} {kidTotal}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               )}
 
@@ -326,9 +359,16 @@ export default function CartDrawer({
                 </div>
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', marginBottom: '0.3rem' }}>
-                  <span>Item Total</span>
+                  <span>{cleanName}'s Box Total</span>
                   <span>{currency} {currentTotal}</span>
                 </div>
+
+                {hasMultipleKidsWithItems && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', marginBottom: '0.3rem', color: 'var(--primary)', fontWeight: 700 }}>
+                    <span>All {kidsWithItems.length} Kids Combined Total</span>
+                    <span>{currency} {totalFamilyAmount}</span>
+                  </div>
+                )}
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', marginBottom: '0.3rem' }}>
                   <span>Classroom Desk Handover</span>
@@ -346,38 +386,95 @@ export default function CartDrawer({
                     fontWeight: 900
                   }}
                 >
-                  <span>To Pay for {cleanName}'s Lunch:</span>
-                  <span>{currency} {currentTotal}</span>
+                  <span>{hasMultipleKidsWithItems ? `Pay for All ${kidsWithItems.length} Kids:` : `To Pay for ${cleanName}:`}</span>
+                  <span style={{ color: '#059669' }}>{currency} {hasMultipleKidsWithItems ? totalFamilyAmount : currentTotal}</span>
                 </div>
               </div>
             </div>
           )}
         </div>
 
-        {/* Footer Proceed Button */}
-        {currentCart.length > 0 && (
+        {/* Footer Checkout Actions */}
+        {(currentCart.length > 0 || totalFamilyCount > 0) && (
           <div
             style={{
               padding: '1rem 1.25rem',
               borderTop: '1px solid var(--border-color)',
-              background: '#ffffff'
+              background: '#ffffff',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '0.5rem'
             }}
           >
-            <button
-              onClick={onProceedToStudent}
-              className="btn-primary"
-              style={{
-                width: '100%',
-                padding: '0.85rem',
-                fontSize: '0.95rem',
-                borderRadius: 'var(--radius-full)'
-              }}
-            >
-              <span>
-                {activeChild ? `Pay ${currency} ${currentTotal} for ${cleanName}'s Lunch` : 'Proceed to Checkout'}
-              </span>
-              <ArrowRight size={17} />
-            </button>
+            {hasMultipleKidsWithItems ? (
+              /* DUAL CTA FOR MULTIPLE KIDS */
+              <>
+                {/* 1. PRIMARY COMBINED 1-TAP PAYMENT */}
+                <button
+                  onClick={() => onProceedToStudent('all')}
+                  className="btn-primary"
+                  style={{
+                    width: '100%',
+                    padding: '0.9rem',
+                    fontSize: '0.95rem',
+                    borderRadius: 'var(--radius-full)',
+                    background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+                    boxShadow: '0 4px 14px rgba(22, 163, 74, 0.35)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px'
+                  }}
+                >
+                  <Users size={18} />
+                  <span>
+                    Pay {currency} {totalFamilyAmount} for All {kidsWithItems.length} Kids (Combined)
+                  </span>
+                  <ArrowRight size={17} />
+                </button>
+
+                {/* 2. SECONDARY SINGLE-CHILD PAYMENT */}
+                {currentCart.length > 0 && (
+                  <button
+                    onClick={() => onProceedToStudent('single')}
+                    style={{
+                      width: '100%',
+                      padding: '0.6rem',
+                      background: '#f8fafc',
+                      border: '1.5px solid #cbd5e1',
+                      color: 'var(--text-main)',
+                      borderRadius: 'var(--radius-full)',
+                      fontSize: '0.8rem',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '4px'
+                    }}
+                  >
+                    <span>Pay Only for {cleanName}'s Box ({currency} {currentTotal})</span>
+                  </button>
+                )}
+              </>
+            ) : (
+              /* SINGLE CHILD PAYMENT */
+              <button
+                onClick={() => onProceedToStudent('single')}
+                className="btn-primary"
+                style={{
+                  width: '100%',
+                  padding: '0.85rem',
+                  fontSize: '0.95rem',
+                  borderRadius: 'var(--radius-full)'
+                }}
+              >
+                <span>
+                  {activeChild ? `Pay ${currency} ${currentTotal} for ${cleanName}'s Lunch` : 'Proceed to Checkout'}
+                </span>
+                <ArrowRight size={17} />
+              </button>
+            )}
           </div>
         )}
       </div>

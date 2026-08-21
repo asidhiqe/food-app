@@ -4,6 +4,14 @@ import { StorageService } from '../../services/storageService';
 
 const DEMO_ACCOUNTS = [
   {
+    name: 'Dr. Sanjay Kapoor',
+    phone: '9811223344',
+    relation: 'Father',
+    avatar: '👨‍⚕️',
+    kidsDesc: 'Aarav (Grade 4), Ananya (Grade 8) & Kabir (Grade 1)',
+    badge: '3 Students'
+  },
+  {
     name: 'Rajesh Sharma',
     phone: '9876543210',
     relation: 'Father',
@@ -15,7 +23,7 @@ const DEMO_ACCOUNTS = [
     name: 'Vikram Verma',
     phone: '9123456780',
     relation: 'Father',
-    avatar: '👨‍⚕️',
+    avatar: '👨‍💼',
     kidsDesc: 'Riya (Grade 2) & Aryan (Grade 6)',
     badge: '2 Students'
   },
