@@ -1,3 +1,5 @@
+import { TIER_PRESETS } from '../services/featureService';
+
 export const INITIAL_SCHOOLS = [
   {
     id: "brainwaves",
@@ -11,6 +13,8 @@ export const INITIAL_SCHOOLS = [
     currencyCode: "INR",
     phone: "+91 98765 43210",
     address: "Campus 1, Academic Avenue",
+    tier: "enterprise",
+    features: { ...TIER_PRESETS.enterprise.features },
     mealPeriods: [
       { id: "break_morning", name: "Morning Snack / Short Break", time: "10:15 AM", cutoffMins: 45 },
       { id: "lunch_break", name: "Lunch Break", time: "12:45 PM", cutoffMins: 45 },
@@ -30,6 +34,8 @@ export const INITIAL_SCHOOLS = [
     currencyCode: "INR",
     phone: "+91 91234 56780",
     address: "St. Xavier's High Road",
+    tier: "growth",
+    features: { ...TIER_PRESETS.growth.features },
     mealPeriods: [
       { id: "short_recess", name: "Short Recess", time: "10:30 AM", cutoffMins: 40 },
       { id: "lunch_hour", name: "Lunch Hour", time: "01:15 PM", cutoffMins: 45 }
@@ -48,6 +54,8 @@ export const INITIAL_SCHOOLS = [
     currencyCode: "USD",
     phone: "+1 (555) 382-9102",
     address: "104 Greenwood Blvd",
+    tier: "starter",
+    features: { ...TIER_PRESETS.starter.features },
     mealPeriods: [
       { id: "brunch", name: "Brunch Period", time: "10:00 AM", cutoffMins: 45 },
       { id: "main_lunch", name: "Main Lunch", time: "12:30 PM", cutoffMins: 45 }

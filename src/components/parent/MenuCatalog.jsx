@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Search, Plus, Minus, Flame, Filter, Leaf, AlertTriangle, Check, X, Sparkles, Utensils, UtensilsCrossed, Milk, Wheat, ShieldCheck, ShoppingBag, Coffee, Cookie, Salad } from 'lucide-react';
+import { hasFeature } from '../../services/featureService';
 
 const CATEGORY_TILE_STYLES = {
   'all': { icon: Sparkles, label: 'All', bg: '#f1f5f9', activeBg: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)', text: '#0f172a', activeText: '#ffffff' },
@@ -40,7 +41,8 @@ export default function MenuCatalog({
   onAddToCart,
   onRemoveFromCart,
   currency,
-  activeChild
+  activeChild,
+  activeSchool
 }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -48,11 +50,15 @@ export default function MenuCatalog({
   const [isSafeOnly, setIsSafeOnly] = useState(false);
   const [pendingAllergyItem, setPendingAllergyItem] = useState(null);
 
+  const enableAllergyShield = hasFeature(activeSchool, 'allergyShield');
+  const enableNutrition = hasFeature(activeSchool, 'nutritionTracker');
+  const enableDietaryPrefs = hasFeature(activeSchool, 'dietaryPrefs');
+
   const childName = activeChild ? activeChild.studentName.split(' ')[0] : 'Child';
-  const childAllergies = (activeChild?.allergies || []).map((a) => a.toLowerCase().trim());
+  const childAllergies = enableAllergyShield ? (activeChild?.allergies || []).map((a) => a.toLowerCase().trim()) : [];
 
   const checkItemConflict = (item) => {
-    if (childAllergies.length === 0) return null;
+    if (!enableAllergyShield || childAllergies.length === 0) return null;
     const itemAllergens = (Array.isArray(item.allergens) ? item.allergens : (item.allergens ? [item.allergens] : []))
       .map((a) => a.toLowerCase().trim());
 
@@ -185,7 +191,7 @@ export default function MenuCatalog({
           />
         </div>
 
-        {childAllergies.length > 0 && (
+        {enableAllergyShield && childAllergies.length > 0 && (
           <button
             onClick={() => setIsSafeOnly(!isSafeOnly)}
             style={{
@@ -208,38 +214,40 @@ export default function MenuCatalog({
           </button>
         )}
 
-        <button
-          onClick={() => setIsVegOnly(!isVegOnly)}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '4px',
-            padding: '0.45rem 0.65rem',
-            borderRadius: 'var(--radius-md)',
-            border: isVegOnly ? '1.5px solid #16a34a' : '1px solid #cbd5e1',
-            background: isVegOnly ? '#ecfdf5' : '#ffffff',
-            color: isVegOnly ? '#15803d' : 'var(--text-main)',
-            fontWeight: 800,
-            fontSize: '0.72rem',
-            cursor: 'pointer',
-            flexShrink: 0
-          }}
-        >
-          <div
+        {enableDietaryPrefs && (
+          <button
+            onClick={() => setIsVegOnly(!isVegOnly)}
             style={{
-              width: '10px',
-              height: '10px',
-              border: '1.5px solid #16a34a',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: '2px'
+              gap: '4px',
+              padding: '0.45rem 0.65rem',
+              borderRadius: 'var(--radius-md)',
+              border: isVegOnly ? '1.5px solid #16a34a' : '1px solid #cbd5e1',
+              background: isVegOnly ? '#ecfdf5' : '#ffffff',
+              color: isVegOnly ? '#15803d' : 'var(--text-main)',
+              fontWeight: 800,
+              fontSize: '0.72rem',
+              cursor: 'pointer',
+              flexShrink: 0
             }}
           >
-            <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#16a34a' }} />
-          </div>
-          <span>VEG</span>
-        </button>
+            <div
+              style={{
+                width: '10px',
+                height: '10px',
+                border: '1.5px solid #16a34a',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '2px'
+              }}
+            >
+              <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#16a34a' }} />
+            </div>
+            <span>VEG</span>
+          </button>
+        )}
       </div>
 
       {/* 3. Appetizing Food Dish Cards */}
@@ -322,13 +330,17 @@ export default function MenuCatalog({
                     </span>
 
                     {/* Nutrition Micro-Badges */}
-                    <span style={{ fontSize: '0.64rem', fontWeight: 800, background: '#fef3c7', color: '#b45309', padding: '1px 5px', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '2px' }}>
-                      <Flame size={10} /> {item.calories || 340} kcal
-                    </span>
-                    {item.protein && (
-                      <span style={{ fontSize: '0.64rem', fontWeight: 800, background: '#dcfce7', color: '#15803d', padding: '1px 5px', borderRadius: '4px' }}>
-                        {item.protein}g protein
-                      </span>
+                    {enableNutrition && (
+                      <>
+                        <span style={{ fontSize: '0.64rem', fontWeight: 800, background: '#fef3c7', color: '#b45309', padding: '1px 5px', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '2px' }}>
+                          <Flame size={10} /> {item.calories || 340} kcal
+                        </span>
+                        {item.protein && (
+                          <span style={{ fontSize: '0.64rem', fontWeight: 800, background: '#dcfce7', color: '#15803d', padding: '1px 5px', borderRadius: '4px' }}>
+                            {item.protein}g protein
+                          </span>
+                        )}
+                      </>
                     )}
                   </div>
 
@@ -349,55 +361,57 @@ export default function MenuCatalog({
                   </p>
 
                   {/* Clean Allergen Micro-Chips */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '3px', flexWrap: 'wrap' }}>
-                    {rawAllergens.length > 0 ? (
-                      rawAllergens.map((alg) => {
-                        const key = alg.toLowerCase().trim();
-                        const isConflict = childAllergies.includes(key);
-                        const info = ALLERGEN_MAP[key] || { label: alg, icon: '⚠️', bg: '#f8fafc', border: '#e2e8f0', text: '#64748b' };
-                        const IconComponent = info.icon || AlertTriangle;
-                        return (
-                          <span
-                            key={alg}
-                            style={{
-                              fontSize: '0.64rem',
-                              fontWeight: 800,
-                              color: isConflict ? '#b91c1c' : info.text,
-                              background: isConflict ? '#fef2f2' : info.bg,
-                              border: `1px solid ${isConflict ? '#fca5a5' : info.border}`,
-                              padding: '1px 5px',
-                              borderRadius: 'var(--radius-full)',
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '3px'
-                            }}
-                          >
-                            <IconComponent size={10} />
-                            <span>{info.label}</span>
-                            {isConflict && <AlertTriangle size={9} color="#b91c1c" />}
-                          </span>
-                        );
-                      })
-                    ) : (
-                      <span
-                        style={{
-                          fontSize: '0.62rem',
-                          fontWeight: 800,
-                          color: '#059669',
-                          background: '#ecfdf5',
-                          border: '1px solid #a7f3d0',
-                          padding: '1px 5px',
-                          borderRadius: 'var(--radius-full)',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '3px'
-                        }}
-                      >
-                        <ShieldCheck size={10} />
-                        <span>Safe</span>
-                      </span>
-                    )}
-                  </div>
+                  {enableAllergyShield && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '3px', flexWrap: 'wrap' }}>
+                      {rawAllergens.length > 0 ? (
+                        rawAllergens.map((alg) => {
+                          const key = alg.toLowerCase().trim();
+                          const isConflict = childAllergies.includes(key);
+                          const info = ALLERGEN_MAP[key] || { label: alg, icon: '⚠️', bg: '#f8fafc', border: '#e2e8f0', text: '#64748b' };
+                          const IconComponent = info.icon || AlertTriangle;
+                          return (
+                            <span
+                              key={alg}
+                              style={{
+                                fontSize: '0.64rem',
+                                fontWeight: 800,
+                                color: isConflict ? '#b91c1c' : info.text,
+                                background: isConflict ? '#fef2f2' : info.bg,
+                                border: `1px solid ${isConflict ? '#fca5a5' : info.border}`,
+                                padding: '1px 5px',
+                                borderRadius: 'var(--radius-full)',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '3px'
+                              }}
+                            >
+                              <IconComponent size={10} />
+                              <span>{info.label}</span>
+                              {isConflict && <AlertTriangle size={9} color="#b91c1c" />}
+                            </span>
+                          );
+                        })
+                      ) : (
+                        <span
+                          style={{
+                            fontSize: '0.62rem',
+                            fontWeight: 800,
+                            color: '#059669',
+                            background: '#ecfdf5',
+                            border: '1px solid #a7f3d0',
+                            padding: '1px 5px',
+                            borderRadius: 'var(--radius-full)',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '3px'
+                          }}
+                        >
+                          <ShieldCheck size={10} />
+                          <span>Safe</span>
+                        </span>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {/* Right: Image + Stepper Button */}

@@ -18,6 +18,8 @@ import KitchenDashboard from './components/vendor/KitchenDashboard';
 import KitchenLoginScreen from './components/vendor/KitchenLoginScreen';
 import SchoolSettings from './components/admin/SchoolSettings';
 import AdminLoginScreen from './components/admin/AdminLoginScreen';
+import SuperAdminDashboard from './components/superadmin/SuperAdminDashboard';
+import SuperAdminLoginScreen from './components/superadmin/SuperAdminLoginScreen';
 import { StorageService } from './services/storageService';
 import { CheckCircle2 } from 'lucide-react';
 
@@ -25,6 +27,7 @@ import { CheckCircle2 } from 'lucide-react';
 const getInitialPortal = () => {
   if (typeof window === 'undefined') return 'parent';
   const hash = (window.location.hash || '').toLowerCase();
+  if (hash.includes('super-admin') || hash.includes('superadmin')) return 'superadmin';
   if (hash.includes('kitchen')) return 'kitchen';
   if (hash.includes('admin')) return 'admin';
   return 'parent';
@@ -34,9 +37,10 @@ export default function App() {
   // State
   const [schools, setSchools] = useState([]);
   const [activeSchool, setActiveSchool] = useState(null);
-  const [activePortal, setActivePortal] = useState(getInitialPortal); // 'parent' | 'kitchen' | 'admin'
+  const [activePortal, setActivePortal] = useState(getInitialPortal); // 'parent' | 'kitchen' | 'admin' | 'superadmin'
   const [kitchenSession, setKitchenSession] = useState(null);
   const [adminSession, setAdminSession] = useState(null);
+  const [superAdminSession, setSuperAdminSession] = useState(null);
   const [menuItems, setMenuItems] = useState([]);
   const [students, setStudents] = useState([]);
   const [orders, setOrders] = useState([]);
@@ -158,6 +162,15 @@ export default function App() {
       } else if (event.action === 'ORDER_CREATED') {
         setNotificationToast(`🔔 Order #${event.payload.order.tokenNumber} Placed & Paid!`);
         setTimeout(() => setNotificationToast(null), 4000);
+      } else if (event.action === 'ORDER_CANCELLED') {
+        setNotificationToast(`❌ Order #${event.payload.order?.tokenNumber || ''} Cancelled. Wallet updated.`);
+        setTimeout(() => setNotificationToast(null), 4000);
+      } else if (event.action === 'ORDER_STATUS_CHANGED' && event.payload.newStatus === 'UNABLE_TO_FULFIL') {
+        setNotificationToast(`⚠️ Kitchen Out of Stock: Order #${event.payload.order?.tokenNumber || ''} refunded.`);
+        setTimeout(() => setNotificationToast(null), 5000);
+      } else if (event.action === 'ORDER_DISPUTED') {
+        setNotificationToast(`📋 Dispute logged for Order #${event.payload.order?.tokenNumber || ''}. Canteen alerted.`);
+        setTimeout(() => setNotificationToast(null), 5000);
       } else if (event.action === 'STUDENT_HEALTH_UPDATED') {
         setNotificationToast(`🛡️ Health & allergy preferences saved!`);
         setTimeout(() => setNotificationToast(null), 3000);
@@ -450,6 +463,14 @@ export default function App() {
     );
   }
 
+  if (activePortal === 'superadmin' && !superAdminSession) {
+    return (
+      <SuperAdminLoginScreen
+        onLoginSuccess={(sess) => setSuperAdminSession(sess)}
+      />
+    );
+  }
+
   return (
     <div className={`app-container ${activePortal !== 'parent' ? 'wide-layout' : 'parent-desktop-responsive'}`}>
       {/* Toast Notification Banner */}
@@ -508,6 +529,8 @@ export default function App() {
                 onBackToMenu={() => setIsTrackingOpen(false)}
                 currency={activeSchool.currency}
                 activeSchool={activeSchool}
+                parentSession={parentSession}
+                onRefresh={loadData}
               />
             ) : (
               <>
@@ -519,6 +542,7 @@ export default function App() {
                   cartsByChild={cartsByChild}
                   currency={activeSchool.currency}
                   onOpenHealthModal={() => setIsHealthModalOpen(true)}
+                  activeSchool={activeSchool}
                 />
 
                 {/* Co-Parent Active Order Conflict Detection Banner */}
@@ -541,6 +565,7 @@ export default function App() {
                   onRemoveFromCart={handleRemoveFromCart}
                   currency={activeSchool.currency}
                   activeChild={activeChild}
+                  activeSchool={activeSchool}
                 />
 
                 {/* 🌟 Floatable Quick-Action Hub */}
@@ -589,6 +614,34 @@ export default function App() {
         </main>
       )}
 
+      {/* PORTAL 4: SAAS PLATFORM SUPER ADMIN MASTER CONSOLE */}
+      {activePortal === 'superadmin' && (
+        <main className="main-content">
+          <SuperAdminDashboard
+            schools={schools}
+            activeSchool={activeSchool}
+            onSelectSchool={(sId) => {
+              StorageService.setActiveSchoolId(sId);
+              loadData();
+            }}
+            onRefresh={loadData}
+            superAdminSession={superAdminSession}
+            onLogoutSuperAdmin={() => setSuperAdminSession(null)}
+            onJumpToPortal={(sId, portalType) => {
+              StorageService.setActiveSchoolId(sId);
+              loadData();
+              if (portalType === 'kitchen') {
+                window.location.hash = '#/kitchen';
+              } else if (portalType === 'admin') {
+                window.location.hash = '#/admin';
+              } else {
+                window.location.hash = '#/order';
+              }
+            }}
+          />
+        </main>
+      )}
+
       {/* Child Health & Allergy Preferences Modal */}
       <ChildHealthModal
         isOpen={isHealthModalOpen}
@@ -625,6 +678,7 @@ export default function App() {
         childrenList={childrenList}
         onSelectChild={handleSelectChild}
         onCopyMealToSibling={handleCopyMealToSibling}
+        activeSchool={activeSchool}
       />
 
       {/* Student Lookup Modal */}

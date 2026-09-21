@@ -3,6 +3,7 @@ import { X, Lock, QrCode, CreditCard, Building2, CheckCircle2, ShieldAlert, Load
 import { QRCodeSVG } from 'qrcode.react';
 import { PaymentService } from '../../services/paymentService';
 import { StorageService } from '../../services/storageService';
+import { hasFeature } from '../../services/featureService';
 
 export default function PaymentModal({
   isOpen,
@@ -20,6 +21,9 @@ export default function PaymentModal({
   onPaymentSuccess,
   onOpenWalletTopUp
 }) {
+  const enableWallet = hasFeature(activeSchool, 'campusWallet');
+  const enableDirect = hasFeature(activeSchool, 'directPayment');
+
   const parentPhone = parentSession?.phone || 'default';
   const walletBalance = StorageService.getParentWalletBalance(parentPhone);
 
@@ -29,8 +33,12 @@ export default function PaymentModal({
     ? validFamilyData.reduce((sum, k) => sum + (Number(k.total) || 0), 0)
     : (Number(cartTotal) || 0);
 
-  const hasSufficientWallet = walletBalance >= effectiveTotal;
-  const [selectedMethod, setSelectedMethod] = useState(hasSufficientWallet ? 'wallet' : 'upi');
+  const hasSufficientWallet = enableWallet && (walletBalance >= effectiveTotal);
+  const [selectedMethod, setSelectedMethod] = useState(() => {
+    if (enableWallet && hasSufficientWallet) return 'wallet';
+    if (enableDirect) return 'upi';
+    return enableWallet ? 'wallet' : 'upi';
+  });
   const [isProcessing, setIsProcessing] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
 
@@ -214,88 +222,101 @@ export default function PaymentModal({
         </div>
 
         {/* Payment Methods (Ranked by Business & UX Priority) */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr', gap: '0.5rem', marginBottom: '1.25rem' }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: enableWallet && enableDirect ? '1.2fr 1fr 1fr' : enableWallet ? '1fr' : '1fr 1fr',
+            gap: '0.5rem',
+            marginBottom: '1.25rem'
+          }}
+        >
           {/* 1. Campus Wallet (Primary / Highest Business Value) */}
-          <button
-            onClick={() => setSelectedMethod('wallet')}
-            style={{
-              padding: '0.75rem 0.5rem',
-              borderRadius: 'var(--radius-md)',
-              border: selectedMethod === 'wallet' ? '2px solid #16a34a' : '1px solid var(--border-color)',
-              background: selectedMethod === 'wallet' ? '#f0fdf4' : 'white',
-              color: selectedMethod === 'wallet' ? '#15803d' : 'var(--text-main)',
-              fontWeight: 800,
-              fontSize: '0.78rem',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '4px',
-              cursor: 'pointer',
-              boxShadow: selectedMethod === 'wallet' ? '0 2px 8px rgba(22,163,74,0.15)' : 'none'
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <Wallet size={16} color={selectedMethod === 'wallet' ? '#16a34a' : 'var(--primary)'} />
-              <span>Campus Wallet</span>
-            </div>
-            <span style={{ fontSize: '0.66rem', color: '#15803d', fontWeight: 800, background: '#dcfce7', padding: '1px 6px', borderRadius: '4px' }}>
-              1-Tap Pay
-            </span>
-          </button>
+          {enableWallet && (
+            <button
+              onClick={() => setSelectedMethod('wallet')}
+              style={{
+                padding: '0.75rem 0.5rem',
+                borderRadius: 'var(--radius-md)',
+                border: selectedMethod === 'wallet' ? '2px solid #16a34a' : '1px solid var(--border-color)',
+                background: selectedMethod === 'wallet' ? '#f0fdf4' : 'white',
+                color: selectedMethod === 'wallet' ? '#15803d' : 'var(--text-main)',
+                fontWeight: 800,
+                fontSize: '0.78rem',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '4px',
+                cursor: 'pointer',
+                boxShadow: selectedMethod === 'wallet' ? '0 2px 8px rgba(22,163,74,0.15)' : 'none'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <Wallet size={16} color={selectedMethod === 'wallet' ? '#16a34a' : 'var(--primary)'} />
+                <span>Campus Wallet</span>
+              </div>
+              <span style={{ fontSize: '0.66rem', color: '#15803d', fontWeight: 800, background: '#dcfce7', padding: '1px 6px', borderRadius: '4px' }}>
+                1-Tap Pay
+              </span>
+            </button>
+          )}
 
           {/* 2. Instant UPI (Highest Consumer Volume in India) */}
-          <button
-            onClick={() => setSelectedMethod('upi')}
-            style={{
-              padding: '0.75rem 0.5rem',
-              borderRadius: 'var(--radius-md)',
-              border: selectedMethod === 'upi' ? '2px solid var(--primary)' : '1px solid var(--border-color)',
-              background: selectedMethod === 'upi' ? 'var(--primary-light)' : 'white',
-              color: selectedMethod === 'upi' ? 'var(--primary)' : 'var(--text-main)',
-              fontWeight: 800,
-              fontSize: '0.78rem',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '4px',
-              cursor: 'pointer'
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <QrCode size={16} />
-              <span>UPI QR / App</span>
-            </div>
-            <span style={{ fontSize: '0.66rem', color: '#64748b', fontWeight: 600 }}>
-              GPay / PhonePe
-            </span>
-          </button>
+          {enableDirect && (
+            <button
+              onClick={() => setSelectedMethod('upi')}
+              style={{
+                padding: '0.75rem 0.5rem',
+                borderRadius: 'var(--radius-md)',
+                border: selectedMethod === 'upi' ? '2px solid var(--primary)' : '1px solid var(--border-color)',
+                background: selectedMethod === 'upi' ? 'var(--primary-light)' : 'white',
+                color: selectedMethod === 'upi' ? 'var(--primary)' : 'var(--text-main)',
+                fontWeight: 800,
+                fontSize: '0.78rem',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '4px',
+                cursor: 'pointer'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <QrCode size={16} />
+                <span>UPI QR / App</span>
+              </div>
+              <span style={{ fontSize: '0.66rem', color: '#64748b', fontWeight: 600 }}>
+                GPay / PhonePe
+              </span>
+            </button>
+          )}
 
           {/* 3. Debit / Credit Card */}
-          <button
-            onClick={() => setSelectedMethod('card')}
-            style={{
-              padding: '0.75rem 0.5rem',
-              borderRadius: 'var(--radius-md)',
-              border: selectedMethod === 'card' ? '2px solid var(--primary)' : '1px solid var(--border-color)',
-              background: selectedMethod === 'card' ? 'var(--primary-light)' : 'white',
-              color: selectedMethod === 'card' ? 'var(--primary)' : 'var(--text-main)',
-              fontWeight: 800,
-              fontSize: '0.78rem',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '4px',
-              cursor: 'pointer'
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <CreditCard size={16} />
-              <span>Card</span>
-            </div>
-            <span style={{ fontSize: '0.66rem', color: '#64748b', fontWeight: 600 }}>
-              Visa / RuPay
-            </span>
-          </button>
+          {enableDirect && (
+            <button
+              onClick={() => setSelectedMethod('card')}
+              style={{
+                padding: '0.75rem 0.5rem',
+                borderRadius: 'var(--radius-md)',
+                border: selectedMethod === 'card' ? '2px solid var(--primary)' : '1px solid var(--border-color)',
+                background: selectedMethod === 'card' ? 'var(--primary-light)' : 'white',
+                color: selectedMethod === 'card' ? 'var(--primary)' : 'var(--text-main)',
+                fontWeight: 800,
+                fontSize: '0.78rem',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '4px',
+                cursor: 'pointer'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <CreditCard size={16} />
+                <span>Card</span>
+              </div>
+              <span style={{ fontSize: '0.66rem', color: '#64748b', fontWeight: 600 }}>
+                Visa / Master
+              </span>
+            </button>
+          )}
         </div>
 
         {/* Selected Method View */}

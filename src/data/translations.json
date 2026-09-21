@@ -1,0 +1,346 @@
+{
+  "languages": [
+    { "code": "en", "label": "English", "badge": "EN" },
+    { "code": "hi", "label": "हिन्दी", "badge": "हिन्दी" }
+  ],
+  "en": {
+    "common": {
+      "appName": "Smart School Food Court",
+      "cancel": "Cancel",
+      "save": "Save",
+      "confirm": "Confirm",
+      "back": "Back",
+      "close": "Close",
+      "submit": "Submit",
+      "loading": "Loading...",
+      "refresh": "Refresh",
+      "search": "Search",
+      "currency": "₹",
+      "all": "All",
+      "veg": "Veg",
+      "nonVeg": "Non-Veg",
+      "vegan": "Vegan",
+      "token": "Token",
+      "class": "Class",
+      "section": "Section",
+      "rollNo": "Roll No",
+      "date": "Date",
+      "breakSlot": "Break Slot"
+    },
+    "auth": {
+      "parentLoginTitle": "Parent Mobile Sign-In",
+      "enterMobile": "Enter 10-digit mobile number",
+      "sendOtp": "Send Verification Code",
+      "enterOtp": "Enter 4-digit OTP",
+      "verifyOtp": "Verify & Continue",
+      "demoParents": "Quick Demo Logins",
+      "staffLogin": "Kitchen Staff Sign-In",
+      "enterPin": "Enter 4-digit Staff PIN",
+      "adminLogin": "School Administrator Sign-In",
+      "enterPasscode": "Enter Admin Passcode"
+    },
+    "parent": {
+      "selectChild": "Select Child",
+      "switchSibling": "Switch Sibling",
+      "childLunchBox": "{name}'s Lunch Box",
+      "copyMealToSibling": "Copy Meal to {siblingName}",
+      "selectBreakSlot": "Select Date & Break Slot",
+      "advanceBooking": "Advance Meal Booking",
+      "allergyWarning": "Allergen Warning",
+      "allergyConflictMsg": "This dish contains {allergen} which conflicts with {childName}'s medical profile.",
+      "safeForChildFilter": "🛡️ Safe for {childName}",
+      "menuTitle": "Today's Fresh Canteen Menu",
+      "searchDishes": "Search dishes, snacks, combos...",
+      "addToBox": "Add to Box",
+      "itemAdded": "Added to {childName}'s box",
+      "cartTitle": "Family Meal Cart",
+      "emptyCart": "Your lunch box is empty",
+      "emptyCartSub": "Pick nutritious meals and snacks for today's break",
+      "orderSummary": "Order Summary",
+      "subtotal": "Subtotal",
+      "packagingFee": "Safe Eco-Packaging Fee",
+      "totalAmount": "Total Payable",
+      "payViaWallet": "Pay via Campus Wallet",
+      "payOnline": "Pay Online (UPI / Card)",
+      "walletBalance": "Wallet Balance",
+      "topUpWallet": "Top Up Wallet",
+      "orderPlacedSuccess": "Meal Order Confirmed!",
+      "trackingTitle": "Live Meal Tracker",
+      "trackingSubtitle": "Transparent timeline from confirmed order to classroom desk",
+      "stages": {
+        "NEW": {
+          "label": "Order Confirmed",
+          "subtext": "Payment received • Scheduled for today’s lunch"
+        },
+        "ACCEPTED": {
+          "label": "Preparing Fresh",
+          "subtext": "Canteen team is preparing today’s lunch"
+        },
+        "PREPARING": {
+          "label": "Packing Lunch Box",
+          "subtext": "Freshly packed and labeled for recess"
+        },
+        "PACKED_DELIVERY": {
+          "label": "Out for Delivery",
+          "subtext": "Sorted into crate for classroom desk delivery"
+        },
+        "PACKED_PICKUP": {
+          "label": "Ready at Counter",
+          "subtext": "Ready at collection counter for recess"
+        },
+        "DELIVERED_DESK": {
+          "label": "Delivered to Desk",
+          "subtext": "Placed on classroom desk for recess. Enjoy! 🍱"
+        },
+        "DELIVERED_COUNTER": {
+          "label": "Handed Over to Student",
+          "subtext": "Collected by student via token verification. Enjoy! 🍱"
+        }
+      },
+      "banner": {
+        "NEW": "Confirmed",
+        "ACCEPTED": "Preparing Fresh",
+        "PREPARING": "Packing Box",
+        "PACKED": "Out for Delivery",
+        "DELIVERED": "Delivered",
+        "CANCELLED": "Cancelled",
+        "UNABLE_TO_FULFIL": "Refunded"
+      },
+      "cancelOrder": "Cancel Order",
+      "reportDispute": "Report an Issue",
+      "fullRefundConfirmed": "Full Refund Confirmed: {amount} credited back to wallet."
+    },
+    "kitchen": {
+      "title": "Kitchen Display System (KDS)",
+      "toggleLang": "🌐 EN",
+      "switchStaff": "Switch Staff",
+      "sync": "Sync",
+      "batchStickers": "Stickers",
+      "searchPlaceholder": "Search by student name, roll # or token...",
+      "filterAllSlots": "All Slots",
+      "summaryBreakdown": "Bulk Kitchen Requirement",
+      "allergyAlert": "ALLERGY ALERT",
+      "dispute": "DISPUTE",
+      "printLabel": "Label",
+      "grade": "Grade",
+      "parent": "Parent",
+      "outOfStockBtn": "Mark Out of Stock / Refund",
+      "filters": {
+        "ALL": "All Orders",
+        "NEW": "Pre-Orders",
+        "ACCEPTED": "In Batch",
+        "PREPARING": "Portioning",
+        "PACKED": "Packed & Labeled",
+        "DELIVERED": "Dispatched",
+        "UNABLE_TO_FULFIL": "Out of Stock",
+        "CANCELLED": "Cancelled"
+      },
+      "badges": {
+        "NEW": "🚨 Pre-Order",
+        "ACCEPTED": "📊 In Batch Tally",
+        "PREPARING": "🍱 Portioning / Assembly",
+        "PACKED": "📦 Box Packed & Labeled",
+        "READY": "📦 Tray Ready",
+        "DELIVERED_DESK": "✅ Delivered to Desk",
+        "DELIVERED_COUNTER": "✅ Handed Over",
+        "CANCELLED": "❌ Cancelled",
+        "UNABLE_TO_FULFIL": "⚠️ Out of Stock"
+      },
+      "actions": {
+        "confirmBatch": "📋 Verify & Include in Batch Tally",
+        "portionTray": "🍱 Portion & Assemble Tray",
+        "sealBox": "🏷️ Seal Box & Apply Student Sticker",
+        "dispatchDesk": "🚀 Dispatch to Classroom Desk",
+        "dispatchCounter": "🚀 Handover at Collection Counter"
+      }
+    },
+    "admin": {
+      "title": "Campus Food Operations Admin",
+      "tabs": {
+        "overview": "Overview & Analytics",
+        "roster": "Student Roster Sync",
+        "menu": "Menu & Cutoff Settings",
+        "reports": "Financial Settlements",
+        "emergency": "Campus Closure Protocol"
+      },
+      "cutoffs": {
+        "title": "Meal Period & Cutoff Timers",
+        "subtitle": "Set advance ordering cutoff minutes before recess bells"
+      },
+      "rosterSync": {
+        "title": "Student Roster Bulk Upload",
+        "dragDropExcel": "Upload Excel or CSV file (.xlsx / .csv)"
+      }
+    }
+  },
+  "hi": {
+    "common": {
+      "appName": "स्मार्ट स्कूल फूड कोर्ट",
+      "cancel": "रद्द करें",
+      "save": "सुरक्षित करें",
+      "confirm": "पुष्टि करें",
+      "back": "वापस",
+      "close": "बंद करें",
+      "submit": "जमा करें",
+      "loading": "लोड हो रहा है...",
+      "refresh": "ताज़ा करें",
+      "search": "खोजें",
+      "currency": "₹",
+      "all": "सभी",
+      "veg": "शाकाहारी",
+      "nonVeg": "मांसाहारी",
+      "vegan": "वीगन",
+      "token": "टोकन",
+      "class": "कक्षा",
+      "section": "सेक्शन",
+      "rollNo": "रोल नं",
+      "date": "दिनांक",
+      "breakSlot": "भोजन समय"
+    },
+    "auth": {
+      "parentLoginTitle": "अभिभावक मोबाइल लॉगिन",
+      "enterMobile": "10 अंकों का मोबाइल नंबर दर्ज करें",
+      "sendOtp": "ओटीपी भेजें",
+      "enterOtp": "4 अंकों का ओटीपी दर्ज करें",
+      "verifyOtp": "सत्यापित करें",
+      "demoParents": "त्वरित डेमो लॉगिन",
+      "staffLogin": "किचन स्टाफ लॉगिन",
+      "enterPin": "4 अंकों का स्टाफ पिन दर्ज करें",
+      "adminLogin": "स्कूल एडमिनिस्ट्रेटर लॉगिन",
+      "enterPasscode": "एडमिन पासकोड दर्ज करें"
+    },
+    "parent": {
+      "selectChild": "बच्चा चुनें",
+      "switchSibling": "भाई/बहन बदलें",
+      "childLunchBox": "{name} का लंच बॉक्स",
+      "copyMealToSibling": "यही भोजन {siblingName} के लिए जोड़ें",
+      "selectBreakSlot": "तारीख और ब्रेक चुनें",
+      "advanceBooking": "अग्रिम भोजन बुकिंग",
+      "allergyWarning": "एलर्जी चेतावनी",
+      "allergyConflictMsg": "इस भोजन में {allergen} है जो {childName} के स्वास्थ्य रिकॉर्ड से मेल नहीं खाता।",
+      "safeForChildFilter": "🛡️ {childName} के लिए सुरक्षित",
+      "menuTitle": "आज का ताज़ा कैंटीन मेनू",
+      "searchDishes": "व्यंजन, नाश्ता, कॉम्बो खोजें...",
+      "addToBox": "बॉक्स में जोड़ें",
+      "itemAdded": "{childName} के बॉक्स में जोड़ा गया",
+      "cartTitle": "पारिवारिक भोजन कार्ट",
+      "emptyCart": "आपका लंच बॉक्स खाली है",
+      "emptyCartSub": "आज के ब्रेक के लिए पौष्टिक भोजन और नाश्ता चुनें",
+      "orderSummary": "ऑर्डर विवरण",
+      "subtotal": "कुल योग",
+      "packagingFee": "पर्यावरण अनुकूल पैकेजिंग शुल्क",
+      "totalAmount": "कुल देय राशि",
+      "payViaWallet": "कैंपस वॉलेट से भुगतान करें",
+      "payOnline": "ऑनलाइन भुगतान (UPI / कार्ड)",
+      "walletBalance": "वॉलेट शेष राशि",
+      "topUpWallet": "वॉलेट रिचार्ज करें",
+      "orderPlacedSuccess": "भोजन ऑर्डर की पुष्टि हो गई!",
+      "trackingTitle": "लाइव मील ट्रैकर",
+      "trackingSubtitle": "ऑर्डर से लेकर क्लास डेस्क तक की पारदर्शी स्थिति",
+      "stages": {
+        "NEW": {
+          "label": "ऑर्डर कन्फर्म",
+          "subtext": "पेमेंट प्राप्त हुआ • आज के लंच के लिए तय"
+        },
+        "ACCEPTED": {
+          "label": "ताजा खाना तैयार हो रहा है",
+          "subtext": "कैंटीन टीम लंच तैयार कर रही है"
+        },
+        "PREPARING": {
+          "label": "लंच बॉक्स पैक हो रहा है",
+          "subtext": "छात्र के नाम व एलर्जी स्टिकर के साथ पैक"
+        },
+        "PACKED_DELIVERY": {
+          "label": "क्लास के लिए रवाना",
+          "subtext": "क्लास क्रेट में रख दिया गया है"
+        },
+        "PACKED_PICKUP": {
+          "label": "काउंटर पर तैयार",
+          "subtext": "कलेक्शन काउंटर पर तैयार है"
+        },
+        "DELIVERED_DESK": {
+          "label": "डेस्क पर डिलीवर",
+          "subtext": "क्लास डेस्क पर पहुंच गया! लंच का आनंद लें 🍱"
+        },
+        "DELIVERED_COUNTER": {
+          "label": "छात्र को प्राप्त हुआ",
+          "subtext": "टोकन से प्राप्त कर लिया गया 🍱"
+        }
+      },
+      "banner": {
+        "NEW": "कन्फर्म",
+        "ACCEPTED": "तैयारी जारी",
+        "PREPARING": "पैकिंग",
+        "PACKED": "डिलीवरी के लिए तैयार",
+        "DELIVERED": "पहुंच गया",
+        "CANCELLED": "रद्द",
+        "UNABLE_TO_FULFIL": "रिफंड हुआ"
+      },
+      "cancelOrder": "ऑर्डर रद्द करें",
+      "reportDispute": "समस्या दर्ज करें",
+      "fullRefundConfirmed": "पूरा रिफंड कन्फर्म: {amount} वॉलेट में वापस जोड़ दिए गए हैं।"
+    },
+    "kitchen": {
+      "title": "किचन डिस्प्ले सिस्टम (KDS)",
+      "toggleLang": "🇮🇳 हिन्दी",
+      "switchStaff": "स्टाफ बदलें",
+      "sync": "सिंक करें",
+      "batchStickers": "सभी स्टिकर",
+      "searchPlaceholder": "विद्यार्थी का नाम, रोल # या टोकन खोजें...",
+      "filterAllSlots": "सभी समय (All Slots)",
+      "summaryBreakdown": "आज का कुल किचन खाना",
+      "allergyAlert": "एलर्जी चेतावनी",
+      "dispute": "शिकायत",
+      "printLabel": "पर्ची",
+      "grade": "कक्षा",
+      "parent": "अभिभावक",
+      "outOfStockBtn": "स्टॉक खत्म / रिफंड करें",
+      "filters": {
+        "ALL": "सभी (All)",
+        "NEW": "नए ऑर्डर",
+        "ACCEPTED": "बैच लिस्ट",
+        "PREPARING": "पैकिंग",
+        "PACKED": "पैक हो गया",
+        "DELIVERED": "क्लास भेजा",
+        "UNABLE_TO_FULFIL": "खत्म है",
+        "CANCELLED": "रद्द"
+      },
+      "badges": {
+        "NEW": "🚨 नया ऑर्डर",
+        "ACCEPTED": "📊 बैच में शामिल",
+        "PREPARING": "🍱 ट्रे पैकिंग जारी",
+        "PACKED": "📦 पैक & तैयार",
+        "READY": "📦 ट्रे तैयार",
+        "DELIVERED_DESK": "✅ क्लास में डिलीवर",
+        "DELIVERED_COUNTER": "✅ छात्र को दिया",
+        "CANCELLED": "❌ रद्द",
+        "UNABLE_TO_FULFIL": "⚠️ स्टॉक खत्म"
+      },
+      "actions": {
+        "confirmBatch": "📋 बैच में शामिल करें",
+        "portionTray": "🍱 ट्रे में खाना निकालें",
+        "sealBox": "🏷️ बॉक्स सील करें & स्टिकर लगाएं",
+        "dispatchDesk": "🚀 क्लास डेस्क पर भेजें",
+        "dispatchCounter": "🚀 काउंटर पर छात्र को दें"
+      }
+    },
+    "admin": {
+      "title": "कैंपस फूड ऑपरेशंस एडमिन",
+      "tabs": {
+        "overview": "डैशबोर्ड और आंकड़े",
+        "roster": "छात्र सूची सिंक",
+        "menu": "मेनू व कटऑफ सेटिंग्स",
+        "reports": "वित्तीय रिपोर्ट",
+        "emergency": "कैंपस अवकाश प्रोटोकॉल"
+      },
+      "cutoffs": {
+        "title": "भोजन समय व कटऑफ टाइमर",
+        "subtitle": "रिसेस बेल से पहले अग्रिम ऑर्डर की समय सीमा निर्धारित करें"
+      },
+      "rosterSync": {
+        "title": "छात्र सूची एक्सेल अपलोड",
+        "dragDropExcel": "एक्सेल या सीएसवी फाइल अपलोड करें (.xlsx / .csv)"
+      }
+    }
+  }
+}

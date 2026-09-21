@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { X, Trash2, Plus, Minus, ArrowRight, ShieldCheck, User, Users, Copy, Sparkles, AlertTriangle, CheckCircle2, ShoppingBag, Flame } from 'lucide-react';
+import { hasFeature } from '../../services/featureService';
 
 export default function CartDrawer({
   isOpen,
@@ -16,7 +17,8 @@ export default function CartDrawer({
   activeChild,
   childrenList,
   onSelectChild,
-  onCopyMealToSibling
+  onCopyMealToSibling,
+  activeSchool
 }) {
   // Keyboard Escape listener
   useEffect(() => {
@@ -259,7 +261,7 @@ export default function CartDrawer({
               </div>
 
               {/* Meal Energy & Nutrition Summary Bar */}
-              {currentCart.length > 0 && (
+              {hasFeature(activeSchool, 'nutritionTracker') && currentCart.length > 0 && (
                 <div
                   style={{
                     background: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)',
@@ -357,8 +359,8 @@ export default function CartDrawer({
                 ))}
               </div>
 
-              {/* Sibling 1-Tap Copy Action (Only shown for siblings with empty trays) */}
-              {emptySiblings && emptySiblings.length > 0 && (
+              {/* Sibling 1-Tap Copy Action (Only shown if multiSibling is enabled and for siblings with empty trays) */}
+              {hasFeature(activeSchool, 'multiSibling') && emptySiblings && emptySiblings.length > 0 && (
                 <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '12px', padding: '0.65rem 0.85rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.74rem', fontWeight: 800, color: '#166534', marginBottom: '0.35rem' }}>
                     <Sparkles size={13} />

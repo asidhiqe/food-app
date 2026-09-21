@@ -1,5 +1,6 @@
 import React from 'react';
 import { AlertCircle, Clock, ChefHat, CheckCircle2, ArrowRight, Eye, ShieldAlert } from 'lucide-react';
+import { t } from '../../services/i18nService';
 
 export default function ActiveSlotOrderBanner({
   activeOrder,
@@ -18,6 +19,10 @@ export default function ActiveSlotOrderBanner({
   const ordererTitle = isOrderedByOtherParent
     ? `${activeOrder.orderedByParentName || 'Other Parent'} (${activeOrder.parentRelation || 'Parent'})`
     : 'You';
+
+  const getFriendlyStatus = (status) => {
+    return t('en', `parent.banner.${status}`, status || 'Confirmed');
+  };
 
   return (
     <div
@@ -42,8 +47,8 @@ export default function ActiveSlotOrderBanner({
               <span style={{ fontSize: '0.85rem', fontWeight: 900, color: '#92400e' }}>
                 MEAL ALREADY ORDERED FOR THIS BREAK
               </span>
-              <span className={`badge badge-${activeOrder.deliveryStatus.toLowerCase()}`} style={{ fontSize: '0.7rem' }}>
-                {activeOrder.deliveryStatus}
+              <span className={`badge badge-${(activeOrder.deliveryStatus || 'new').toLowerCase()}`} style={{ fontSize: '0.7rem' }}>
+                {getFriendlyStatus(activeOrder.deliveryStatus || activeOrder.status)}
               </span>
             </div>
 

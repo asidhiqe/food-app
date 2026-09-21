@@ -18,8 +18,8 @@ const channel = typeof window !== 'undefined' && window.BroadcastChannel
   ? new BroadcastChannel('school_food_app_sync')
   : null;
 
-const SCHEMA_VERSION_KEY = 'sfa_schema_version_v3';
-const CURRENT_SCHEMA_VERSION = 'v3.0_real_kids_photos';
+const SCHEMA_VERSION_KEY = 'sfa_schema_version_v4';
+const CURRENT_SCHEMA_VERSION = 'v4.0_feature_flags_and_pricing';
 
 export const StorageService = {
   // --- Initialization ---
@@ -39,16 +39,7 @@ export const StorageService = {
         localStorage.setItem(menuKey, JSON.stringify(INITIAL_MENUS[school.id] || []));
       });
 
-      // Clear previous cached session if it was holding old child
-      const currentSession = localStorage.getItem(KEYS.PARENT_SESSION);
-      if (currentSession) {
-        const parsed = JSON.parse(currentSession);
-        if (parsed.phone === '9811223344') {
-          localStorage.removeItem(KEYS.PARENT_SESSION);
-          localStorage.removeItem(KEYS.ACTIVE_CHILD);
-        }
-      }
-
+      // Clear previous cached session if needed
       localStorage.setItem(SCHEMA_VERSION_KEY, CURRENT_SCHEMA_VERSION);
     } else {
       if (!localStorage.getItem(KEYS.SCHOOLS)) {
@@ -427,17 +418,180 @@ export const StorageService = {
     return newOrder;
   },
 
-  updateOrderStatus(schoolId, orderId, newStatus) {
+  updateOrderStatus(schoolId, orderId, newStatus, extraData = {}) {
     const orders = this.getOrders(schoolId);
     const index = orders.findIndex((o) => o.id === orderId);
     if (index !== -1) {
       orders[index].deliveryStatus = newStatus;
-      if (newStatus === 'DELIVERED') {
-        orders[index].deliveredAt = new Date().toISOString();
+      orders[index].status = newStatus;
+      const now = new Date().toISOString();
+
+      if (newStatus === 'ACCEPTED') orders[index].acceptedAt = now;
+      if (newStatus === 'PREPARING') orders[index].preparingAt = now;
+      if (newStatus === 'PACKED' || newStatus === 'READY') orders[index].packedAt = now;
+      if (newStatus === 'DELIVERED') orders[index].deliveredAt = now;
+
+      if (extraData && typeof extraData === 'object') {
+        Object.assign(orders[index], extraData);
       }
+
       localStorage.setItem(KEYS.ORDERS_PREFIX + schoolId, JSON.stringify(orders));
       this.notify('ORDER_STATUS_CHANGED', { schoolId, orderId, newStatus, order: orders[index] });
     }
+  },
+
+  isOrderBeforeCutoff(order, cutoffTime = '09:00') {
+    if (!order || !order.requiredDate) return true;
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const todayStr = `${year}-${month}-${day}`;
+
+    // If order is for future date (tomorrow onwards), always before cutoff
+    if (order.requiredDate > todayStr) return true;
+    // If order is for past date, cutoff has elapsed
+    if (order.requiredDate < todayStr) return false;
+
+    // Order is for today: check cutoff time
+    const [cutoffHourStr, cutoffMinStr] = (cutoffTime || '09:00').split(':');
+    const cutoffHour = parseInt(cutoffHourStr, 10) || 9;
+    const cutoffMin = parseInt(cutoffMinStr, 10) || 0;
+
+    const currentHour = now.getHours();
+    const currentMin = now.getMinutes();
+
+    return currentHour < cutoffHour || (currentHour === cutoffHour && currentMin <= cutoffMin);
+  },
+
+  cancelOrder(schoolId, orderId, { reason = '', cancelledBy = 'PARENT' } = {}) {
+    const orders = this.getOrders(schoolId);
+    const index = orders.findIndex((o) => o.id === orderId);
+    if (index === -1) return { success: false, error: 'Order not found' };
+
+    const order = orders[index];
+    if (order.deliveryStatus === 'CANCELLED' || order.deliveryStatus === 'CANCELLED_LATE') {
+      return { success: false, error: 'Order is already cancelled' };
+    }
+
+    const beforeCutoff = this.isOrderBeforeCutoff(order);
+    const refundAmount = Number(order.totalAmount || order.paidAmount || 0);
+    const parentPhone = order.orderedByParentPhone || 'default';
+    const now = new Date().toISOString();
+
+    if (beforeCutoff) {
+      orders[index].deliveryStatus = 'CANCELLED';
+      orders[index].status = 'CANCELLED';
+      orders[index].cancelledAt = now;
+      orders[index].cancellationReason = reason || 'Cancelled by Parent before 9:00 AM cutoff';
+      orders[index].cancelledBy = cancelledBy;
+      orders[index].refundStatus = 'REFUNDED';
+      orders[index].refundAmount = refundAmount;
+
+      // Issue automated wallet refund
+      this.refundParentWallet(parentPhone, refundAmount, `Refund: Cancelled Order #${order.orderNumber}`);
+
+      localStorage.setItem(KEYS.ORDERS_PREFIX + schoolId, JSON.stringify(orders));
+      this.notify('ORDER_CANCELLED', { schoolId, orderId, order: orders[index], refundAmount });
+      this.notify('ORDER_STATUS_CHANGED', { schoolId, orderId, newStatus: 'CANCELLED', order: orders[index] });
+
+      return {
+        success: true,
+        isBeforeCutoff: true,
+        refundAmount,
+        message: `Order cancelled. ₹${refundAmount} has been credited to your Campus Lunch Wallet.`,
+        order: orders[index]
+      };
+    } else {
+      orders[index].deliveryStatus = 'CANCELLED_LATE';
+      orders[index].status = 'CANCELLED_LATE';
+      orders[index].cancelledAt = now;
+      orders[index].cancellationReason = reason || 'Cancelled after 9:00 AM cutoff (Food preparation commenced)';
+      orders[index].cancelledBy = cancelledBy;
+      orders[index].refundStatus = 'NO_REFUND_PAST_CUTOFF';
+      orders[index].refundAmount = 0;
+
+      localStorage.setItem(KEYS.ORDERS_PREFIX + schoolId, JSON.stringify(orders));
+      this.notify('ORDER_CANCELLED', { schoolId, orderId, order: orders[index], refundAmount: 0 });
+      this.notify('ORDER_STATUS_CHANGED', { schoolId, orderId, newStatus: 'CANCELLED_LATE', order: orders[index] });
+
+      return {
+        success: true,
+        isBeforeCutoff: false,
+        refundAmount: 0,
+        message: 'Order marked cancelled. Note: As preparation commenced past 9:00 AM cutoff, refunds are subject to canteen policy.',
+        order: orders[index]
+      };
+    }
+  },
+
+  markOrderUnableToFulfil(schoolId, orderId, reason = 'Item Out of Stock') {
+    const orders = this.getOrders(schoolId);
+    const index = orders.findIndex((o) => o.id === orderId);
+    if (index === -1) return { success: false, error: 'Order not found' };
+
+    const order = orders[index];
+    const refundAmount = Number(order.totalAmount || order.paidAmount || 0);
+    const parentPhone = order.orderedByParentPhone || 'default';
+
+    orders[index].deliveryStatus = 'UNABLE_TO_FULFIL';
+    orders[index].status = 'UNABLE_TO_FULFIL';
+    orders[index].unableToFulfilAt = new Date().toISOString();
+    orders[index].unableReason = reason;
+    orders[index].refundStatus = 'REFUNDED';
+    orders[index].refundAmount = refundAmount;
+
+    this.refundParentWallet(parentPhone, refundAmount, `Refund: Kitchen Out of Stock #${order.orderNumber}`);
+
+    localStorage.setItem(KEYS.ORDERS_PREFIX + schoolId, JSON.stringify(orders));
+    this.notify('ORDER_STATUS_CHANGED', { schoolId, orderId, newStatus: 'UNABLE_TO_FULFIL', order: orders[index] });
+    return { success: true, refundAmount, order: orders[index] };
+  },
+
+  reportOrderDispute(schoolId, orderId, { issueType = 'Meal Not Received', comments = '', parentName = '' } = {}) {
+    const orders = this.getOrders(schoolId);
+    const index = orders.findIndex((o) => o.id === orderId);
+    if (index === -1) return { success: false, error: 'Order not found' };
+
+    orders[index].dispute = {
+      reportedAt: new Date().toISOString(),
+      issueType,
+      comments,
+      reportedBy: parentName || orders[index].orderedByParentName || 'Parent',
+      status: 'UNDER_REVIEW',
+      resolutionNotes: ''
+    };
+
+    localStorage.setItem(KEYS.ORDERS_PREFIX + schoolId, JSON.stringify(orders));
+    this.notify('ORDER_DISPUTED', { schoolId, orderId, dispute: orders[index].dispute, order: orders[index] });
+    return { success: true, dispute: orders[index].dispute, order: orders[index] };
+  },
+
+  cancelAllOrdersForDate(schoolId, date, reason = 'Emergency School Holiday') {
+    const orders = this.getOrders(schoolId);
+    let cancelledCount = 0;
+    let totalRefunded = 0;
+
+    orders.forEach((order) => {
+      if (order.requiredDate === date && order.deliveryStatus !== 'CANCELLED' && order.deliveryStatus !== 'CANCELLED_LATE') {
+        order.deliveryStatus = 'CANCELLED';
+        order.status = 'CANCELLED';
+        order.cancelledAt = new Date().toISOString();
+        order.cancellationReason = reason;
+        order.cancelledBy = 'SCHOOL_ADMIN';
+        const refundAmt = Number(order.totalAmount || order.paidAmount || 0);
+        order.refundStatus = 'REFUNDED';
+        order.refundAmount = refundAmt;
+        totalRefunded += refundAmt;
+        cancelledCount++;
+
+        this.refundParentWallet(order.orderedByParentPhone || 'default', refundAmt, `Refund: ${reason} on ${date}`);
+      }
+    });
+
+    localStorage.setItem(KEYS.ORDERS_PREFIX + schoolId, JSON.stringify(orders));
+    this.notify('ORDERS_BATCH_CANCELLED', { schoolId, date, reason, cancelledCount, totalRefunded });
+    return { success: true, cancelledCount, totalRefunded };
   },
 
   markStickerPrinted(schoolId, orderIds) {

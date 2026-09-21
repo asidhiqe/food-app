@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
 import { ChefHat, CheckCircle2, Clock, Package, Send, Printer, RefreshCw, Filter, Search, Sparkles, Flame, Check, ArrowLeft, AlertTriangle } from 'lucide-react';
 import { StorageService } from '../../services/storageService';
+import { hasFeature } from '../../services/featureService';
+import { t, SUPPORTED_LANGUAGES } from '../../services/i18nService';
 import ThermalStickerModal from './ThermalStickerModal';
 
 const STATUS_FILTERS = [
   { id: 'ALL', label: 'All Orders', icon: '📋' },
-  { id: 'NEW', label: 'New', icon: '🚨' },
-  { id: 'ACCEPTED', label: 'Accepted', icon: '👨‍🍳' },
-  { id: 'PREPARING', label: 'Cooking', icon: '🔥' },
-  { id: 'PACKED', label: 'Packed', icon: '📦' },
-  { id: 'DELIVERED', label: 'Delivered', icon: '✅' }
+  { id: 'NEW', label: 'Pre-Orders', icon: '🚨' },
+  { id: 'ACCEPTED', label: 'In Batch', icon: '📊' },
+  { id: 'PREPARING', label: 'Portioning', icon: '🍱' },
+  { id: 'PACKED', label: 'Packed & Labeled', icon: '📦' },
+  { id: 'DELIVERED', label: 'Dispatched', icon: '✅' },
+  { id: 'UNABLE_TO_FULFIL', label: 'Out of Stock', icon: '⚠️' },
+  { id: 'CANCELLED', label: 'Cancelled', icon: '❌' }
 ];
 
 export default function KitchenDashboard({
@@ -19,6 +23,13 @@ export default function KitchenDashboard({
   staffSession,
   onLogoutKitchen
 }) {
+  const enableThermal = hasFeature(activeSchool, 'thermalPrinting');
+  const isClassroomDelivery = hasFeature(activeSchool, 'classroomDelivery');
+
+  // Multi-language state powered by i18nService & translations.json
+  const [lang, setLang] = useState('en');
+  const toggleLang = () => setLang((prev) => (prev === 'en' ? 'hi' : 'en'));
+
   // Default filter based on kitchen staff role
   const getInitialFilter = () => {
     if (!staffSession) return 'ALL';
@@ -34,10 +45,21 @@ export default function KitchenDashboard({
   const [stickerOrder, setStickerOrder] = useState(null);
   const [isBatchPrinting, setIsBatchPrinting] = useState(false);
 
+  const getFilterLabel = (f) => t(lang, `kitchen.filters.${f.id}`, f.label);
+
   // Progressive Status Progression Handler
   const handleUpdateStatus = (orderId, newStatus) => {
-    StorageService.updateOrderStatus(orderId, newStatus);
+    StorageService.updateOrderStatus(activeSchool?.id, orderId, newStatus);
     onRefresh();
+  };
+
+  // Kitchen Out of Stock / Unable to Fulfil Handler
+  const handleMarkUnableToFulfil = (orderId) => {
+    const reason = window.prompt('Enter reason for inability to fulfil (will issue instant refund to parent wallet):', 'Ingredient Out of Stock');
+    if (reason) {
+      StorageService.markOrderUnableToFulfil(activeSchool?.id, orderId, reason);
+      onRefresh();
+    }
   };
 
   // Filter Orders
@@ -59,16 +81,21 @@ export default function KitchenDashboard({
   const getStatusBadge = (status) => {
     switch (status) {
       case 'NEW':
-        return <span style={{ background: '#fee2e2', color: '#991b1b', padding: '3px 8px', borderRadius: 'var(--radius-full)', fontSize: '0.72rem', fontWeight: 800 }}>🚨 New Order</span>;
+        return <span style={{ background: '#fee2e2', color: '#991b1b', padding: '3px 8px', borderRadius: 'var(--radius-full)', fontSize: '0.72rem', fontWeight: 800 }}>{t(lang, 'kitchen.badges.NEW')}</span>;
       case 'ACCEPTED':
-        return <span style={{ background: '#e0f2fe', color: '#0369a1', padding: '3px 8px', borderRadius: 'var(--radius-full)', fontSize: '0.72rem', fontWeight: 800 }}>👨‍🍳 Accepted</span>;
+        return <span style={{ background: '#e0f2fe', color: '#0369a1', padding: '3px 8px', borderRadius: 'var(--radius-full)', fontSize: '0.72rem', fontWeight: 800 }}>{t(lang, 'kitchen.badges.ACCEPTED')}</span>;
       case 'PREPARING':
-        return <span style={{ background: '#fef3c7', color: '#92400e', padding: '3px 8px', borderRadius: 'var(--radius-full)', fontSize: '0.72rem', fontWeight: 800 }}>🔥 Cooking</span>;
+        return <span style={{ background: '#fef3c7', color: '#92400e', padding: '3px 8px', borderRadius: 'var(--radius-full)', fontSize: '0.72rem', fontWeight: 800 }}>{t(lang, 'kitchen.badges.PREPARING')}</span>;
       case 'PACKED':
       case 'READY':
-        return <span style={{ background: '#ede9fe', color: '#6b21a8', padding: '3px 8px', borderRadius: 'var(--radius-full)', fontSize: '0.72rem', fontWeight: 800 }}>📦 Box Packed</span>;
+        return <span style={{ background: '#ede9fe', color: '#6b21a8', padding: '3px 8px', borderRadius: 'var(--radius-full)', fontSize: '0.72rem', fontWeight: 800 }}>{t(lang, isClassroomDelivery ? 'kitchen.badges.PACKED' : 'kitchen.badges.READY')}</span>;
       case 'DELIVERED':
-        return <span style={{ background: '#dcfce7', color: '#15803d', padding: '3px 8px', borderRadius: 'var(--radius-full)', fontSize: '0.72rem', fontWeight: 800 }}>✅ Delivered</span>;
+        return <span style={{ background: '#dcfce7', color: '#15803d', padding: '3px 8px', borderRadius: 'var(--radius-full)', fontSize: '0.72rem', fontWeight: 800 }}>{t(lang, isClassroomDelivery ? 'kitchen.badges.DELIVERED_DESK' : 'kitchen.badges.DELIVERED_COUNTER')}</span>;
+      case 'CANCELLED':
+      case 'CANCELLED_LATE':
+        return <span style={{ background: '#fee2e2', color: '#dc2626', padding: '3px 8px', borderRadius: 'var(--radius-full)', fontSize: '0.72rem', fontWeight: 800 }}>{t(lang, 'kitchen.badges.CANCELLED')}</span>;
+      case 'UNABLE_TO_FULFIL':
+        return <span style={{ background: '#ffedd5', color: '#c2410c', padding: '3px 8px', borderRadius: 'var(--radius-full)', fontSize: '0.72rem', fontWeight: 800 }}>{t(lang, 'kitchen.badges.UNABLE_TO_FULFIL')}</span>;
       default:
         return <span>{status}</span>;
     }
@@ -100,6 +127,27 @@ export default function KitchenDashboard({
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {/* 1-Tap Kitchen Language Switcher (backed by i18nService & translations.json) */}
+            <button
+              onClick={toggleLang}
+              style={{
+                background: lang === 'hi' ? '#15803d' : 'rgba(255, 255, 255, 0.15)',
+                border: lang === 'hi' ? '1px solid #4ade80' : '1px solid rgba(255, 255, 255, 0.3)',
+                color: '#ffffff',
+                padding: '2px 8px',
+                borderRadius: 'var(--radius-full)',
+                fontSize: '0.7rem',
+                fontWeight: 800,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '3px'
+              }}
+              title="Toggle Kitchen Language"
+            >
+              <span>{t(lang, 'kitchen.toggleLang')}</span>
+            </button>
+
             {staffSession && (
               <div
                 style={{
@@ -154,26 +202,28 @@ export default function KitchenDashboard({
           </div>
 
           <div style={{ display: 'flex', gap: '4px' }}>
-            <button
-              onClick={() => setIsBatchPrinting(true)}
-              style={{
-                background: 'rgba(255,255,255,0.12)',
-                color: '#ffffff',
-                border: '1px solid rgba(255,255,255,0.2)',
-                borderRadius: 'var(--radius-md)',
-                padding: '6px 8px',
-                fontSize: '0.72rem',
-                fontWeight: 800,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '3px'
-              }}
-              title="Batch Print All Labels"
-            >
-              <Printer size={13} />
-              <span>Stickers</span>
-            </button>
+            {enableThermal && (
+              <button
+                onClick={() => setIsBatchPrinting(true)}
+                style={{
+                  background: 'rgba(255,255,255,0.12)',
+                  color: '#ffffff',
+                  border: '1px solid rgba(255,255,255,0.2)',
+                  borderRadius: 'var(--radius-md)',
+                  padding: '6px 8px',
+                  fontSize: '0.72rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '3px'
+                }}
+                title="Batch Print All Labels"
+              >
+                <Printer size={13} />
+                <span>Stickers</span>
+              </button>
+            )}
 
             <button
               onClick={onRefresh}
@@ -239,7 +289,7 @@ export default function KitchenDashboard({
               }}
             >
               <span>{tab.icon}</span>
-              <span>{tab.label}</span>
+              <span>{getFilterLabel(tab)}</span>
               <span
                 style={{
                   background: isSelected ? '#ffffff' : '#f1f5f9',
@@ -372,7 +422,7 @@ export default function KitchenDashboard({
                     }}
                   >
                     <Printer size={13} />
-                    <span>Label</span>
+                    <span>{t(lang, 'kitchen.printLabel')}</span>
                   </button>
                 </div>
 
@@ -383,12 +433,12 @@ export default function KitchenDashboard({
                       👦 {order.studentName}
                     </div>
                     <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-                      Parent: {order.orderedByParentName || 'Parent'} ({order.orderedByParentPhone || 'N/A'})
+                      {t(lang, 'kitchen.parent')}: {order.orderedByParentName || 'Parent'} ({order.orderedByParentPhone || 'N/A'})
                     </div>
                   </div>
 
                   <div style={{ background: 'var(--primary-light)', color: 'var(--primary)', padding: '3px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800 }}>
-                    Grade {order.classSection.replace(/Grade\s*/i, '')}
+                    {t(lang, 'kitchen.grade')} {order.classSection.replace(/Grade\s*/i, '')}
                   </div>
                 </div>
 
@@ -397,8 +447,21 @@ export default function KitchenDashboard({
                   <div style={{ background: '#fff1f2', border: '1px solid #fecdd3', borderRadius: 'var(--radius-md)', padding: '0.45rem 0.65rem', marginBottom: '0.65rem', display: 'flex', alignItems: 'center', gap: '5px' }}>
                     <AlertTriangle size={15} color="#e11d48" />
                     <span style={{ fontSize: '0.75rem', fontWeight: 900, color: '#be123c' }}>
-                      ALLERGY ALERT: {order.allergies.join(', ')}
+                      {t(lang, 'kitchen.allergyAlert')}: {order.allergies.join(', ')}
                     </span>
+                  </div>
+                )}
+
+                {/* Parent Dispute Alert */}
+                {order.dispute && (
+                  <div style={{ background: '#fef2f2', border: '1px solid #f87171', borderRadius: 'var(--radius-md)', padding: '0.5rem 0.65rem', marginBottom: '0.65rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px', color: '#b91c1c', fontWeight: 900, fontSize: '0.75rem' }}>
+                      <AlertTriangle size={14} />
+                      <span>{t(lang, 'kitchen.dispute')}: {order.dispute.type?.toUpperCase()}</span>
+                    </div>
+                    <div style={{ fontSize: '0.72rem', color: '#7f1d1d', marginTop: '2px' }}>
+                      "{order.dispute.comments}" • {order.dispute.reportedAt ? new Date(order.dispute.reportedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Reported'}
+                    </div>
                   </div>
                 )}
 
@@ -414,29 +477,102 @@ export default function KitchenDashboard({
                   ))}
                 </div>
 
-                {/* Action Stepper Buttons */}
-                <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
-                  {order.status === 'NEW' && (
-                    <button
-                      onClick={() => handleUpdateStatus(order.id, 'ACCEPTED')}
-                      className="btn-primary"
-                      style={{ width: '100%', padding: '0.65rem', fontSize: '0.85rem' }}
-                    >
-                      <span>👨‍🍳 Accept Order & Send to Stove</span>
-                    </button>
-                  )}
+                  {/* Action Stepper Buttons */}
+                  <div style={{ display: 'flex', gap: '0.4rem', flexDirection: 'column' }}>
+                    {order.status === 'NEW' && (
+                      <button
+                        onClick={() => handleUpdateStatus(order.id, 'ACCEPTED')}
+                        className="btn-primary"
+                        style={{ width: '100%', padding: '0.65rem', fontSize: '0.85rem' }}
+                      >
+                        <span>{t(lang, 'kitchen.actions.confirmBatch')}</span>
+                      </button>
+                    )}
 
-                  {order.status === 'ACCEPTED' && (
+                    {order.status === 'ACCEPTED' && (
+                      <button
+                        onClick={() => handleUpdateStatus(order.id, 'PREPARING')}
+                        style={{
+                          width: '100%',
+                          background: '#0284c7',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: 'var(--radius-md)',
+                          padding: '0.65rem',
+                          fontSize: '0.85rem',
+                          fontWeight: 800,
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '6px'
+                        }}
+                      >
+                        <Sparkles size={16} />
+                        <span>{t(lang, 'kitchen.actions.portionTray')}</span>
+                      </button>
+                    )}
+
+                    {order.status === 'PREPARING' && (
+                      <button
+                        onClick={() => handleUpdateStatus(order.id, 'PACKED')}
+                        style={{
+                          width: '100%',
+                          background: '#7c3aed',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: 'var(--radius-md)',
+                          padding: '0.65rem',
+                          fontSize: '0.85rem',
+                          fontWeight: 800,
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '6px'
+                        }}
+                      >
+                        <Package size={16} />
+                        <span>{t(lang, 'kitchen.actions.sealBox')}</span>
+                      </button>
+                    )}
+
+                    {order.status === 'PACKED' && (
+                      <button
+                        onClick={() => handleUpdateStatus(order.id, 'DELIVERED')}
+                        style={{
+                          width: '100%',
+                          background: '#16a34a',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: 'var(--radius-md)',
+                          padding: '0.65rem',
+                          fontSize: '0.85rem',
+                          fontWeight: 800,
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '6px'
+                        }}
+                      >
+                        <Send size={16} />
+                        <span>{t(lang, isClassroomDelivery ? 'kitchen.actions.dispatchDesk' : 'kitchen.actions.dispatchCounter')}</span>
+                      </button>
+                    )}
+
+                  {/* Negative / Out of Stock Option for active orders */}
+                  {['NEW', 'ACCEPTED', 'PREPARING'].includes(order.status) && (
                     <button
-                      onClick={() => handleUpdateStatus(order.id, 'PREPARING')}
+                      onClick={() => handleMarkUnableToFulfil(order.id)}
                       style={{
                         width: '100%',
-                        background: '#f59e0b',
-                        color: 'white',
-                        border: 'none',
+                        background: '#fff',
+                        color: '#dc2626',
+                        border: '1px dashed #f87171',
                         borderRadius: 'var(--radius-md)',
-                        padding: '0.65rem',
-                        fontSize: '0.85rem',
+                        padding: '0.45rem',
+                        fontSize: '0.75rem',
                         fontWeight: 800,
                         cursor: 'pointer',
                         display: 'flex',
@@ -445,62 +581,26 @@ export default function KitchenDashboard({
                         gap: '5px'
                       }}
                     >
-                      <Flame size={16} />
-                      <span>Start Cooking Dish</span>
-                    </button>
-                  )}
-
-                  {order.status === 'PREPARING' && (
-                    <button
-                      onClick={() => handleUpdateStatus(order.id, 'PACKED')}
-                      style={{
-                        width: '100%',
-                        background: '#7c3aed',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: 'var(--radius-md)',
-                        padding: '0.65rem',
-                        fontSize: '0.85rem',
-                        fontWeight: 800,
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '5px'
-                      }}
-                    >
-                      <Package size={16} />
-                      <span>Mark Box Packed & Labeled</span>
-                    </button>
-                  )}
-
-                  {order.status === 'PACKED' && (
-                    <button
-                      onClick={() => handleUpdateStatus(order.id, 'DELIVERED')}
-                      style={{
-                        width: '100%',
-                        background: '#16a34a',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: 'var(--radius-md)',
-                        padding: '0.65rem',
-                        fontSize: '0.85rem',
-                        fontWeight: 800,
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '5px'
-                      }}
-                    >
-                      <Send size={16} />
-                      <span>Handover & Deliver to Desk</span>
+                      <AlertTriangle size={13} />
+                      <span>Unable to Fulfil / Stock Out (Auto Refund)</span>
                     </button>
                   )}
 
                   {order.status === 'DELIVERED' && (
-                    <div style={{ width: '100%', textAlign: 'center', color: '#15803d', fontSize: '0.78rem', fontWeight: 800, padding: '4px', background: '#dcfce7', borderRadius: 'var(--radius-md)' }}>
+                    <div style={{ width: '100%', textAlign: 'center', color: '#15803d', fontSize: '0.78rem', fontWeight: 800, padding: '6px', background: '#dcfce7', borderRadius: 'var(--radius-md)' }}>
                       ✅ Successfully Delivered to Classroom
+                    </div>
+                  )}
+
+                  {(order.status === 'CANCELLED' || order.status === 'CANCELLED_LATE') && (
+                    <div style={{ width: '100%', textAlign: 'center', color: '#b91c1c', fontSize: '0.78rem', fontWeight: 800, padding: '6px', background: '#fee2e2', borderRadius: 'var(--radius-md)' }}>
+                      ❌ Order Cancelled ({order.cancelReason || 'Cancelled'}) {order.refundAmount ? `• ₹${order.refundAmount} Refunded` : ''}
+                    </div>
+                  )}
+
+                  {order.status === 'UNABLE_TO_FULFIL' && (
+                    <div style={{ width: '100%', textAlign: 'center', color: '#c2410c', fontSize: '0.78rem', fontWeight: 800, padding: '6px', background: '#ffedd5', borderRadius: 'var(--radius-md)' }}>
+                      ⚠️ Out of Stock / Rejected ({order.unableReason || 'Ingredients unavailable'}) {order.refundAmount ? `• ₹${order.refundAmount} Auto-Refunded` : ''}
                     </div>
                   )}
                 </div>

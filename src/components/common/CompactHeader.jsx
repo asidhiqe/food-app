@@ -216,6 +216,14 @@ export default function CompactHeader({
                   </button>
 
                   <button
+                    onClick={() => { setIsSettingsOpen(false); window.location.hash = '#/super-admin'; }}
+                    style={{ width: '100%', padding: '0.5rem', borderRadius: '6px', border: 'none', background: 'rgba(99, 102, 241, 0.1)', color: '#4f46e5', textAlign: 'left', fontSize: '0.78rem', fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+                  >
+                    <span>🛡️</span>
+                    <span>SaaS Super Admin (Master)</span>
+                  </button>
+
+                  <button
                     onClick={() => {
                       setIsSettingsOpen(false);
                       // Clear dismiss flag and reload to trigger PWA install banner

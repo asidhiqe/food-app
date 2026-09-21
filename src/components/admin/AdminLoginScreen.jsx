@@ -371,7 +371,8 @@ export default function AdminLoginScreen({ activeSchool, onLoginSuccess }) {
               borderRadius: '16px',
               border: '1px solid rgba(255, 255, 255, 0.14)',
               cursor: 'pointer',
-              color: '#e2e8f0'
+              color: '#e2e8f0',
+              marginBottom: '0.75rem'
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -385,6 +386,25 @@ export default function AdminLoginScreen({ activeSchool, onLoginSuccess }) {
               <ArrowRight size={12} />
             </div>
           </button>
+
+          {/* Master Super Admin & Parent Links */}
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', fontSize: '0.75rem' }}>
+            <button
+              type="button"
+              onClick={() => { window.location.hash = '#/super-admin'; }}
+              style={{ background: 'transparent', border: 'none', color: '#a5b4fc', cursor: 'pointer', fontWeight: 800 }}
+            >
+              🛡️ SaaS Super Admin Console
+            </button>
+            <span style={{ color: 'rgba(255,255,255,0.2)' }}>•</span>
+            <button
+              type="button"
+              onClick={() => { window.location.hash = '#/order'; }}
+              style={{ background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer', fontWeight: 700 }}
+            >
+              🍱 Parent View
+            </button>
+          </div>
         </div>
       </div>
 

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { Settings, Upload, Download, School, Palette, Clock, Users, FileSpreadsheet, Check, AlertCircle, Trash2, Plus, Search, ArrowLeft, X, ShieldAlert, UserPlus, Edit3, Clock3, UtensilsCrossed, Flame, Dumbbell, Sparkles, ToggleLeft, ToggleRight, Leaf } from 'lucide-react';
+import { Settings, Upload, Download, School, Palette, Clock, Users, FileSpreadsheet, Check, AlertCircle, Trash2, Plus, Search, ArrowLeft, X, ShieldAlert, UserPlus, Edit3, Clock3, UtensilsCrossed, Flame, Dumbbell, Sparkles, ToggleLeft, ToggleRight, Leaf, Sliders, Zap, Shield, CreditCard, Layers, CheckCircle } from 'lucide-react';
 import { StorageService } from '../../services/storageService';
 import { ExcelService } from '../../services/excelService';
+import { FEATURE_DEFINITIONS, FEATURE_CATEGORIES, TIER_PRESETS, hasFeature, getSchoolTier } from '../../services/featureService';
 
 const TABS = [
+  { id: 'features', label: 'Plans & Features', icon: '🎛️' },
   { id: 'branding', label: 'Branding', icon: '🎨' },
   { id: 'menu', label: 'Menu & Nutrition', icon: '🍱' },
   { id: 'roster', label: 'Roster', icon: '👥' },
@@ -12,10 +14,10 @@ const TABS = [
 ];
 
 const ROLE_PERMISSIONS = {
-  'Super Admin': ['branding', 'menu', 'roster', 'mealSlots', 'export'],
+  'Super Admin': ['features', 'branding', 'menu', 'roster', 'mealSlots', 'export'],
   'Operations': ['menu', 'roster', 'mealSlots', 'export'],
   'Dietitian': ['menu', 'roster', 'mealSlots'],
-  'default': ['branding', 'menu', 'roster', 'mealSlots', 'export']
+  'default': ['features', 'branding', 'menu', 'roster', 'mealSlots', 'export']
 };
 
 const COMMON_ALLERGIES = ['Peanuts', 'Tree Nuts', 'Lactose/Dairy', 'Eggs', 'Wheat/Gluten', 'Soy', 'Mustard', 'Sesame'];
@@ -99,7 +101,73 @@ export default function SchoolSettings({
     isAvailable: true
   });
 
+  // --- Emergency Holiday Batch Cancellation State ---
+  const [emergencyDate, setEmergencyDate] = useState(() => new Date().toISOString().split('T')[0]);
+  const [emergencyReason, setEmergencyReason] = useState('Severe Weather / Heavy Rain Closure');
+  const [emergencyCustomReason, setEmergencyCustomReason] = useState('');
+  const [emergencyStatus, setEmergencyStatus] = useState(null);
+  const [isEmergencySubmitting, setIsEmergencySubmitting] = useState(false);
+
+  const handleExecuteEmergencyHoliday = () => {
+    const finalReason = emergencyReason === 'Other' && emergencyCustomReason ? emergencyCustomReason : emergencyReason;
+    const confirmMsg = `Are you sure you want to cancel ALL student meal orders for ${emergencyDate}? Reason: "${finalReason}". This will immediately issue 100% wallet refunds to all affected parents.`;
+    if (!window.confirm(confirmMsg)) return;
+
+    setIsEmergencySubmitting(true);
+    const res = StorageService.cancelAllOrdersForDate(activeSchool.id, emergencyDate, finalReason);
+    setIsEmergencySubmitting(false);
+
+    if (res.success) {
+      setEmergencyStatus({
+        type: 'success',
+        message: `Emergency closure processed! Successfully cancelled ${res.cancelledCount} orders and refunded ₹${res.totalRefunded} to parent campus wallets.`
+      });
+      if (onRefresh) onRefresh();
+      setTimeout(() => setEmergencyStatus(null), 8000);
+    } else {
+      setEmergencyStatus({
+        type: 'error',
+        message: res.error || 'Failed to batch cancel orders.'
+      });
+    }
+  };
+
   const menuList = StorageService.getMenu(activeSchool.id);
+
+  const currentTier = formData.tier || activeSchool.tier || 'enterprise';
+  const currentFeatures = formData.features || activeSchool.features || { ...TIER_PRESETS[currentTier]?.features };
+
+  const handleApplyTier = (tierKey) => {
+    const preset = TIER_PRESETS[tierKey];
+    if (!preset) return;
+    const updated = {
+      ...formData,
+      tier: tierKey,
+      features: { ...preset.features }
+    };
+    setFormData(updated);
+    StorageService.updateSchoolConfig(activeSchool.id, updated);
+    setSaveSuccess(true);
+    setTimeout(() => setSaveSuccess(false), 2500);
+    onRefresh();
+  };
+
+  const handleToggleFeature = (featureKey) => {
+    const currentVal = typeof currentFeatures[featureKey] !== 'undefined'
+      ? !!currentFeatures[featureKey]
+      : hasFeature(activeSchool, featureKey);
+    const updatedFeatures = {
+      ...currentFeatures,
+      [featureKey]: !currentVal
+    };
+    const updated = {
+      ...formData,
+      features: updatedFeatures
+    };
+    setFormData(updated);
+    StorageService.updateSchoolConfig(activeSchool.id, updated);
+    onRefresh();
+  };
 
   // Handle Branding Save
   const handleSaveBranding = (e) => {
@@ -490,6 +558,274 @@ export default function SchoolSettings({
       </div>
 
       {/* 3. Tab Contents */}
+
+      {/* TAB 0: PLANS & FEATURE FLAGS */}
+      {activeTab === 'features' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+          {/* Active Plan Overview Header */}
+          <div
+            style={{
+              background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+              color: '#ffffff',
+              padding: '1.25rem',
+              borderRadius: 'var(--radius-lg)',
+              boxShadow: 'var(--shadow-card)',
+              border: '1px solid rgba(255,255,255,0.1)'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '0.75rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div
+                  style={{
+                    width: '42px',
+                    height: '42px',
+                    borderRadius: '12px',
+                    background: TIER_PRESETS[currentTier]?.color || '#7c3aed',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '1.25rem',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.25)'
+                  }}
+                >
+                  🎛️
+                </div>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <h3 style={{ fontSize: '1.05rem', fontWeight: 900, color: '#ffffff', margin: 0 }}>
+                      {TIER_PRESETS[currentTier]?.name || 'Custom Plan'}
+                    </h3>
+                    <span
+                      style={{
+                        fontSize: '0.68rem',
+                        fontWeight: 900,
+                        background: 'rgba(255,255,255,0.2)',
+                        color: '#ffffff',
+                        padding: '2px 8px',
+                        borderRadius: 'var(--radius-full)',
+                        textTransform: 'uppercase'
+                      }}
+                    >
+                      {TIER_PRESETS[currentTier]?.badge || 'Active'}
+                    </span>
+                  </div>
+                  <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '2px' }}>
+                    {TIER_PRESETS[currentTier]?.description || 'Custom feature configuration enabled.'}
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ fontSize: '1.15rem', fontWeight: 900, color: '#38bdf8' }}>
+                  {TIER_PRESETS[currentTier]?.price || 'Custom'}
+                </div>
+                <div style={{ fontSize: '0.68rem', color: '#94a3b8' }}>
+                  {TIER_PRESETS[currentTier]?.priceIntl || ''} • Billed Annually
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Status Bar */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                paddingTop: '0.75rem',
+                borderTop: '1px solid rgba(255,255,255,0.1)',
+                fontSize: '0.75rem',
+                color: '#cbd5e1'
+              }}
+            >
+              <span>
+                Enabled Features: <strong style={{ color: '#4ade80' }}>
+                  {FEATURE_DEFINITIONS.filter((f) => currentFeatures[f.key] !== false).length} / {FEATURE_DEFINITIONS.length}
+                </strong>
+              </span>
+              {saveSuccess && (
+                <span style={{ color: '#4ade80', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <Check size={14} /> Plan & Features Saved Live!
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* 1-Click Plan Preset Switcher */}
+          <div style={{ background: '#ffffff', padding: '1.25rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-card)' }}>
+            <div style={{ marginBottom: '1rem' }}>
+              <h4 style={{ fontSize: '0.92rem', fontWeight: 900, color: '#0f172a', margin: 0 }}>
+                🚀 Switch Subscription Plan Preset
+              </h4>
+              <p style={{ fontSize: '0.74rem', color: 'var(--text-muted)', margin: '2px 0 0 0' }}>
+                Applying a plan preset immediately updates feature flags to match that commercial tier.
+              </p>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '0.75rem' }}>
+              {Object.values(TIER_PRESETS).map((preset) => {
+                const isCurrent = currentTier === preset.id;
+                return (
+                  <div
+                    key={preset.id}
+                    style={{
+                      border: isCurrent ? `2px solid ${preset.color}` : '1px solid #e2e8f0',
+                      borderRadius: '12px',
+                      padding: '1rem',
+                      background: isCurrent ? '#f8fafc' : '#ffffff',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between',
+                      position: 'relative',
+                      boxShadow: isCurrent ? '0 4px 12px rgba(0,0,0,0.06)' : 'none'
+                    }}
+                  >
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 900, color: '#0f172a' }}>
+                          {preset.name}
+                        </span>
+                        {isCurrent && (
+                          <span style={{ background: preset.color, color: '#ffffff', fontSize: '0.62rem', fontWeight: 900, padding: '2px 6px', borderRadius: 'var(--radius-full)' }}>
+                            CURRENT
+                          </span>
+                        )}
+                      </div>
+                      <div style={{ fontSize: '1rem', fontWeight: 900, color: preset.color, marginBottom: '0.2rem' }}>
+                        {preset.price}
+                      </div>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', lineHeight: 1.35, marginBottom: '0.75rem' }}>
+                        {preset.description}
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleApplyTier(preset.id)}
+                      disabled={isCurrent}
+                      style={{
+                        width: '100%',
+                        padding: '0.5rem',
+                        borderRadius: 'var(--radius-md)',
+                        border: isCurrent ? '1px solid #cbd5e1' : `1.5px solid ${preset.color}`,
+                        background: isCurrent ? '#f1f5f9' : preset.color,
+                        color: isCurrent ? '#64748b' : '#ffffff',
+                        fontWeight: 800,
+                        fontSize: '0.76rem',
+                        cursor: isCurrent ? 'default' : 'pointer',
+                        transition: 'all 0.15s ease'
+                      }}
+                    >
+                      {isCurrent ? 'Active Plan' : `Apply ${preset.name.split(' ')[0]}`}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Granular Feature Toggles Board */}
+          <div style={{ background: '#ffffff', padding: '1.25rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-card)' }}>
+            <div style={{ marginBottom: '1.15rem' }}>
+              <h4 style={{ fontSize: '0.92rem', fontWeight: 900, color: '#0f172a', margin: 0 }}>
+                ⚡ Granular Feature Controls & Overrides
+              </h4>
+              <p style={{ fontSize: '0.74rem', color: 'var(--text-muted)', margin: '2px 0 0 0' }}>
+                Toggle individual features on or off for this campus. Changes reflect immediately across Parent and Kitchen screens.
+              </p>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              {Object.values(FEATURE_CATEGORIES).map((cat) => {
+                const catFeatures = FEATURE_DEFINITIONS.filter((f) => f.category === cat.id);
+                if (catFeatures.length === 0) return null;
+
+                return (
+                  <div key={cat.id} style={{ borderBottom: '1px solid #f1f5f9', paddingBottom: '1.25rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '0.75rem' }}>
+                      <span style={{ fontSize: '1rem' }}>{cat.icon}</span>
+                      <h5 style={{ fontSize: '0.85rem', fontWeight: 900, color: '#1e293b', margin: 0 }}>
+                        {cat.label}
+                      </h5>
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '0.75rem' }}>
+                      {catFeatures.map((feature) => {
+                        const isEnabled = typeof currentFeatures[feature.key] !== 'undefined'
+                          ? !!currentFeatures[feature.key]
+                          : feature.defaultEnabled;
+
+                        return (
+                          <div
+                            key={feature.key}
+                            onClick={() => handleToggleFeature(feature.key)}
+                            style={{
+                              padding: '0.75rem 0.9rem',
+                              borderRadius: '10px',
+                              border: isEnabled ? '1.5px solid #86efac' : '1px solid #e2e8f0',
+                              background: isEnabled ? '#f0fdf4' : '#fafafa',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              gap: '0.75rem',
+                              cursor: 'pointer',
+                              transition: 'all 0.15s ease'
+                            }}
+                          >
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
+                                <span style={{ fontSize: '0.82rem', fontWeight: 800, color: isEnabled ? '#14532d' : '#334155' }}>
+                                  {feature.name}
+                                </span>
+                                {feature.minTier === 'enterprise' && (
+                                  <span style={{ fontSize: '0.58rem', fontWeight: 900, background: '#ede9fe', color: '#6b21a8', padding: '1px 5px', borderRadius: '4px' }}>
+                                    Enterprise
+                                  </span>
+                                )}
+                                {feature.minTier === 'growth' && (
+                                  <span style={{ fontSize: '0.58rem', fontWeight: 900, background: '#dcfce7', color: '#15803d', padding: '1px 5px', borderRadius: '4px' }}>
+                                    Growth
+                                  </span>
+                                )}
+                              </div>
+                              <p style={{ fontSize: '0.68rem', color: '#64748b', margin: 0, lineHeight: 1.3 }}>
+                                {feature.description}
+                              </p>
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleToggleFeature(feature.key);
+                              }}
+                              style={{
+                                background: 'transparent',
+                                border: 'none',
+                                cursor: 'pointer',
+                                padding: 0,
+                                display: 'flex',
+                                alignItems: 'center',
+                                flexShrink: 0
+                              }}
+                              title={isEnabled ? 'Click to Disable' : 'Click to Enable'}
+                            >
+                              {isEnabled ? (
+                                <ToggleRight size={28} color="#16a34a" />
+                              ) : (
+                                <ToggleLeft size={28} color="#94a3b8" />
+                              )}
+                            </button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* TAB 1: BRANDING */}
       {activeTab === 'branding' && (
@@ -1060,20 +1396,172 @@ export default function SchoolSettings({
 
       {/* TAB 5: EXPORT & REPORTS */}
       {activeTab === 'export' && (
-        <div style={{ background: '#ffffff', padding: '1.25rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-card)' }}>
-          <h3 style={{ fontSize: '0.95rem', fontWeight: 900, marginBottom: '0.5rem' }}>📊 Accounting & Settlement Reports</h3>
-          <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: '1.25rem' }}>
-            Download itemized transaction reports for canteen vendor billing and school commission audits.
-          </p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+          <div style={{ background: '#ffffff', padding: '1.25rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-card)' }}>
+            <h3 style={{ fontSize: '0.95rem', fontWeight: 900, marginBottom: '0.5rem' }}>📊 Accounting & Settlement Reports</h3>
+            <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: '1.25rem' }}>
+              Download itemized transaction reports for canteen vendor billing and school commission audits.
+            </p>
 
-          <button
-            onClick={handleExportOrders}
-            className="btn-primary"
-            style={{ width: '100%', padding: '0.85rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+            <button
+              onClick={handleExportOrders}
+              className="btn-primary"
+              style={{ width: '100%', padding: '0.85rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+            >
+              <FileSpreadsheet size={18} />
+              <span>Download All Orders (.xlsx)</span>
+            </button>
+          </div>
+
+          {/* Emergency Closure & Batch Cancellation Card */}
+          <div
+            style={{
+              background: '#ffffff',
+              padding: '1.25rem',
+              borderRadius: 'var(--radius-lg)',
+              border: '1.5px solid #fca5a5',
+              boxShadow: 'var(--shadow-card)'
+            }}
           >
-            <FileSpreadsheet size={18} />
-            <span>Download All Orders (.xlsx)</span>
-          </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.5rem' }}>
+              <ShieldAlert size={20} color="#dc2626" />
+              <h3 style={{ fontSize: '0.95rem', fontWeight: 900, color: '#dc2626', margin: 0 }}>
+                🚨 Emergency School Holiday / Unscheduled Closure
+              </h3>
+            </div>
+            <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
+              In case of sudden extreme weather, rain red alerts, strikes, or administrative holidays, batch-cancel all student meal orders for that date. Affected parents are automatically credited 100% wallet refunds instantly.
+            </p>
+
+            {emergencyStatus && (
+              <div
+                style={{
+                  padding: '0.75rem',
+                  marginBottom: '1rem',
+                  borderRadius: 'var(--radius-md)',
+                  fontSize: '0.8rem',
+                  fontWeight: 800,
+                  background: emergencyStatus.type === 'success' ? '#dcfce7' : '#fee2e2',
+                  color: emergencyStatus.type === 'success' ? '#15803d' : '#b91c1c'
+                }}
+              >
+                {emergencyStatus.message}
+              </div>
+            )}
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 2fr', gap: '0.75rem', marginBottom: '1rem' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, marginBottom: '0.3rem' }}>
+                  Closure Date:
+                </label>
+                <input
+                  type="date"
+                  value={emergencyDate}
+                  onChange={(e) => setEmergencyDate(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '0.55rem',
+                    borderRadius: 'var(--radius-md)',
+                    border: '1px solid #cbd5e1',
+                    fontSize: '0.82rem',
+                    fontWeight: 700
+                  }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, marginBottom: '0.3rem' }}>
+                  Closure Reason:
+                </label>
+                <select
+                  value={emergencyReason}
+                  onChange={(e) => setEmergencyReason(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '0.55rem',
+                    borderRadius: 'var(--radius-md)',
+                    border: '1px solid #cbd5e1',
+                    fontSize: '0.82rem',
+                    fontWeight: 600
+                  }}
+                >
+                  <option value="Severe Weather / Heavy Rain Closure">Severe Weather / Heavy Rain Closure</option>
+                  <option value="Government Declared Public Holiday">Government Declared Public Holiday</option>
+                  <option value="School Facility / Water Maintenance">School Facility / Water Maintenance</option>
+                  <option value="Unscheduled Administrative Closure">Unscheduled Administrative Closure</option>
+                  <option value="Other">Other Reason</option>
+                </select>
+              </div>
+            </div>
+
+            {emergencyReason === 'Other' && (
+              <div style={{ marginBottom: '1rem' }}>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, marginBottom: '0.3rem' }}>
+                  Specify Custom Reason:
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. Local election day closure..."
+                  value={emergencyCustomReason}
+                  onChange={(e) => setEmergencyCustomReason(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '0.55rem',
+                    borderRadius: 'var(--radius-md)',
+                    border: '1px solid #cbd5e1',
+                    fontSize: '0.82rem'
+                  }}
+                />
+              </div>
+            )}
+
+            {/* Orders count preview */}
+            {(() => {
+              const affectedOrders = (orders || []).filter(
+                (o) => o.requiredDate === emergencyDate && o.deliveryStatus !== 'CANCELLED' && o.deliveryStatus !== 'CANCELLED_LATE'
+              );
+              const totalRefund = affectedOrders.reduce((sum, o) => sum + Number(o.totalAmount || 0), 0);
+
+              return (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.65rem 0.85rem', background: '#f8fafc', borderRadius: 'var(--radius-md)', marginBottom: '1rem', border: '1px solid #e2e8f0' }}>
+                  <div style={{ fontSize: '0.78rem' }}>
+                    Active Orders for <strong>{emergencyDate}</strong>: <strong>{affectedOrders.length} meal{affectedOrders.length === 1 ? '' : 's'}</strong>
+                  </div>
+                  <div style={{ fontSize: '0.82rem', fontWeight: 900, color: '#dc2626' }}>
+                    Total Value: {activeSchool.currency}{totalRefund}
+                  </div>
+                </div>
+              );
+            })()}
+
+            <button
+              type="button"
+              onClick={handleExecuteEmergencyHoliday}
+              disabled={isEmergencySubmitting}
+              style={{
+                width: '100%',
+                padding: '0.75rem',
+                background: '#dc2626',
+                color: '#ffffff',
+                border: 'none',
+                borderRadius: 'var(--radius-md)',
+                fontSize: '0.84rem',
+                fontWeight: 900,
+                cursor: isEmergencySubmitting ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px'
+              }}
+            >
+              <AlertCircle size={16} />
+              <span>
+                {isEmergencySubmitting
+                  ? 'Cancelling & Issuing Wallet Refunds...'
+                  : 'Batch Cancel All Orders & Auto-Refund Parent Wallets'}
+              </span>
+            </button>
+          </div>
         </div>
       )}
 
